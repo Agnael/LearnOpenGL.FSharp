@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>_03_Quad</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Basic.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Basic.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup />
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
+    <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+    <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Galante\Galante.fsproj" />
+  </ItemGroup>
+
+</Project>
