@@ -1,6 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
-
-open System
+﻿open System
 open Galante
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
@@ -11,8 +9,8 @@ open Silk.NET.Maths
 let main argv =
     let glOpts = 
         { GlWindowOptions.Default with
-            Title = "RawSilk"
-            Size = new Size (600, 300) }
+            Title = "01_Window"
+            Size = new Size (600, 600) }
 
     let (window, gl) = GlWin.create glOpts
     window.add_Render 

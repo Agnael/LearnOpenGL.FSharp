@@ -1,7 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
-
-open System
-open Sodium.Frp
+﻿open System
 open Galante
 open Microsoft.Extensions.Logging.Abstractions
 open Microsoft.Extensions.FileProviders
@@ -15,7 +12,7 @@ let main argv =
     let glOpts = 
         { GlWindowOptions.Default with
             Title = "03_Quad"
-            Size = new Size (600, 300) }
+            Size = new Size (600, 600) }
 
     let (window, gl) = GlWin.create glOpts
 
@@ -76,4 +73,4 @@ let main argv =
     window.add_Load (new Action(onLoad))
     window.add_Render (new Action<float>(onRender))
     window.Run ()
-    0 // return an integer exit code
+    0

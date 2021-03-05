@@ -1,6 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
-
-open System
+﻿open System
 open Galante
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
@@ -14,7 +12,7 @@ let main argv =
     let glOpts = 
         { GlWindowOptions.Default with
             Title = "04_Quad_Texture"
-            Size = new Size (600, 300) }
+            Size = new Size (600, 600) }
 
     let (window, gl) = GlWin.create glOpts
 
@@ -89,4 +87,4 @@ let main argv =
     window.add_Load (new Action(onLoad))
     window.add_Render (new Action<float>(onRender))
     window.Run ()
-    0 // return an integer exit code
+    0

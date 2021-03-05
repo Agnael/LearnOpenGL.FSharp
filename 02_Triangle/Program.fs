@@ -1,6 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
-
-open System
+﻿open System
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
 open Galante
@@ -14,7 +12,7 @@ let main argv =
     let glOpts = 
         { GlWindowOptions.Default with
             Title = "02_Triangle"
-            Size = new Size (600, 300) }
+            Size = new Size (600, 600) }
 
     let (window, gl) = GlWin.create glOpts
 
@@ -49,7 +47,7 @@ let main argv =
             |> GlVbo.withAttrDefinitions [
                 [[-0.5f;  -0.5f;  0.0f;]]
                 [[0.5f; -0.5f;  0.0f;]]
-                [[0.00f; 0.8f;   0.0f;]] ]
+                [[0.00f; 0.5f;   0.0f;]] ]
             |> GlVbo.build (triangleVao, ctx)
         ()
 
