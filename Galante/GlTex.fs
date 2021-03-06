@@ -95,3 +95,17 @@ let create (texTarget, texGlTarget, filePath, format, internalFormat: GLEnum, wr
     ctx.Gl.Enable (GLEnum.Texture2D)
     ctx.Logger.LogInformation <| "olaaaaa"
     tex
+
+let create2D filePath (vao, ctx) =
+    (vao, ctx)
+    |> create 
+        ( TextureTarget.Texture2D
+        , GLEnum.Texture2D
+        , filePath
+        , GLEnum.Rgba
+        , GLEnum.Rgba
+        , GLEnum.Repeat
+        , GLEnum.Repeat
+        , GLEnum.Linear
+        , GLEnum.Linear
+        )

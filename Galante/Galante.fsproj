@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Models\GlTextureSlotsState.fs" />
     <Compile Include="Models\GlElementBufferObject.fs" />
     <Compile Include="Models\GlTexture.fs" />
     <Compile Include="Models\GlVertexArrayObject.fs" />
