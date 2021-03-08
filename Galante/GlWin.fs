@@ -4,8 +4,11 @@
     open Silk.NET.OpenGL
     open Galante
     open System
+    open Microsoft.Extensions.Logging.Abstractions
+    open Microsoft.Extensions.FileProviders
+    open System.IO
 
-    let create (options: GlWindowOptions): (IWindow * GL) =    
+    let create (options: GlWindowOptions): (IWindow * GlWindowContext) =    
         let windowOptions =
             new WindowOptions
                 ( options.IsVisible
@@ -38,4 +41,11 @@
 
         let window = Window.Create(windowOptions)
         let gl = GL.GetApi(window)
-        (window, gl)
+
+        let windowContext = 
+            { Gl = GL.GetApi(window) 
+            ; Logger = new NullLogger<obj>()
+            ; FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory())
+            ;}
+        
+        (window, windowContext)

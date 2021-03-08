@@ -6,7 +6,7 @@ module GlShad
     open System.IO
     open Microsoft.Extensions.Logging
 
-    let load (shaderType: ShaderType) srcFilePath ctx =
+    let load (shaderType: ShaderType) srcFilePath (ctx: GlWindowContext) =
           let sourceGlslCode = 
               ctx.FileProvider.GetFileInfo(srcFilePath)
               |> fun fileInfo ->

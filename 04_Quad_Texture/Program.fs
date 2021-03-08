@@ -14,13 +14,7 @@ let main argv =
             Title = "04_Quad_Texture"
             Size = new Size (600, 600) }
 
-    let (window, gl) = GlWin.create glOpts
-
-    let ctx =  
-        { GlContext.Gl = gl
-        ; Logger = new NullLogger<obj>()
-        ; FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory())
-        ;}
+    let (window, ctx) = GlWin.create glOpts
 
     let mutable quadVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
@@ -74,7 +68,7 @@ let main argv =
         ()
 
     let onRender dt =
-        gl.Clear <| uint32 GLEnum.ColorBufferBit
+        ctx.Gl.Clear <| uint32 GLEnum.ColorBufferBit
         
         (shader, ctx)
         |> GlProg.setAsCurrent

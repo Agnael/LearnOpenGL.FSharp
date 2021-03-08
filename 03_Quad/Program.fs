@@ -14,13 +14,7 @@ let main argv =
             Title = "03_Quad"
             Size = new Size (600, 600) }
 
-    let (window, gl) = GlWin.create glOpts
-
-    let ctx =  
-        { GlContext.Gl = gl
-        ; Logger = new NullLogger<obj>()
-        ; FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory())
-        ;}
+    let (window, ctx) = GlWin.create glOpts
 
     let mutable quadVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
@@ -57,7 +51,7 @@ let main argv =
         ()
 
     let onRender dt =
-        gl.Clear <| uint32 GLEnum.ColorBufferBit
+        ctx.Gl.Clear <| uint32 GLEnum.ColorBufferBit
         
         let greenValue = single <| Math.Sin(window.Time);
 
@@ -66,8 +60,8 @@ let main argv =
         |> GlProg.setUniformV4 "myColor" (0.8f, greenValue, 0.0f, 1.0f)
         |> ignore
 
-        gl.BindVertexArray quadVao.GlVaoHandle
-        gl.DrawElements (GLEnum.Triangles, 6ul, GLEnum.UnsignedInt, IntPtr.Zero.ToPointer())
+        ctx.Gl.BindVertexArray quadVao.GlVaoHandle
+        ctx.Gl.DrawElements (GLEnum.Triangles, 6ul, GLEnum.UnsignedInt, IntPtr.Zero.ToPointer())
         ()
 
     window.add_Load (new Action(onLoad))

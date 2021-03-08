@@ -14,13 +14,7 @@ let main argv =
             Title = "02_Triangle"
             Size = new Size (600, 600) }
 
-    let (window, gl) = GlWin.create glOpts
-
-    let ctx =  
-        { GlContext.Gl = gl
-        ; Logger = new NullLogger<obj>()
-        ; FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory())
-        ;}
+    let (window, ctx) = GlWin.create glOpts
 
     let mutable shaderBasic = Unchecked.defaultof<_>
     let mutable triangleVao = Unchecked.defaultof<_>
@@ -52,7 +46,7 @@ let main argv =
         ()
 
     let render (dt: float) =
-        gl.Clear <| uint32 GLEnum.ColorBufferBit
+        ctx.Gl.Clear <| uint32 GLEnum.ColorBufferBit
         
         let greenValue = single <| Math.Sin(window.Time);
 
@@ -60,8 +54,8 @@ let main argv =
         |> GlProg.setAsCurrent
         |> GlProg.setUniformV4 "myColor" (0.8f, greenValue, 0.0f, 1.0f)
         |> ignore
-        gl.BindVertexArray triangleVao.GlVaoHandle
-        gl.DrawArrays (GLEnum.Triangles, 0, 3u) 
+        ctx.Gl.BindVertexArray triangleVao.GlVaoHandle
+        ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 3u) 
 
     window.add_Load (new Action(load))
     window.add_Render (new Action<_>(render))

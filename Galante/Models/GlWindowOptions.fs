@@ -3,9 +3,13 @@
     open System.Drawing
     open Silk.NET.Windowing
     open Silk.NET.Windowing.Glfw
+    open Microsoft.Extensions.Logging
+    open Microsoft.Extensions.FileProviders
 
-    type GlWindowOptions =
-        { IsVisible: bool
+    type GlWindowOptions = 
+        { FileProvider: IFileProvider option
+        ; Logger: ILogger option
+        ; IsVisible: bool
         ; UseSingleThreadedWindow: bool
         ; Position: Point
         ; Size: Size
@@ -24,11 +28,13 @@
         ; PreferredBitDepth: Silk.NET.Maths.Vector4D<int> option
         ; TransparentFrameBuffer: bool
         ; IsEventDriven: bool
-        ; SharedContext: Silk.NET.Core.Contexts.IGLContext option
+        ; SharedContext: Silk.NET.Core.Contexts.IGLContext option 
         ;}
 
         static member Default =
-            { GlWindowOptions.IsVisible = true
+            { FileProvider = None
+            ; Logger = None
+            ; IsVisible = true
             ; UseSingleThreadedWindow = false
             ; Position = new Point (50, 50) 
             ; Size = new Size (600, 400)

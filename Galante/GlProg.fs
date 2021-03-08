@@ -6,7 +6,7 @@ module GlProg
     open System.IO
     open Microsoft.Extensions.Logging
 
-    let rec private loadProgramShaders pending added ctx =
+    let rec private loadProgramShaders pending added (ctx: GlWindowContext) =
         match pending with
         | [] -> added
         | h::t -> 

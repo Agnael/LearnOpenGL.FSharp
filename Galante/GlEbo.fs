@@ -5,7 +5,7 @@ open Galante
 open Silk.NET.OpenGL
 open Microsoft.FSharp.NativeInterop
 
-let create (ctx: GlContext) (indices: uint32[]) =
+let create ctx (indices: uint32[]) =
     let squareEbo = ctx.Gl.GenBuffer () 
     use indicesDataIntPtr = fixed indices
     let indicesDataVoidPtr = NativePtr.toVoidPtr indicesDataIntPtr 
