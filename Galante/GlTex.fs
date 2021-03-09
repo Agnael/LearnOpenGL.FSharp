@@ -15,8 +15,9 @@ open System.IO
 open Microsoft.FSharp.NativeInterop
 open Microsoft.Extensions.Logging
 
-let bind (texture: GlTexture) (vao, ctx) =
+let bind (glTextureSlotId: GLEnum) (texture: GlTexture) (vao, ctx) =
     GlVao.bind (vao, ctx) |> ignore
+    ctx.Gl.ActiveTexture glTextureSlotId
     ctx.Gl.BindTexture (GLEnum.Texture2D, texture.GlTexHandle)
     (vao, ctx)
 

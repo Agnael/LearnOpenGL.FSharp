@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>_08_Coordinate_Systems</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="awesomeface.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="DoubleTexture.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Textured3d.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup />
+
+  <ItemGroup />
+
+  <ItemGroup>
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
+    <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+    <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Galante\Galante.fsproj" />
+  </ItemGroup>
+
+</Project>

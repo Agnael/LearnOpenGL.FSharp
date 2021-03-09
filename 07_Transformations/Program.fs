@@ -9,7 +9,7 @@ open System.Numerics
 let main argv =
     let glOpts = 
         { GlWindowOptions.Default with
-            Title = "06_Quad_Texture_Double"
+            Title = "07_Transformations"
             Size = new Size (600, 600) }
 
     let (window, ctx) = GlWin.create glOpts
@@ -61,12 +61,10 @@ let main argv =
     let onRender dt =
         ctx.Gl.Clear <| uint32 GLEnum.ColorBufferBit
         
-        ctx.Gl.ActiveTexture (GLEnum.Texture0)
-        GlTex.bind texture1 (quadVao, ctx) |> ignore
-
-        let maxTextureSlot = ctx.Gl.GetInteger(GLEnum.MaxCombinedTextureImageUnits);  
-        ctx.Gl.ActiveTexture (GLEnum.Texture1)
-        GlTex.bind texture2 (quadVao, ctx) |> ignore
+        (quadVao, ctx)
+        |> GlTex.bind GLEnum.Texture0 texture1
+        |> GlTex.bind GLEnum.Texture1 texture2
+        |> ignore
         
         // Prepares shader and draws the original image
         (shader, ctx)
@@ -111,7 +109,7 @@ let main argv =
         GlVao.bind (quadVao, ctx) |> ignore
         ctx.Gl.DrawElements (GLEnum.Triangles, 6ul, GLEnum.UnsignedInt, IntPtr.Zero.ToPointer())
         ()
-
+    
     window.add_Update (new Action<float>(onUpdate))
     window.add_Load (new Action(onLoad))
     window.add_Render (new Action<float>(onRender))

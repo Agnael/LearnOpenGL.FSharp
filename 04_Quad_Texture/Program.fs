@@ -43,22 +43,7 @@ let main argv =
             ]
             |> GlVbo.build (quadVao, ctx)
 
-        let quadTex =
-            (quadVao, ctx)
-            |> GlTex.create 
-                ( TextureTarget.Texture2D
-                , GLEnum.Texture2D
-                , @"wall.jpg"
-                , GLEnum.Rgba
-                , GLEnum.Rgba
-                , GLEnum.Repeat
-                , GLEnum.Repeat
-                , GLEnum.Linear
-                , GLEnum.Linear
-                )
-            |> fun tex ->
-                GlTex.bind tex (quadVao, ctx) |> ignore
-                tex
+        let quadTex = GlTex.create2D "wall.jpg" (quadVao, ctx)
 
         // Define en qué orden se van a dibujar los 2 triángulos que forman el cuadrilátero
         let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]
