@@ -3,9 +3,6 @@ open Galante
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
 open System.Drawing
-open Microsoft.Extensions.Logging.Abstractions
-open Microsoft.Extensions.FileProviders
-open System.IO
 
 [<EntryPoint>]
 let main argv =

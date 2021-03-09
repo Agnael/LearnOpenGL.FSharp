@@ -3,9 +3,6 @@ open Galante
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
 open System.Drawing
-open Microsoft.Extensions.Logging.Abstractions
-open Microsoft.Extensions.FileProviders
-open System.IO
 open System.Numerics
 
 [<EntryPoint>]
@@ -82,7 +79,7 @@ let main argv =
         GlVao.bind (quadVao, ctx) |> ignore
         ctx.Gl.DrawElements (GLEnum.Triangles, 6ul, GLEnum.UnsignedInt, IntPtr.Zero.ToPointer())
 
-        // Applies the 1st transformation matrix to the same shader and vao and draws it again
+        // Applies the 1st transformation matrix to the same shader and draws the same VAO again
         let rotationRadians: float32 = timer
         let transformation1 = 
             Matrix4x4.Identity * 
@@ -96,14 +93,12 @@ let main argv =
             Matrix4x4.CreateTranslation (new Vector3(-0.6f, +0.6f, 0.0f)) *
             // This last translation is to move it aside from the previous drawing so it is distinguishable
             Matrix4x4.CreateTranslation (new Vector3(0.6f, 0.0f, 0.0f))
-        (shader, ctx)
-        |> GlProg.setUniformM4x4 "uTransformation" transformation1
-        |> ignore
-        
+
+        GlProg.setUniformM4x4 "uTransformation" transformation1 (shader, ctx) |> ignore        
         GlVao.bind (quadVao, ctx) |> ignore
         ctx.Gl.DrawElements (GLEnum.Triangles, 6ul, GLEnum.UnsignedInt, IntPtr.Zero.ToPointer())
 
-        // Applies the 2nd transformation and draws again
+        // Applies a 2nd transformation and draws the same VAO again
         let ninetyDegreeRadians = 90.0f * MathF.PI / 180.0f
         let transformation2 = 
             Matrix4x4.Identity * 
@@ -111,14 +106,10 @@ let main argv =
             Matrix4x4.CreateRotationZ ninetyDegreeRadians *
             Matrix4x4.CreateTranslation (new Vector3(-0.6f, +0.6f, 0.0f)) *
             Matrix4x4.CreateTranslation (new Vector3(1.2f, 0.0f, 0.0f))
-        
-        (shader, ctx)
-        |> GlProg.setUniformM4x4 "uTransformation" transformation2
-        |> ignore
-        
+                
+        GlProg.setUniformM4x4 "uTransformation" transformation2 (shader, ctx) |> ignore        
         GlVao.bind (quadVao, ctx) |> ignore
         ctx.Gl.DrawElements (GLEnum.Triangles, 6ul, GLEnum.UnsignedInt, IntPtr.Zero.ToPointer())
-
         ()
 
     window.add_Update (new Action<float>(onUpdate))

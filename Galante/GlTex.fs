@@ -65,7 +65,7 @@ let create (texTarget, texGlTarget, filePath, format, internalFormat: GLEnum, wr
 
     ctx.Gl.BindTexture (GLEnum.Texture2D, tex.GlTexHandle)
 
-    // set the texture wrapping/filtering options (on the currently bound texture object)
+    // 1 the texture wrapping/filtering options (on the currently bound texture object)
     let mutable wrapParams = GLEnum.Repeat |> LanguagePrimitives.EnumToValue
     let wrapParamsIntPtr = NativePtr.toNativeInt<int> &&wrapParams
     let wrapParamsNativePtr: nativeptr<int> = NativePtr.ofNativeInt wrapParamsIntPtr

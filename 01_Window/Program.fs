@@ -1,9 +1,7 @@
-﻿open System
-open Galante
+﻿open Galante
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
 open System.Drawing
-open Silk.NET.Maths
 
 [<EntryPoint>]
 let main argv =

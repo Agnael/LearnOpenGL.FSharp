@@ -1,8 +1,5 @@
 ﻿open System
 open Galante
-open Microsoft.Extensions.Logging.Abstractions
-open Microsoft.Extensions.FileProviders
-open System.IO
 open System.Drawing
 open Silk.NET.Windowing
 open Silk.NET.OpenGL

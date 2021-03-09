@@ -2,9 +2,6 @@
 open Galante
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
-open Microsoft.Extensions.Logging.Abstractions
-open Microsoft.Extensions.FileProviders
-open System.IO
 open System.Drawing
 
 [<EntryPoint>]
