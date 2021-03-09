@@ -1,10 +1,12 @@
 ﻿[<RequireQualifiedAccess>]
 module GlProg
-
+    #nowarn "9"
     open Silk.NET.OpenGL
     open Galante
     open System.IO
     open Microsoft.Extensions.Logging
+    open System.Numerics
+    open Microsoft.FSharp.NativeInterop
 
     let rec private loadProgramShaders pending added (ctx: GlWindowContext) =
         match pending with
@@ -59,6 +61,19 @@ module GlProg
         program.Uniforms
         |> List.find (fun x -> x.UniformName = name)
         |> fun uniform -> ctx.Gl.Uniform1(uniform.GlUniformHandle, value)
+        (program, ctx)
+        
+    let setUniformM4x4 name (value: Matrix4x4) (program, ctx) =         
+        // This block is the equivalent of the C# code:
+        // "_gl.UniformMatrix4(location, 1, false, (float*) &value)"
+        // where value is of type System.Numerics.Matrix4x4.
+        let mutable auxVal = value
+        let valPtr = NativePtr.toNativeInt<Matrix4x4> &&auxVal
+        let valFloatPtr: nativeptr<float32> = NativePtr.ofNativeInt<float32> valPtr 
+
+        program.Uniforms
+        |> List.find (fun x -> x.UniformName = name)
+        |> fun uniform -> ctx.Gl.UniformMatrix4(uniform.GlUniformHandle, 1ul, false, valFloatPtr)
         (program, ctx)
 
     let setUniformV4 name (x: single, y, z, w) (program: GlProgram, ctx) =             
