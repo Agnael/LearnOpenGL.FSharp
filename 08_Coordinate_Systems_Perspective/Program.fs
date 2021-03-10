@@ -60,7 +60,7 @@ let main argv =
         ()
 
     let onUpdate dt =
-        timer <- timer + float32(dt) / 2.0f
+        timer <- timer + float32(dt) * 3.0f
         ()
         
     let toRadians degrees = degrees * MathF.PI / 180.0f
@@ -77,17 +77,21 @@ let main argv =
 
         let modelMatrix =
             Matrix4x4.Identity *
-            Matrix4x4.CreateRotationX(toRadians -55.0f)
+            Matrix4x4.CreateRotationX(toRadians -55.0f) *
+            Matrix4x4.CreateRotationY(toRadians 40.0f)
 
-        // note that we're translating the scene in the reverse 
+        let cameraDistance =
+            float32 <| Math.Sin(float timer) + 3.0
+            
+        // Note that we're translating the scene in the reverse 
         // direction of where we want to move.
         let viewMatrix = 
             Matrix4x4.Identity * 
-            Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, -3.0f))
+            Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, -cameraDistance))
 
         let projectionMatrix = 
             Matrix4x4.CreatePerspectiveFieldOfView(fov, aspectRatio, 0.1f, 100.0f)
-
+       
         // Prepares shader and draws the original image
         (shader, ctx)
         |> GlProg.setAsCurrent
