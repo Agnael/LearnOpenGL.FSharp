@@ -39,6 +39,8 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.12" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.12" />
+    <PackageReference Include="Silk.NET.Input" Version="2.1.0" />
+    <PackageReference Include="Silk.NET.Input.Common" Version="2.1.0" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
     <PackageReference Include="Silk.NET.Windowing.Common" Version="2.1.0" />

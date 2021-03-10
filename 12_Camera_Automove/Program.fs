@@ -5,11 +5,25 @@ open Silk.NET.OpenGL
 open System.Drawing
 open System.Numerics
 
+type CubeTransformation = 
+    { Translation: Vector3
+    ; RotationX: single
+    ; RotationY: single
+    ; RotationZ: single
+    ;}
+
+    static member create (translation, rotationX, rotationY, rotationZ) =
+        { Translation = translation
+        ; RotationX = rotationX
+        ; RotationY = rotationY
+        ; RotationZ = rotationZ 
+        ;}
+
 [<EntryPoint>]
 let main argv =
     let glOpts = 
         { GlWindowOptions.Default with
-            Title = "10_Coordinate_Systems_Many_Cubes"
+            Title = "12_Camera_Automove"
             Size = new Size (800, 600) }
 
     let (window, ctx) = GlWin.create glOpts
@@ -103,20 +117,24 @@ let main argv =
     let toRadians degrees = degrees * MathF.PI / 180.0f
     let fov = toRadians 45.0f
     let aspectRatio = 800.0f/600.0f
-
-    // List of cube copies that will be created, expressed as translations.
-    let cubeTranslations = [
-        new Vector3(0.0f, 0.0f, 0.0f)
-        new Vector3(2.0f, 5.0f, -15.0f)
-        new Vector3(-1.5f, -2.2f, -2.5f)
-        new Vector3(-3.8f, -2.0f, -12.3f)
-        new Vector3(2.4f, -0.4f, -3.5f)
-        new Vector3(-1.7f, 3.0f, -7.5f)
-        new Vector3(1.3f, -2.0f, -2.5f)
-        new Vector3(1.5f, 2.0f, -2.5f)
-        new Vector3(1.5f, 0.2f, -1.5f)
-        new Vector3(-1.3f, 1.0f, -1.5f)
-    ]
+    
+    // List of cube copies that will be created, expressed as transformation of one 
+    // thats standing on the origin.
+    // 
+    // NOTE: This is just to add some dynamism without being TOO distracting from 
+    // the actual spotlight of the example, which is the camera and it's movement.
+    let cubeTransformations = [
+        CubeTransformation.create (new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 0.0f)
+        CubeTransformation.create (new Vector3(2.0f, 5.0f, -15.0f), 43.0f, 12.0f, 0.0f)
+        CubeTransformation.create (new Vector3(-1.5f, -2.2f, -2.5f), 12.0f, 98.0f, 40.0f)
+        CubeTransformation.create (new Vector3(-3.8f, -2.0f, -12.3f), 45.0f, 32.0f, 0.0f)
+        CubeTransformation.create (new Vector3(2.4f, -0.4f, -3.5f), 0.0f, 0.0f, 43.0f)
+        CubeTransformation.create (new Vector3(-1.7f, 3.0f, -7.5f), 0.0f, 54.0f, 0.0f)
+        CubeTransformation.create (new Vector3(1.3f, -2.0f, -2.5f), 14.0f, 54.0f, 12.0f)
+        CubeTransformation.create (new Vector3(1.5f, 2.0f, -2.5f), 76.5f, 0.56f, 12.0f)
+        CubeTransformation.create (new Vector3(1.5f, 0.2f, -1.5f), 54.0f, 0.0f, 125.0f)
+        CubeTransformation.create (new Vector3(-1.3f, 1.0f, -1.5f), 246.0f, 122.0f, 243.0f)
+    ] 
 
     let onRender dt =
         ctx.Gl.Enable GLEnum.DepthTest
@@ -126,10 +144,53 @@ let main argv =
         |> GlTex.bind GLEnum.Texture0 texture1
         |> GlTex.bind GLEnum.Texture1 texture2
         |> ignore
-        
+
+        // Creates the current position of the camera on each frame so it looks 
+        // like the camera is moving around the scene.
+        let cameraPathRadius = 10.0f
+        let cameraPathCurrentX = sin(timer) * cameraPathRadius
+        let cameraPathCurrentZ = cos(timer) * cameraPathRadius
+
+        // 1. Camera position
+        let cameraPosition = new Vector3 (cameraPathCurrentX, 0.0f, cameraPathCurrentZ)
+
+        // 2. Camera direction
+        let cameraTarget = new Vector3(0.0f, 0.0f, 0.0f)
+
+        // The next vector required is the camera's direction e.g. at what direction 
+        // it is pointing at. For now we let the camera point to the origin of our 
+        // scene: (0,0,0). Remember that if we subtract two vectors from each other 
+        // we get a vector that's the difference of these two vectors? Subtracting the 
+        // camera position vector from the scene's origin vector thus results in the 
+        // direction vector we want. For the view matrix's coordinate system we want 
+        // its z-axis to be positive and because by convention (in OpenGL) the camera 
+        // points towards the negative z-axis we want to negate the direction vector. 
+        // If we switch the subtraction order around we now get a vector pointing 
+        // towards the camera's positive z-axis.
+        let cameraReverseDirection = Vector3.Normalize (cameraPosition - cameraTarget)
+
+        // 3. Camera right axis
+        // The next vector that we need is a right vector that represents the 
+        // positive x-axis of the camera space. To get the right vector we use a 
+        // little trick by first specifying an up vector that points upwards 
+        // (in world space). Then we do a cross product on the up vector and the 
+        // direction vector from step 2. Since the result of a cross product is a 
+        // vector perpendicular to both vectors, we will get a vector that points 
+        // in the positive x-axis's direction (if we would switch the cross product 
+        // order we'd get a vector that points in the negative x-axis).
+        let absoluteUp = new Vector3(0.0f, 1.0f, 0.0f)
+        let cameraRight = 
+            Vector3.Normalize (Vector3.Cross(absoluteUp, cameraReverseDirection))
+
+        // 4. Camera up axis
+        // Now that we have both the x-axis vector and the z-axis vector, retrieving 
+        // the vector that points to the camera's positive y-axis is relatively 
+        // easy: we take the cross product of the right and direction vector.
+        let cameraUp = Vector3.Cross (cameraReverseDirection, cameraRight)
+
         // Note that we're translating the scene in the reverse 
         // direction of where we want to move.
-        let viewMatrix = Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, -3.0f))
+        let viewMatrix = Matrix4x4.CreateLookAt(cameraPosition, cameraTarget, cameraUp)
 
         let projectionMatrix = 
             Matrix4x4.CreatePerspectiveFieldOfView(fov, aspectRatio, 0.1f, 100.0f)
@@ -151,17 +212,22 @@ let main argv =
             match translations with
             | [] -> ()
             | h::t ->
+                let rotationX = cubeTransformations.[idx].RotationX
+                let rotationY = cubeTransformations.[idx].RotationY
+                let rotationZ = cubeTransformations.[idx].RotationZ
+
                 let modelMatrix =
-                    Matrix4x4.CreateRotationX (toRadians(50.0f) * timer)
-                    * Matrix4x4.CreateRotationY (toRadians(50.0f) * timer)
-                    * Matrix4x4.CreateTranslation cubeTranslations.[idx]
+                    Matrix4x4.CreateRotationX (toRadians rotationX)
+                    * Matrix4x4.CreateRotationY (toRadians rotationY)
+                    * Matrix4x4.CreateRotationZ (toRadians rotationZ)
+                    * Matrix4x4.CreateTranslation cubeTransformations.[idx].Translation
 
                 GlProg.setUniformM4x4 "uModel" modelMatrix (shader, ctx) |> ignore    
                 ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
 
                 drawEachTranslation t (idx + 1)
 
-        drawEachTranslation cubeTranslations 0
+        drawEachTranslation cubeTransformations 0
         ()
     
     window.add_Update (new Action<float>(onUpdate))

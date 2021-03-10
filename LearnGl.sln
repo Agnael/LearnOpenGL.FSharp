@@ -21,11 +21,15 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "07_Transformations", "07_Tr
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "08_Coordinate_Systems_Perspective", "08_Coordinate_Systems_Perspective\08_Coordinate_Systems_Perspective.fsproj", "{F57F190A-D0E5-4991-A3AF-06E82123DADA}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "09_Coordinate_Systems_Cube", "09_Coordinate_Systems_Cube\09_Coordinate_Systems_Cube.fsproj", "{BE12A96E-416A-4DCB-B303-D5D222C5BD31}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "09_Coordinate_Systems_Cube", "09_Coordinate_Systems_Cube\09_Coordinate_Systems_Cube.fsproj", "{BE12A96E-416A-4DCB-B303-D5D222C5BD31}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "10_Coordinate_Systems_Cube_With_Depth_Testing", "10_Coordinate_Systems_Cube_With_Depth_Testing\10_Coordinate_Systems_Cube_With_Depth_Testing.fsproj", "{0C2C606D-C6F2-4D25-A0C4-33B9CEAD697E}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "10_Coordinate_Systems_Cube_With_Depth_Testing", "10_Coordinate_Systems_Cube_With_Depth_Testing\10_Coordinate_Systems_Cube_With_Depth_Testing.fsproj", "{0C2C606D-C6F2-4D25-A0C4-33B9CEAD697E}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "11_Coordinate_Systems_Many_Cubes", "11_Coordinate_Systems_Many_Cubes\11_Coordinate_Systems_Many_Cubes.fsproj", "{79D45E55-8338-4711-A98B-CDA27DDE4A2E}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "11_Coordinate_Systems_Many_Cubes", "11_Coordinate_Systems_Many_Cubes\11_Coordinate_Systems_Many_Cubes.fsproj", "{79D45E55-8338-4711-A98B-CDA27DDE4A2E}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "12_Camera_Automove", "12_Camera_Automove\12_Camera_Automove.fsproj", "{E1A9B049-A8E2-43A0-BE77-B5C5B52FAC03}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "13_Camera_Walk_Around_With_Inputs", "13_Camera_Walk_Around_With_Inputs\13_Camera_Walk_Around_With_Inputs.fsproj", "{0E48DB0D-8200-4A3C-9F19-79DC2B6735A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +85,14 @@ Global
 		{79D45E55-8338-4711-A98B-CDA27DDE4A2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79D45E55-8338-4711-A98B-CDA27DDE4A2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79D45E55-8338-4711-A98B-CDA27DDE4A2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1A9B049-A8E2-43A0-BE77-B5C5B52FAC03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1A9B049-A8E2-43A0-BE77-B5C5B52FAC03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1A9B049-A8E2-43A0-BE77-B5C5B52FAC03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1A9B049-A8E2-43A0-BE77-B5C5B52FAC03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E48DB0D-8200-4A3C-9F19-79DC2B6735A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E48DB0D-8200-4A3C-9F19-79DC2B6735A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E48DB0D-8200-4A3C-9F19-79DC2B6735A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E48DB0D-8200-4A3C-9F19-79DC2B6735A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

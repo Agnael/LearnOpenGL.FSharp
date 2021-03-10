@@ -7,6 +7,7 @@
     open Microsoft.Extensions.Logging.Abstractions
     open Microsoft.Extensions.FileProviders
     open System.IO
+    open Silk.NET.Input
 
     let create (options: GlWindowOptions): (IWindow * GlWindowContext) =    
         let windowOptions =
