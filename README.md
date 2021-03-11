@@ -2,12 +2,39 @@
 Exercises based on the https://learnopengl.com/ tutorials, using F# and SILK.NET as the OpenGL wrapper.
 Each title title with a link is pointing to the original chapter from the learnopengl.com site on which the theory is explained and all of the math is being copied from.
 
-Table of contents
+# Table of contents
 * **Getting started**
-  * **Hello window** ([See original article](https://learnopengl.com/Getting-started/Hello-Window))
+  * **Hello window** ([Original article](https://learnopengl.com/Getting-started/Hello-Window))
     * [01_Window](#01_window)
-    * [13_Camera_Walk_Around_With_Inputs](#13_camera_walk_around_with_inputs)
-           
+  * **Hello triangle** ([Original article](https://learnopengl.com/Getting-started/Hello-Triangle)) and **Shaders** ([Original article](https://learnopengl.com/Getting-started/Shaders))
+    * [02_Triangle](#02_triangle)
+    * [03_Quad](#03_quad)
+  * **Textures** ([Original article](https://learnopengl.com/Getting-started/Textures))
+    * [04_Quad_Texture](#04_quad_texture)
+    * [05_Quad_Texture_Colored](#05_quad_texture_colored)
+    * [06_Quad_Texture_Double](#06_quad_texture_double)
+  * **Transformations** ([Original article](https://learnopengl.com/Getting-started/Transformations))
+    * [07_Transformations](#07_transformations)
+  * **Coordinate systems** ([Original article](https://learnopengl.com/Getting-started/Coordinate-Systems))
+    * [08_Coordinate_Systems_Perspective](#08_coordinate_systems_perspective)
+    * [09_Coordinate_Systems_Cube](#09_coordinate_systems_cube)
+    * [10_Coordinate_Systems_Cube_With_Depth_Testing](#10_coordinate_systems_cube_with_depth_testing)
+  * **Camera** ([Original article](https://learnopengl.com/Getting-started/Camera))
+    * [12_Camera_Automove](#12_camera_automove)
+    * [13_Camera_Walk_Around_With_Inputs](#13_camera_walk_around_with_inputs)   
+* **Lighting**
+  * Coming soon. 
+* **Model loading**
+  * Coming soon.
+* **Advanced OpenGL**
+  * Coming soon.
+* **Advanced lighting**
+  * Coming soon.
+* **PBR (physically based rendering)**
+  * Coming soon.
+* **In practice**
+  * Coming soon.
+
 
 # Getting started
 
