@@ -2,7 +2,7 @@
 
     open Silk.NET.Windowing
     open Silk.NET.OpenGL
-    open Galante
+    open Galante.OpenGL
     open System
     open Microsoft.Extensions.Logging.Abstractions
     open Microsoft.Extensions.FileProviders

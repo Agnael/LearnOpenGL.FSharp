@@ -2,7 +2,7 @@
 module GlShad
 
     open Silk.NET.OpenGL
-    open Galante
+    open Galante.OpenGL
     open System.IO
     open Microsoft.Extensions.Logging
 

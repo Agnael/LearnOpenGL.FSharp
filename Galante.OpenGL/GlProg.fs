@@ -2,7 +2,7 @@
 module GlProg
     #nowarn "9"
     open Silk.NET.OpenGL
-    open Galante
+    open Galante.OpenGL
     open System.IO
     open Microsoft.Extensions.Logging
     open System.Numerics

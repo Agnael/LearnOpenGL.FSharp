@@ -9,7 +9,7 @@ open Silk.NET.OpenGL
 open System
 open SixLabors.ImageSharp.PixelFormats
 open System.Runtime.InteropServices
-open Galante
+open Galante.OpenGL
 open SixLabors.ImageSharp
 open System.IO
 open Microsoft.FSharp.NativeInterop

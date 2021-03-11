@@ -1,7 +1,7 @@
 ﻿module GlEbo
 #nowarn "9"
 
-open Galante
+open Galante.OpenGL
 open Silk.NET.OpenGL
 open Microsoft.FSharp.NativeInterop
 

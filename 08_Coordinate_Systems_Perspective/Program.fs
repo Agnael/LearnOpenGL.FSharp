@@ -1,5 +1,5 @@
 ﻿open System
-open Galante
+open Galante.OpenGL
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
 open System.Drawing

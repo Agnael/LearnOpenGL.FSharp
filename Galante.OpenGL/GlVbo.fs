@@ -4,7 +4,7 @@ open Microsoft.FSharp.NativeInterop
 open System
 
 #nowarn "9"
-open Galante
+open Galante.OpenGL
 open Silk.NET.OpenGL
 
 let emptyVboBuilder =

@@ -1,7 +1,7 @@
 ﻿open System
 open Silk.NET.Windowing
 open Silk.NET.OpenGL
-open Galante
+open Galante.OpenGL
 open System.Drawing
 
 [<EntryPoint>]

@@ -23,8 +23,6 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
 
-  <ItemGroup />
-
   <ItemGroup>
     <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
@@ -32,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Galante\Galante.fsproj" />
+    <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
   </ItemGroup>
 
 </Project>

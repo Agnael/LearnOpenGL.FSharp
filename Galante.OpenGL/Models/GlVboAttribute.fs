@@ -1,6 +1,6 @@
-﻿namespace Galante
+﻿namespace Galante.OpenGL
 
-open Galante
+open Galante.OpenGL
 
 type GlVboAttribute = { 
     AttrIdx: uint32 

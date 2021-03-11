@@ -1,6 +1,6 @@
 ﻿module GlVao
 
-open Galante
+open Galante.OpenGL
 
 let create ctx = 
     ctx.Gl.GenVertexArray ()

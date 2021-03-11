@@ -1,4 +1,4 @@
-﻿namespace Galante
+﻿namespace Galante.OpenGL
 
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.FileProviders

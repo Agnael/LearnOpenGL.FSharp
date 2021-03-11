@@ -1,4 +1,4 @@
-﻿namespace Galante
+﻿namespace Galante.OpenGL
 
 type GlElementBufferObject = {
         GlEboHandle: uint32

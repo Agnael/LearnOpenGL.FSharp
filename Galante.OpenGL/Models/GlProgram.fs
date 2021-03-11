@@ -1,4 +1,4 @@
-﻿namespace Galante
+﻿namespace Galante.OpenGL
 
 type GlProgram =
     { GlProgramHandle: uint32 

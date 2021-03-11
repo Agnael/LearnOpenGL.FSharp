@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Galante\Galante.fsproj" />
+    <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
   </ItemGroup>
 
 </Project>
