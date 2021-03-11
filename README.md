@@ -53,19 +53,19 @@ This one looks kind of weird because it the images are not centered vertically, 
 
 
 # Lighting
-Comming soon.
+Coming soon.
 
 # Model loading
-Comming soon.
+Coming soon.
 
 # Advanced OpenGL
-Comming soon.
+Coming soon.
 
 # Advanced lighting
-Comming soon.
+Coming soon.
 
 # PBR
-Comming soon.
+Coming soon.
 
 # In practice
-Comming soon.
+Coming soon.
