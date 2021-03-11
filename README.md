@@ -27,7 +27,7 @@ Each title title with a link is pointing to the original chapter from the learno
 
 ## [Transformations](https://learnopengl.com/Getting-started/Transformations) 
 #### 07_Transformations
-This one looks kind of weird because it the images are not centered vertically, the intention is to be forced to realize that rotations in OpenGL are made from the origin and if a rotation of an object is needed around itself, then said object must be translated to the origin, rotated and then translated back to it's initial position, which may be somewhat counterintuitive.
+This one looks kind of weird because the images are not centered vertically, the intention is to be forced to realize that rotations in OpenGL are calculated taking the origin as the rotation center (and not the object's center) and if a rotation of an object is needed around itself, then said object must be translated to the origin, rotated and then translated back to it's initial position, which may be somewhat counterintuitive.
 
 <img src="https://user-images.githubusercontent.com/32271030/110715001-2bf57d00-81e3-11eb-9dc7-98df6fd2cca2.gif" width="400" height="420">
 
