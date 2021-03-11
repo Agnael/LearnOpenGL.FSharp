@@ -2,6 +2,13 @@
 Exercises based on the https://learnopengl.com/ tutorials, using F# and SILK.NET as the OpenGL wrapper.
 Each title title with a link is pointing to the original chapter from the learnopengl.com site on which the theory is explained and all of the math is being copied from.
 
+Table of contents
+* **Getting started**
+  * **Hello window** ([See original article](https://learnopengl.com/Getting-started/Hello-Window))
+    * [01_Window](#01_window)
+    * [13_Camera_Walk_Around_With_Inputs](#13_camera_walk_around_with_inputs)
+           
+
 # Getting started
 
 ## [Hello window](https://learnopengl.com/Getting-started/Hello-Window)
