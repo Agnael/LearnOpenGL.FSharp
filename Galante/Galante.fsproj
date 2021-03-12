@@ -10,10 +10,10 @@
 
   <ItemGroup>
     <Compile Include="GalanteMath.fs" />
-    <Compile Include="States\CameraState.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aether" Version="8.3.1" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="3.1.12" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.12" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
@@ -28,6 +28,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="States\" />
   </ItemGroup>
 
 </Project>

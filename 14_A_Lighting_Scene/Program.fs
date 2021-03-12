@@ -7,40 +7,27 @@ open System.Numerics
 open System.Linq
 open Silk.NET.Input
 open System.Collections.Generic
-open Cube
+open CameraSlice
+open MouseSlice
 open GalanteMath
-open Galante
+open Aether
+open Sodium.Frp
 
-type CubeTransformation = 
-    { Translation: Vector3
-    ; RotationX: single
-    ; RotationY: single
-    ; RotationZ: single
+type GameAction =
+    | Camera of CameraAction
+    | Mouse of MouseAction
+    | Quit
+
+type GameState =
+    { Camera: CameraState 
+    ; Mouse: MouseState
+    ; ShouldQuit: bool
     ;}
-
-    static member create (translation, rotationX, rotationY, rotationZ) =
-        { Translation = translation
-        ; RotationX = rotationX
-        ; RotationY = rotationY
-        ; RotationZ = rotationZ 
+    static member Default = 
+        { Camera = CameraState.Default 
+        ; Mouse = MouseState.Default
+        ; ShouldQuit = false
         ;}
-
-// List of cube copies that will be created, expressed as transformation of one 
-// thats standing on the origin.
-// NOTE: This is just to add some dynamism without being TOO distracting from 
-// the actual spotlight of the example, which is the camera and it's movement.
-let cubeTransformations = [
-    CubeTransformation.create (new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 0.0f)
-    CubeTransformation.create (new Vector3(2.0f, 5.0f, -15.0f), 43.0f, 12.0f, 0.0f)
-    CubeTransformation.create (new Vector3(-1.5f, -2.2f, -2.5f), 12.0f, 98.0f, 40.0f)
-    CubeTransformation.create (new Vector3(-3.8f, -2.0f, -12.3f), 45.0f, 32.0f, 0.0f)
-    CubeTransformation.create (new Vector3(2.4f, -0.4f, -3.5f), 0.0f, 0.0f, 43.0f)
-    CubeTransformation.create (new Vector3(-1.7f, 3.0f, -7.5f), 0.0f, 54.0f, 0.0f)
-    CubeTransformation.create (new Vector3(1.3f, -2.0f, -2.5f), 14.0f, 54.0f, 12.0f)
-    CubeTransformation.create (new Vector3(1.5f, 2.0f, -2.5f), 76.5f, 0.56f, 12.0f)
-    CubeTransformation.create (new Vector3(1.5f, 0.2f, -1.5f), 54.0f, 0.0f, 125.0f)
-    CubeTransformation.create (new Vector3(-1.3f, 1.0f, -1.5f), 246.0f, 122.0f, 243.0f)
-] 
 
 [<EntryPoint>]
 let main argv =
@@ -57,98 +44,69 @@ let main argv =
     let mutable texture2 = Unchecked.defaultof<_>
     let mutable timer = 0.0f
     
-    let mutable camera = CameraState.Default
+    let actionSink = sinkS<GameAction>()
+    let game =
+        loopWithNoCapturesC 
+            (fun game ->
+                actionSink
+                |> snapshotC game 
+                    (fun gameAction game -> 
+                        match gameAction with
+                        | Camera action ->
+                            { game with Camera = CameraSlice.reduce action game.Camera }
+                        | Mouse action ->
+                            { game with Mouse = MouseSlice.reduce action game.Mouse }
+                        | Quit -> 
+                            { game with ShouldQuit = true }
+                    )
+                |> Stream.hold GameState.Default
+            )
 
-    let cameraSpeed = 2.5f
-    let mutable cameraPosition = new Vector3(0.0f, 0.0f, 3.0f)
-    let mutable cameraTarget = new Vector3(0.0f, 0.0f, -1.0f)
-    let mutable cameraUp = new Vector3(0.0f, 1.0f, 0.0f)
-
-    ////  To make sure the camera points towards the negative z-axis by default 
-    //// we can give the yaw a default value of a 90 degree clockwise rotation. 
-    //// Positive degrees rotate counter-clockwise so we set the default yaw value to:
-    //let mutable cameraYaw = -90.0f
-    //let mutable cameraPitch = 0.0f
-
-    let mutable isMovingForward = false
-    let mutable isMovingLeft = false
-    let mutable isMovingRight = false
-    let mutable isMovingBack = false
-    let mutable isMovingUp = false
-    let mutable isMovingDown = false
-
-    let mouseSensitivity = 0.1f
     let zoomSpeed = 3.0f
-    let mutable isAbsoluteFirstMouseInput = true
-    let mutable lastMouseX = single (glOpts.Size.Width / 2)
-    let mutable lastMouseY = single (glOpts.Size.Height / 2)
 
+    let toRadians degrees = degrees * MathF.PI / 180.0f
     let mutable fov = 45.0f
     let aspectRatio = 800.0f/600.0f
     
-    let onKeyDown keyboard key id = 
-        if key = Key.Escape then window.Close()
-        if key = Key.W then isMovingForward <- true
-        if key = Key.A then isMovingLeft <- true
-        if key = Key.S then isMovingBack <- true
-        if key = Key.D then isMovingRight <- true
-        if key = Key.Space then isMovingUp <- true
-        if key = Key.ShiftLeft then isMovingDown <- true
+    let sendMovement cameraAction = 
+        sendS (Camera cameraAction) actionSink
+
+    let onKeyDown keyboard key id =         
+        match key with
+        | Key.W         -> sendMovement MoveForwardStart
+        | Key.A         -> sendMovement MoveLeftStart
+        | Key.S         -> sendMovement MoveBackStart
+        | Key.D         -> sendMovement MoveRightStart
+        | Key.Space     -> sendMovement MoveUpStart
+        | Key.ShiftLeft -> sendMovement MoveDownStart
+
+        | Key.Escape    -> sendS Quit actionSink
+        | _ -> ()
             
     let onKeyUp keyboard key id = 
-        if key = Key.Escape then window.Close()
-        if key = Key.W then isMovingForward <- false
-        if key = Key.A then isMovingLeft <- false
-        if key = Key.S then isMovingBack <- false
-        if key = Key.D then isMovingRight <- false
-        if key = Key.Space then isMovingUp <- false
-        if key = Key.ShiftLeft then isMovingDown <- false
+        match key with
+        | Key.W         -> sendMovement MoveForwardStop
+        | Key.A         -> sendMovement MoveLeftStop
+        | Key.S         -> sendMovement MoveBackStop
+        | Key.D         -> sendMovement MoveRightStop
+        | Key.Space     -> sendMovement MoveUpStop
+        | Key.ShiftLeft -> sendMovement MoveDownStop
+        | _ -> ()
 
-    let onMouseMove mouse (position: Vector2) = 
-        // Without this block, you'll notice the camera makes a large sudden jump 
-        // whenever the window first receives focus of your mouse cursor. The cause 
-        // for this sudden jump is that as soon as your cursor enters the window the 
-        // mouse callback function is called with an xpos and ypos position equal to 
-        // the location your mouse entered the screen from. This is often a position 
-        // that is significantly far away from the center of the screen, resulting in 
-        // large offsets and thus a large movement jump. We can circumvent this issue 
-        // by defining a global bool variable to check if this is the first time we 
-        // receive mouse input. If it is the first time, we update the initial mouse 
-        // positions to the new xpos and ypos values. The resulting mouse movements 
-        // will then use the newly entered mouse's position coordinates to calculate 
-        // the offsets.
-        if isAbsoluteFirstMouseInput then
-            lastMouseX <- position.X
-            lastMouseY <- position.Y
-            isAbsoluteFirstMouseInput <- false
+    let onMouseMove mouse newPos = 
+        let game = sampleC game
+        
+        sendS (Mouse (NewPosition newPos)) actionSink
 
-        let mouseXoffset = position.X - lastMouseX
-
-        // Reversed since y-coordinates range from bottom to top
-        let mouseYoffset = lastMouseY - position.Y
-
-        lastMouseX <- position.X
-        lastMouseY <- position.Y
-
-        camera <- 
-            { camera with 
-                Yaw = 
-                    camera.Yaw
-                    |> Degrees.value
-                    |> fun yaw -> yaw + (mouseXoffset * mouseSensitivity)
-                    |> Degrees.make
-                Pitch = 
-                    camera.Pitch
-                    |> Degrees.value
-                    |> fun oldPitch -> 
-                        oldPitch + (mouseYoffset * mouseSensitivity)
-                        |> fun newPitch -> 
-                            if newPitch > 89.0f then 
-                                89.0f
-                            else if newPitch < -89.0f then 
-                                -89.0f
-                            else newPitch
-                    |> Degrees.make }
+        if not game.Mouse.IsFirstMoveReceived then
+            sendS (Mouse FirstMoveReceived) actionSink
+        else
+            // Reversed  y-coordinates since they range from bottom to top
+            let cameraOffset =
+                { CameraOffset.X = newPos.X - game.Mouse.X 
+                ; CameraOffset.Y = game.Mouse.Y - newPos.Y
+                ;}
+            sendS (Camera (AngularChange cameraOffset)) actionSink
 
     let onMouseWheelScroll mouse (wheel: ScrollWheel) = 
         fov <- fov - wheel.Y * zoomSpeed
@@ -181,7 +139,7 @@ let main argv =
         let qubeVbo =
             GlVbo.emptyVboBuilder
             |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
-            |> GlVbo.withAttrDefinitions cubeVertexPositionsAndTexturePositions
+            |> GlVbo.withAttrDefinitions Cube.vertexPositionsAndTexturePositions
             |> GlVbo.build (cubeVao, ctx)
             
         texture1 <- GlTex.create2D @"wall.jpg" (cubeVao, ctx)
@@ -208,38 +166,19 @@ let main argv =
         setMouseEventHandlers (List.ofSeq inputs.Mice) 0
         ()
 
-    let normalizeCross (v1, v2) = Vector3.Normalize <| Vector3.Cross(v1, v2)
-
     let onUpdate dt =
+        let game = sampleC game
+
+        if game.ShouldQuit then window.Close()
+        
         timer <- timer + single(dt)
-        let dynCamSpeed = cameraSpeed * single(dt)
+        let dynCamSpeed = CameraSpeed.make <| game.Camera.Speed * single(dt)
 
-        if isMovingForward then 
-            cameraPosition <- cameraPosition + (cameraTarget * dynCamSpeed)
-
-        if isMovingBack then
-            cameraPosition <- cameraPosition - (cameraTarget * dynCamSpeed)
-
-        if isMovingLeft then 
-            cameraPosition <- cameraPosition - normalizeCross(cameraTarget, cameraUp) * dynCamSpeed
-
-        if isMovingRight then
-            cameraPosition <- cameraPosition + normalizeCross(cameraTarget, cameraUp) * dynCamSpeed
-
-        if isMovingUp then
-            cameraPosition <- cameraPosition + (new Vector3(0.0f, 1.0f, 0.0f) * dynCamSpeed)
-
-        if isMovingDown then
-            cameraPosition <- cameraPosition + (new Vector3(0.0f, -1.0f, 0.0f) * dynCamSpeed)
-            
-        let newCamTargetX = MathF.Cos(toRadF cameraYaw) * MathF.Cos(toRadF cameraPitch)
-        let newCamTargetY = MathF.Sin(toRadF cameraPitch)
-        let newCamTargetZ = MathF.Sin(toRadF cameraYaw) * MathF.Cos(toRadF cameraPitch)
-
-        cameraTarget <- 
-            Vector3.Normalize(new Vector3(newCamTargetX, newCamTargetY, newCamTargetZ))
+        sendS (Camera (UpdatePosition dynCamSpeed)) actionSink
 
     let onRender dt =
+        let game = sampleC game
+
         ctx.Gl.Enable GLEnum.DepthTest
         ctx.Gl.Clear <| uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
 
@@ -248,11 +187,10 @@ let main argv =
         |> GlTex.bind GLEnum.Texture1 texture2
         |> ignore
 
-        let viewMatrix = 
-            Matrix4x4.CreateLookAt(cameraPosition, cameraPosition + cameraTarget, cameraUp)
+        let viewMatrix = CameraSlice.createViewMatrix game.Camera
 
         let projectionMatrix = 
-            Matrix4x4.CreatePerspectiveFieldOfView(toRadF fov, aspectRatio, 0.1f, 100.0f)
+            Matrix4x4.CreatePerspectiveFieldOfView(toRadians fov, aspectRatio, 0.1f, 100.0f)
        
         // Prepares the shader
         (shader, ctx)
@@ -271,22 +209,22 @@ let main argv =
             match translations with
             | [] -> ()
             | h::t ->
-                let rotationX = cubeTransformations.[idx].RotationX
-                let rotationY = cubeTransformations.[idx].RotationY
-                let rotationZ = cubeTransformations.[idx].RotationZ
+                let rotationX = Cube.transformations.[idx].RotationX
+                let rotationY = Cube.transformations.[idx].RotationY
+                let rotationZ = Cube.transformations.[idx].RotationZ
 
                 let modelMatrix =
-                    Matrix4x4.CreateRotationX (toRadF rotationX)
-                    * Matrix4x4.CreateRotationY (toRadF rotationY)
-                    * Matrix4x4.CreateRotationZ (toRadF rotationZ)
-                    * Matrix4x4.CreateTranslation cubeTransformations.[idx].Translation
+                    Matrix4x4.CreateRotationX (toRadians rotationX)
+                    * Matrix4x4.CreateRotationY (toRadians rotationY)
+                    * Matrix4x4.CreateRotationZ (toRadians rotationZ)
+                    * Matrix4x4.CreateTranslation Cube.transformations.[idx].Translation
 
                 GlProg.setUniformM4x4 "uModel" modelMatrix (shader, ctx) |> ignore    
                 ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
 
                 drawEachTranslation t (idx + 1)
 
-        drawEachTranslation cubeTransformations 0
+        drawEachTranslation Cube.transformations 0
         ()
     
     window.add_Update (new Action<float>(onUpdate))
