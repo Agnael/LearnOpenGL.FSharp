@@ -11,7 +11,7 @@ let main argv =
             Title = "02_Triangle"
             Size = new Size (600, 600) }
 
-    let (window, ctx) = GlWin.create glOpts
+    let ctx = GlWin.create glOpts
 
     let mutable shaderBasic = Unchecked.defaultof<_>
     let mutable triangleVao = Unchecked.defaultof<_>
@@ -45,7 +45,7 @@ let main argv =
     let render (dt: float) =
         ctx.Gl.Clear <| uint32 GLEnum.ColorBufferBit
         
-        let greenValue = single <| Math.Sin(window.Time);
+        let greenValue = single <| Math.Sin(ctx.Window.Time);
 
         (shaderBasic, ctx)
         |> GlProg.setAsCurrent
@@ -54,7 +54,7 @@ let main argv =
         ctx.Gl.BindVertexArray triangleVao.GlVaoHandle
         ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 3u) 
 
-    window.add_Load (new Action(load))
-    window.add_Render (new Action<_>(render))
-    window.Run ()
+    ctx.Window.add_Load (new Action(load))
+    ctx.Window.add_Render (new Action<_>(render))
+    ctx.Window.Run ()
     0

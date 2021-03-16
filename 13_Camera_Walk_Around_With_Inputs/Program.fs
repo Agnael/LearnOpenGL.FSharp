@@ -47,13 +47,12 @@ let main argv =
             Title = "13_Camera_Walk_Around_With_Inputs"
             Size = new Size (800, 600) }
 
-    let (window, ctx) = GlWin.create glOpts
+    let ctx = GlWin.create glOpts
 
     let mutable cubeVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
     let mutable texture1 = Unchecked.defaultof<_>
     let mutable texture2 = Unchecked.defaultof<_>
-    let mutable timer = 0.0f
     
     let cameraSpeed = 2.5f
     let mutable cameraPosition = new Vector3(0.0f, 0.0f, 3.0f)
@@ -84,7 +83,7 @@ let main argv =
     let aspectRatio = 800.0f/600.0f
     
     let onKeyDown keyboard key id = 
-        if key = Key.Escape then window.Close()
+        if key = Key.Escape then ctx.Window.Close()
         if key = Key.W then isMovingForward <- true
         if key = Key.A then isMovingLeft <- true
         if key = Key.S then isMovingBack <- true
@@ -93,7 +92,7 @@ let main argv =
         if key = Key.ShiftLeft then isMovingDown <- true
             
     let onKeyUp keyboard key id = 
-        if key = Key.Escape then window.Close()
+        if key = Key.Escape then ctx.Window.Close()
         if key = Key.W then isMovingForward <- false
         if key = Key.A then isMovingLeft <- false
         if key = Key.S then isMovingBack <- false
@@ -145,7 +144,7 @@ let main argv =
         if fov > 45.0f then fov <- 45.0f
 
     let onLoad () = 
-        let inputs = window.CreateInput()
+        let inputs = ctx.Window.CreateInput()
 
         shader <-
             GlProg.emptyBuilder
@@ -200,7 +199,6 @@ let main argv =
     let normalizeCross (v1, v2) = Vector3.Normalize <| Vector3.Cross(v1, v2)
 
     let onUpdate dt =
-        timer <- timer + single(dt)
         let dynCamSpeed = cameraSpeed * single(dt)
 
         if isMovingForward then 
@@ -277,8 +275,8 @@ let main argv =
         drawEachTranslation cubeTransformations 0
         ()
     
-    window.add_Update (new Action<float>(onUpdate))
-    window.add_Load (new Action(onLoad))
-    window.add_Render (new Action<float>(onRender))
-    window.Run ()
+    ctx.Window.add_Update (new Action<float>(onUpdate))
+    ctx.Window.add_Load (new Action(onLoad))
+    ctx.Window.add_Render (new Action<float>(onRender))
+    ctx.Window.Run ()
     0

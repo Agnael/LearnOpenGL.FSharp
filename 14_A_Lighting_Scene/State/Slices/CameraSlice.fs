@@ -8,14 +8,19 @@
         ; Y: single
         ;}
 
+    type ZoomOffset =
+        | ZoomOffset of single
+        static member make v = ZoomOffset v
+        static member value (ZoomOffset z) = z
+
     type CameraSpeed =
-        | CameraSpeed of float32
+        | CameraSpeed of single
         static member make v = CameraSpeed v
         static member value (CameraSpeed s)  = s
 
     type CameraAction =  
         | AngularChange of CameraOffset
-        | MouseWheelNewPosition of Vector2
+        | ZoomChange of ZoomOffset
         | UpdatePosition of CameraSpeed
         | MoveForwardStart
         | MoveForwardStop
@@ -34,7 +39,8 @@
         { Position: Vector3
         ; TargetDirection: Vector3
         ; UpDirection: Vector3
-        ; Speed: single
+        ; MoveSpeed: single
+        ; ZoomSpeed: single
         ; Sensitivity: single
         ; Pitch: Degrees
         ; Yaw: Degrees
@@ -48,10 +54,11 @@
         ;}
     
         static member Default = {
-            Position = new Vector3(0.0f, 0.0f, 3.0f)
+            Position = new Vector3(0.0f, 0.0f, 0.0f)
             TargetDirection = new Vector3(0.0f, 0.0f, -1.0f)
             UpDirection = new Vector3(0.0f, 1.0f, 0.0f)
-            Speed = 2.5f
+            MoveSpeed = 2.5f
+            ZoomSpeed = 3.0f
             Sensitivity = 0.1f
             Fov = Degrees.make 45.0f
             Pitch = Degrees.make 0.0f
@@ -68,75 +75,34 @@
             IsMovingDown = false
         }
 
-        // Setters
-        static member setPosition v r  = { r with Position = v }
-        static member setYaw v r = { r with Yaw = v }
-        static member setPitch v r = { r with Pitch = v }
-
-        // Optics
-        static member Position_ = 
-            (fun r -> r.Position), CameraState.setPosition
-
-        static member TargetDirection_ =
-            (fun r -> r.TargetDirection), (fun v r -> { r with TargetDirection = v })
-
-        static member Pitch_ =
-            (fun r -> r.Pitch), (fun v r -> { r with Pitch = v })
-
-        static member Yaw_ =
-            (fun r -> r.Yaw), (fun v r -> { r with Yaw = v })
-
-    //let camHandleKeyboard (keyboard: KeyboardState) (cam: CameraState) =
-    //    cam
-
-    //let camUpdate (cam: CameraState) (mouse: MouseState) =
-    //    cam
-
     let createViewMatrix state = 
-        Matrix4x4.CreateLookAt(state.Position, state.Position + state.TargetDirection, state.UpDirection)
+        Matrix4x4.CreateLookAt(
+            state.Position, 
+            state.Position + state.TargetDirection, 
+            state.UpDirection)
     
     let reduce action state =
         match action with
         | UpdatePosition (CameraSpeed camSpeed) ->
-            let handleMoveForward oldPos =
-                if state.IsMovingForward then
-                    oldPos + state.TargetDirection * camSpeed
-                else oldPos
+            let currTargetDir = state.TargetDirection
+            let currUpDir = state.UpDirection
 
-            let handleMoveBack oldPos =
-                if state.IsMovingBack then
-                    oldPos - state.TargetDirection * camSpeed
-                else oldPos
-                
-            let handleMoveLeft oldPos =
-                if state.IsMovingLeft then
-                    oldPos - normalizeCross(state.TargetDirection, state.UpDirection) * camSpeed
-                else oldPos
-                
-            let handleMoveRight oldPos =
-                if state.IsMovingRight then
-                    oldPos + normalizeCross(state.TargetDirection, state.UpDirection) * camSpeed
-                else oldPos
-                
-            let handleMoveUp oldPos =
-                if state.IsMovingUp then
-                    oldPos + (new Vector3(0.0f, 1.0f, 0.0f) * camSpeed)
-                else oldPos
-                
-            let handleMoveDown oldPos =
-                if state.IsMovingDown then
-                    oldPos + (new Vector3(0.0f, -1.0f, 0.0f) * camSpeed)
-                else oldPos
+            let moveForward pos = pos + currTargetDir * camSpeed
+            let moveBack pos = pos - currTargetDir * camSpeed
+            let moveLeft pos = pos - normalizeCross(currTargetDir, currUpDir) * camSpeed
+            let moveRight pos = pos + normalizeCross(currTargetDir, currUpDir) * camSpeed
+            let moveUp pos = pos + currUpDir * camSpeed
+            let moveDown pos = pos - currUpDir * camSpeed
 
             { state with
                 Position =
                     state.Position
-                    |> handleMoveForward
-                    |> handleMoveBack
-                    |> handleMoveLeft
-                    |> handleMoveRight
-                    |> handleMoveDown
-                    |> handleMoveUp 
+                    |> fun pos -> if state.IsMovingForward then moveForward pos else pos
+                    |> fun pos -> if state.IsMovingBack then moveBack pos else pos
+                    |> fun pos -> if state.IsMovingLeft then moveLeft pos else pos
+                    |> fun pos -> if state.IsMovingRight then moveRight pos else pos
+                    |> fun pos -> if state.IsMovingUp then moveUp pos else pos
+                    |> fun pos -> if state.IsMovingDown then moveDown pos else pos
             }
 
         | AngularChange offset -> 
@@ -164,8 +130,16 @@
                 Pitch = newPitch
                 TargetDirection = newTargetDirection }
 
-
-        | MouseWheelNewPosition newPos -> state
+        | ZoomChange (ZoomOffset offset) -> 
+            { state with 
+                Fov =
+                    (Degrees.value state.Fov) - offset
+                    |> fun newFov ->
+                        if newFov < 20.0f then 20.0f
+                        elif newFov > 45.0f then 45.0f
+                        else newFov
+                        |> Degrees.make
+            }
 
         | MoveForwardStart -> 
             { state with IsMovingForward = true }

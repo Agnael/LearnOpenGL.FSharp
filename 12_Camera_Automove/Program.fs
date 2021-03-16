@@ -26,13 +26,12 @@ let main argv =
             Title = "12_Camera_Automove"
             Size = new Size (800, 600) }
 
-    let (window, ctx) = GlWin.create glOpts
+    let ctx = GlWin.create glOpts
 
     let mutable cubeVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
     let mutable texture1 = Unchecked.defaultof<_>
     let mutable texture2 = Unchecked.defaultof<_>
-    let mutable timer = 0.0f
         
     let onLoad () = 
         shader <-
@@ -110,9 +109,7 @@ let main argv =
         let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]
         ()
 
-    let onUpdate dt =
-        timer <- timer + float32(dt)
-        ()
+    let onUpdate dt = ()
         
     let toRadians degrees = degrees * MathF.PI / 180.0f
     let fov = toRadians 45.0f
@@ -147,12 +144,12 @@ let main argv =
 
         // Creates the current position of the camera on each frame so it looks 
         // like the camera is moving around the scene.
-        let cameraPathRadius = 10.0f
-        let cameraPathCurrentX = sin(timer) * cameraPathRadius
-        let cameraPathCurrentZ = cos(timer) * cameraPathRadius
+        let cameraPathRadius = 10.0
+        let cameraPathCurrentX = sin(ctx.Window.Time) * cameraPathRadius
+        let cameraPathCurrentZ = cos(ctx.Window.Time) * cameraPathRadius
 
         // 1. Camera position
-        let cameraPosition = new Vector3 (cameraPathCurrentX, 0.0f, cameraPathCurrentZ)
+        let cameraPosition = new Vector3 (single cameraPathCurrentX, 0.0f, single cameraPathCurrentZ)
 
         // 2. Camera direction
         let cameraTarget = new Vector3(0.0f, 0.0f, 0.0f)
@@ -230,8 +227,8 @@ let main argv =
         drawEachTranslation cubeTransformations 0
         ()
     
-    window.add_Update (new Action<float>(onUpdate))
-    window.add_Load (new Action(onLoad))
-    window.add_Render (new Action<float>(onRender))
-    window.Run ()
+    ctx.Window.add_Update (new Action<float>(onUpdate))
+    ctx.Window.add_Load (new Action(onLoad))
+    ctx.Window.add_Render (new Action<float>(onRender))
+    ctx.Window.Run ()
     0

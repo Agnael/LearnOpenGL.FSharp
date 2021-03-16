@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="MouseSlice.fs" />
-    <Compile Include="CameraSlice.fs" />
+    <Compile Include="State\Slices\WindowSlice.fs" />
+    <Compile Include="State\Slices\FpsCounterSlice.fs" />
+    <Compile Include="State\Slices\MouseSlice.fs" />
+    <Compile Include="State\Slices\CameraSlice.fs" />
+    <Compile Include="State\GameState.fs" />
     <Compile Include="Cube.fs" />
     <Content Include="awesomeface.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

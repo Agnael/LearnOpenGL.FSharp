@@ -10,11 +10,12 @@ let main argv =
             Title = "01_Window"
             Size = new Size (600, 600) }
 
-    let (window, ctx) = GlWin.create glOpts
-    window.add_Render 
+    let ctx = GlWin.create glOpts
+
+    ctx.Window.add_Render 
         (fun dt -> 
             ctx.Gl.ClearColor Color.DarkKhaki
             ctx.Gl.Clear <| uint32 GLEnum.ColorBufferBit)
 
-    window.Run ()
+    ctx.Window.Run ()
     0

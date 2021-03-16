@@ -8,6 +8,7 @@ open Silk.NET.Input
 
 type GlWindowContext = 
     { Gl: GL
+    ; Window: IWindow
     ; FileProvider: IFileProvider
     ; Logger: ILogger
     ;}

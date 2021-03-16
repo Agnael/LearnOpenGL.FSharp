@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Models\GameBuilder.fs" />
+    <Compile Include="Models\GameContext.fs" />
+    <Compile Include="State\StoreFactory.fs" />
+    <Compile Include="Game.fs" />
     <Compile Include="GalanteMath.fs" />
   </ItemGroup>
 
@@ -24,14 +28,11 @@
     <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
     <PackageReference Include="Silk.NET.Windowing.Common" Version="2.1.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+    <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="States\" />
   </ItemGroup>
 
 </Project>

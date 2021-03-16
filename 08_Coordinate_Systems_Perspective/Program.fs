@@ -12,13 +12,12 @@ let main argv =
             Title = "08_Coordinate_Systems_Perspective"
             Size = new Size (800, 600) }
 
-    let (window, ctx) = GlWin.create glOpts
+    let ctx = GlWin.create glOpts
 
     let mutable quadVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
     let mutable texture1 = Unchecked.defaultof<_>
     let mutable texture2 = Unchecked.defaultof<_>
-    let mutable timer = 0.0f
         
     let onLoad () = 
         shader <-
@@ -59,9 +58,7 @@ let main argv =
         let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]
         ()
 
-    let onUpdate dt =
-        timer <- timer + float32(dt) * 3.0f
-        ()
+    let onUpdate dt = ()
         
     let toRadians degrees = degrees * MathF.PI / 180.0f
     let fov = toRadians 45.0f
@@ -81,7 +78,7 @@ let main argv =
             Matrix4x4.CreateRotationY(toRadians 40.0f)
 
         let cameraDistance =
-            float32 <| Math.Sin(float timer) + 3.0
+            float32 <| Math.Sin(ctx.Window.Time * 3.0) + 3.0
             
         // Note that we're translating the scene in the reverse 
         // direction of where we want to move.
@@ -106,8 +103,8 @@ let main argv =
         ctx.Gl.DrawElements (GLEnum.Triangles, 6ul, GLEnum.UnsignedInt, IntPtr.Zero.ToPointer())
         ()
     
-    window.add_Update (new Action<float>(onUpdate))
-    window.add_Load (new Action(onLoad))
-    window.add_Render (new Action<float>(onRender))
-    window.Run ()
+    ctx.Window.add_Update (new Action<float>(onUpdate))
+    ctx.Window.add_Load (new Action(onLoad))
+    ctx.Window.add_Render (new Action<float>(onRender))
+    ctx.Window.Run ()
     0

@@ -6,70 +6,55 @@ open System.Drawing
 open System.Numerics
 open System.Linq
 open Silk.NET.Input
-open System.Collections.Generic
 open CameraSlice
 open MouseSlice
 open GalanteMath
 open Aether
+open GameState
 open Sodium.Frp
+open FpsCounterSlice
+open WindowSlice
+open StoreFactory
+open Game
 
-type GameAction =
-    | Camera of CameraAction
-    | Mouse of MouseAction
-    | Quit
+let initialState = 
+    GameState.createDefault(
+        "13_Camera_Walk_Around_With_Inputs", 
+        new Size(800, 600))
 
-type GameState =
-    { Camera: CameraState 
-    ; Mouse: MouseState
-    ; ShouldQuit: bool
-    ;}
-    static member Default = 
-        { Camera = CameraState.Default 
-        ; Mouse = MouseState.Default
-        ; ShouldQuit = false
-        ;}
+let initialRes = initialState.Window.Resolution
 
 [<EntryPoint>]
 let main argv =
+    let (getState, dispatch) = 
+        createStore(initialState, gameMainReducer)
+
+    // No need to get the current state since this is executed
+    // before starting the game loop, so using the initial state 
+    // is just fine.
     let glOpts = 
         { GlWindowOptions.Default with
-            Title = "13_Camera_Walk_Around_With_Inputs"
-            Size = new Size (800, 600) }
+            IsVsync = false
+            Title = initialState.Window.Title
+            Size = initialRes }
 
-    let (window, ctx) = GlWin.create glOpts
+    let ctx = GlWin.create glOpts
+
+    let game =
+        emptyGameBuilder glOpts initialState gameMainReducer
+        |> buildAndRun
 
     let mutable cubeVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
     let mutable texture1 = Unchecked.defaultof<_>
     let mutable texture2 = Unchecked.defaultof<_>
-    let mutable timer = 0.0f
     
-    let actionSink = sinkS<GameAction>()
-    let game =
-        loopWithNoCapturesC 
-            (fun game ->
-                actionSink
-                |> snapshotC game 
-                    (fun gameAction game -> 
-                        match gameAction with
-                        | Camera action ->
-                            { game with Camera = CameraSlice.reduce action game.Camera }
-                        | Mouse action ->
-                            { game with Mouse = MouseSlice.reduce action game.Mouse }
-                        | Quit -> 
-                            { game with ShouldQuit = true }
-                    )
-                |> Stream.hold GameState.Default
-            )
-
-    let zoomSpeed = 3.0f
-
     let toRadians degrees = degrees * MathF.PI / 180.0f
-    let mutable fov = 45.0f
-    let aspectRatio = 800.0f/600.0f
     
-    let sendMovement cameraAction = 
-        sendS (Camera cameraAction) actionSink
+    let sendMovement cameraAction = dispatch (Camera cameraAction)
+    let sendWindow windowAction = dispatch (Window windowAction)
+    let sendResolutionUpdate w h = 
+        dispatch (Window (ResolutionUpdate (new Size(w, h))))
 
     let onKeyDown keyboard key id =         
         match key with
@@ -78,9 +63,11 @@ let main argv =
         | Key.S         -> sendMovement MoveBackStart
         | Key.D         -> sendMovement MoveRightStart
         | Key.Space     -> sendMovement MoveUpStart
-        | Key.ShiftLeft -> sendMovement MoveDownStart
-
-        | Key.Escape    -> sendS Quit actionSink
+        | Key.ShiftLeft -> sendMovement MoveDownStart        
+        | Key.F5        -> sendResolutionUpdate initialRes.Width initialRes.Height
+        | Key.F6        -> sendResolutionUpdate 1280 720
+        | Key.F1        -> dispatch (Window ToggleFullscreen)
+        | Key.Escape    -> sendWindow Close
         | _ -> ()
             
     let onKeyUp keyboard key id = 
@@ -94,27 +81,26 @@ let main argv =
         | _ -> ()
 
     let onMouseMove mouse newPos = 
-        let game = sampleC game
+        let state = getState()
         
-        sendS (Mouse (NewPosition newPos)) actionSink
+        dispatch (Mouse (NewPosition newPos))
 
-        if not game.Mouse.IsFirstMoveReceived then
-            sendS (Mouse FirstMoveReceived) actionSink
+        if not state.Mouse.IsFirstMoveReceived then
+            dispatch (Mouse FirstMoveReceived)
         else
             // Reversed  y-coordinates since they range from bottom to top
             let cameraOffset =
-                { CameraOffset.X = newPos.X - game.Mouse.X 
-                ; CameraOffset.Y = game.Mouse.Y - newPos.Y
+                { CameraOffset.X = newPos.X - state.Mouse.X 
+                ; CameraOffset.Y = state.Mouse.Y - newPos.Y
                 ;}
-            sendS (Camera (AngularChange cameraOffset)) actionSink
+            dispatch (Camera (AngularChange cameraOffset))
 
     let onMouseWheelScroll mouse (wheel: ScrollWheel) = 
-        fov <- fov - wheel.Y * zoomSpeed
-        if fov < 20.0f then fov <- 20.0f
-        if fov > 45.0f then fov <- 45.0f
+        let state = getState()
+        dispatch (Camera (ZoomChange (ZoomOffset(wheel.Y * state.Camera.ZoomSpeed))))
 
     let onLoad () = 
-        let inputs = window.CreateInput()
+        let inputs = ctx.Window.CreateInput()
 
         shader <-
             GlProg.emptyBuilder
@@ -123,12 +109,7 @@ let main argv =
                 [ ShaderType.VertexShader, @"Textured3d.vert"
                 ; ShaderType.FragmentShader, @"DoubleTexture.frag" 
                 ;]
-            |> GlProg.withUniforms [
-                "texture1"; 
-                "texture2"; 
-                "uModel"; 
-                "uView"; 
-                "uProjection"]
+            |> GlProg.withUniforms ["uTex1"; "uTex2"; "uModel"; "uView"; "uProjection"]
             |> GlProg.build ctx
 
         cubeVao <-
@@ -146,7 +127,7 @@ let main argv =
         texture2 <- GlTex.create2D @"awesomeface.png" (cubeVao, ctx)
 
         // Define en qué orden se van a dibujar los 2 triángulos que forman el cuadrilátero
-        let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]
+        //let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]
                 
         let mainKeyboard = inputs.Keyboards.FirstOrDefault()
 
@@ -158,7 +139,7 @@ let main argv =
             match mouseList with
             | [] -> ()
             | h::t ->
-                h.Cursor.CursorMode <- CursorMode.Disabled
+                h.Cursor.CursorMode <- CursorMode.Raw
                 h.add_MouseMove (new Action<IMouse, Vector2>(onMouseMove))
                 h.add_Scroll (new Action<IMouse, ScrollWheel>(onMouseWheelScroll))
                 setMouseEventHandlers t (idx + 1)
@@ -167,17 +148,48 @@ let main argv =
         ()
 
     let onUpdate dt =
-        let game = sampleC game
+        let state = getState()
 
-        if game.ShouldQuit then window.Close()
-        
-        timer <- timer + single(dt)
-        let dynCamSpeed = CameraSpeed.make <| game.Camera.Speed * single(dt)
+        if state.Window.ShouldClose then 
+            ctx.Window.Close()
 
-        sendS (Camera (UpdatePosition dynCamSpeed)) actionSink
+        if state.Window.ShouldUpdateResolution then
+            let res = state.Window.Resolution
+            let newSize = new Silk.NET.Maths.Vector2D<int>(res.Width, res.Height)
+
+            ctx.Window.Size <- newSize                
+            ctx.Gl.Viewport (0, 0, uint32 newSize.X, uint32 newSize.Y)
+            dispatch (Window ResolutionUpdated)
+
+        if 
+            state.Window.IsFullscreen && 
+            not (ctx.Window.WindowState = WindowState.Fullscreen) 
+        then      
+            let displaySize = ctx.Window.Monitor.Bounds.Size
+
+            ctx.Gl.Viewport (0, 0, uint32 displaySize.X, uint32 displaySize.Y)
+            ctx.Window.WindowState <- WindowState.Fullscreen
+
+        elif 
+            state.Window.IsFullscreen = false && 
+            ctx.Window.WindowState = WindowState.Fullscreen 
+        then
+            let res = state.Window.Resolution
+            let newSize = new Silk.NET.Maths.Vector2D<int>(res.Width, res.Height)
+
+            ctx.Gl.Viewport (0, 0, uint32 newSize.X, uint32 newSize.Y)
+            ctx.Window.WindowState <- WindowState.Normal
+            sendResolutionUpdate res.Width res.Height
+                
+        ctx.Window.Title <- 
+            sprintf "%s [%i FPS]" state.Window.Title state.FpsCounter.CurrentFps
+
+        let dynCamSpeed = CameraSpeed.make <| state.Camera.MoveSpeed * single(dt)
+
+        dispatch (Camera (UpdatePosition dynCamSpeed))
 
     let onRender dt =
-        let game = sampleC game
+        let state = getState()
 
         ctx.Gl.Enable GLEnum.DepthTest
         ctx.Gl.Clear <| uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
@@ -187,16 +199,20 @@ let main argv =
         |> GlTex.bind GLEnum.Texture1 texture2
         |> ignore
 
-        let viewMatrix = CameraSlice.createViewMatrix game.Camera
+        let viewMatrix = CameraSlice.createViewMatrix state.Camera
 
+        let fovRadians = toRadians <| Degrees.value state.Camera.Fov
+
+        let aspectRatio = 
+            single(state.Window.Resolution.Width) / single(state.Window.Resolution.Height)
         let projectionMatrix = 
-            Matrix4x4.CreatePerspectiveFieldOfView(toRadians fov, aspectRatio, 0.1f, 100.0f)
+            Matrix4x4.CreatePerspectiveFieldOfView(fovRadians, aspectRatio, 0.1f, 100.0f)
        
         // Prepares the shader
         (shader, ctx)
         |> GlProg.setAsCurrent
-        |> GlProg.setUniformI "texture1" 0
-        |> GlProg.setUniformI "texture2" 1
+        |> GlProg.setUniformI "uTex1" 0
+        |> GlProg.setUniformI "uTex2" 1
         |> GlProg.setUniformM4x4 "uView" viewMatrix
         |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
         |> ignore
@@ -225,10 +241,12 @@ let main argv =
                 drawEachTranslation t (idx + 1)
 
         drawEachTranslation Cube.transformations 0
+
+        dispatch (FpsCounter(FrameRenderCompleted dt))
         ()
     
-    window.add_Update (new Action<float>(onUpdate))
-    window.add_Load (new Action(onLoad))
-    window.add_Render (new Action<float>(onRender))
-    window.Run ()
+    ctx.Window.add_Update (new Action<float>(onUpdate))
+    ctx.Window.add_Load (new Action(onLoad))
+    ctx.Window.add_Render (new Action<float>(onRender))
+    ctx.Window.Run ()
     0

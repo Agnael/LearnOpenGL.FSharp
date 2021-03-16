@@ -12,13 +12,12 @@ let main argv =
             Title = "10_Coordinate_Systems_Cube_With_Depth_Testing"
             Size = new Size (800, 600) }
 
-    let (window, ctx) = GlWin.create glOpts
+    let ctx = GlWin.create glOpts
 
     let mutable cubeVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
     let mutable texture1 = Unchecked.defaultof<_>
     let mutable texture2 = Unchecked.defaultof<_>
-    let mutable timer = 0.0f
         
     let onLoad () = 
         shader <-
@@ -96,9 +95,7 @@ let main argv =
         let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]
         ()
 
-    let onUpdate dt =
-        timer <- timer + float32(dt)
-        ()
+    let onUpdate dt = ()
         
     let toRadians degrees = degrees * MathF.PI / 180.0f
     let fov = toRadians 45.0f
@@ -114,11 +111,11 @@ let main argv =
         |> ignore
         
         let rotationQuaternion = 
-            new Quaternion(new Vector3(0.5f, 1.0f, 0.0f), toRadians(5.0f) * timer)
+            new Quaternion(new Vector3(0.5f, 1.0f, 0.0f), toRadians(5.0f) * single(ctx.Window.Time))
 
         let modelMatrix =
-            Matrix4x4.CreateRotationX (toRadians(50.0f) * timer)
-            * Matrix4x4.CreateRotationY (toRadians(50.0f) * timer)
+            Matrix4x4.CreateRotationX (toRadians(50.0f) * single(ctx.Window.Time))
+            * Matrix4x4.CreateRotationY (toRadians(50.0f) * single(ctx.Window.Time))
 
         // Note that we're translating the scene in the reverse 
         // direction of where we want to move.
@@ -141,8 +138,8 @@ let main argv =
         ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
         ()
     
-    window.add_Update (new Action<float>(onUpdate))
-    window.add_Load (new Action(onLoad))
-    window.add_Render (new Action<float>(onRender))
-    window.Run ()
+    ctx.Window.add_Update (new Action<float>(onUpdate))
+    ctx.Window.add_Load (new Action(onLoad))
+    ctx.Window.add_Render (new Action<float>(onRender))
+    ctx.Window.Run ()
     0

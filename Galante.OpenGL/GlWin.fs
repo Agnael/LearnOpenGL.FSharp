@@ -1,5 +1,4 @@
 ﻿module GlWin
-
     open Silk.NET.Windowing
     open Silk.NET.OpenGL
     open Galante.OpenGL
@@ -9,7 +8,7 @@
     open System.IO
     open Silk.NET.Input
 
-    let create (options: GlWindowOptions): (IWindow * GlWindowContext) =    
+    let create (options: GlWindowOptions): GlWindowContext =    
         let windowOptions =
             new WindowOptions
                 ( options.IsVisible
@@ -41,12 +40,12 @@
                     | Some c -> c | None -> null))
 
         let window = Window.Create(windowOptions)
-        let gl = GL.GetApi(window)
 
         let windowContext = 
             { Gl = GL.GetApi(window) 
+            ; Window = window
             ; Logger = new NullLogger<obj>()
             ; FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory())
             ;}
         
-        (window, windowContext)
+        windowContext

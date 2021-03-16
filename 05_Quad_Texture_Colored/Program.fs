@@ -11,7 +11,7 @@ let main argv =
             Title = "05_Quad_Texture_Colored"
             Size = new Size (600, 600) }
 
-    let (window, ctx) = GlWin.create glOpts
+    let ctx = GlWin.create glOpts
 
     let mutable quadVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
@@ -60,7 +60,7 @@ let main argv =
         ctx.Gl.DrawElements (GLEnum.Triangles, 6ul, GLEnum.UnsignedInt, IntPtr.Zero.ToPointer())
         ()
 
-    window.add_Load (new Action(onLoad))
-    window.add_Render (new Action<float>(onRender))
-    window.Run ()
+    ctx.Window.add_Load (new Action(onLoad))
+    ctx.Window.add_Render (new Action<float>(onRender))
+    ctx.Window.Run ()
     0
