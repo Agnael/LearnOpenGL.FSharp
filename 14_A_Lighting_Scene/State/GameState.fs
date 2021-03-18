@@ -7,6 +7,7 @@
     open WindowSlice
     open System.Drawing
     open StoreFactory
+    open Silk.NET.Input
     
     type GameAction =
         | Camera of CameraAction
@@ -27,7 +28,7 @@
             ; Window = WindowState.createDefault (winTitle, winResolution)
             ;}
 
-    let gameMainReducer action prevState =
+    let gameReducer action prevState =
         match action with
         | Camera action ->
             { prevState with Camera = CameraSlice.reduce action prevState.Camera }

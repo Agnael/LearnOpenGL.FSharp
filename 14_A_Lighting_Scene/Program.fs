@@ -4,104 +4,74 @@ open Silk.NET.Windowing
 open Silk.NET.OpenGL
 open System.Drawing
 open System.Numerics
-open System.Linq
 open Silk.NET.Input
 open CameraSlice
 open MouseSlice
 open GalanteMath
-open Aether
 open GameState
-open Sodium.Frp
 open FpsCounterSlice
 open WindowSlice
-open StoreFactory
 open Game
+open Galante
 
 let initialState = 
     GameState.createDefault(
         "13_Camera_Walk_Around_With_Inputs", 
-        new Size(800, 600))
+        new Size(720, 480))
 
 let initialRes = initialState.Window.Resolution
 
 [<EntryPoint>]
 let main argv =
-    let (getState, dispatch) = 
-        createStore(initialState, gameMainReducer)
-
     // No need to get the current state since this is executed
     // before starting the game loop, so using the initial state 
     // is just fine.
-    let glOpts = 
+    let glWindowOptions = 
         { GlWindowOptions.Default with
             IsVsync = false
             Title = initialState.Window.Title
             Size = initialRes }
 
-    let ctx = GlWin.create glOpts
-
-    let game =
-        emptyGameBuilder glOpts initialState gameMainReducer
-        |> buildAndRun
-
     let mutable cubeVao = Unchecked.defaultof<_>
     let mutable shader = Unchecked.defaultof<_>
     let mutable texture1 = Unchecked.defaultof<_>
     let mutable texture2 = Unchecked.defaultof<_>
-    
-    let toRadians degrees = degrees * MathF.PI / 180.0f
-    
-    let sendMovement cameraAction = dispatch (Camera cameraAction)
-    let sendWindow windowAction = dispatch (Window windowAction)
-    let sendResolutionUpdate w h = 
-        dispatch (Window (ResolutionUpdate (new Size(w, h))))
-
-    let onKeyDown keyboard key id =         
-        match key with
-        | Key.W         -> sendMovement MoveForwardStart
-        | Key.A         -> sendMovement MoveLeftStart
-        | Key.S         -> sendMovement MoveBackStart
-        | Key.D         -> sendMovement MoveRightStart
-        | Key.Space     -> sendMovement MoveUpStart
-        | Key.ShiftLeft -> sendMovement MoveDownStart        
-        | Key.F5        -> sendResolutionUpdate initialRes.Width initialRes.Height
-        | Key.F6        -> sendResolutionUpdate 1280 720
-        | Key.F1        -> dispatch (Window ToggleFullscreen)
-        | Key.Escape    -> sendWindow Close
-        | _ -> ()
-            
-    let onKeyUp keyboard key id = 
-        match key with
-        | Key.W         -> sendMovement MoveForwardStop
-        | Key.A         -> sendMovement MoveLeftStop
-        | Key.S         -> sendMovement MoveBackStop
-        | Key.D         -> sendMovement MoveRightStop
-        | Key.Space     -> sendMovement MoveUpStop
-        | Key.ShiftLeft -> sendMovement MoveDownStop
-        | _ -> ()
-
-    let onMouseMove mouse newPos = 
-        let state = getState()
         
-        dispatch (Mouse (NewPosition newPos))
+    let aMovement dispatch cameraAction = dispatch (Camera cameraAction)
+    let aWindow dispatch windowAction = dispatch (Window windowAction)
+    let aMouse dispatch mouseAction = dispatch (Mouse mouseAction)
+    let aResolutionUpdate dispatch w h  = 
+        dispatch (Window (ResolutionUpdate (new Size(w, h))))
+    let aCamera dispatch cameraAction = dispatch (Camera cameraAction)
 
-        if not state.Mouse.IsFirstMoveReceived then
-            dispatch (Mouse FirstMoveReceived)
-        else
-            // Reversed  y-coordinates since they range from bottom to top
-            let cameraOffset =
-                { CameraOffset.X = newPos.X - state.Mouse.X 
-                ; CameraOffset.Y = state.Mouse.Y - newPos.Y
-                ;}
-            dispatch (Camera (AngularChange cameraOffset))
+    let onKeyDown ctx state dispatch kb key =
+        let initResW = initialState.Window.Resolution.Width
+        let initResH = initialState.Window.Resolution.Height
 
-    let onMouseWheelScroll mouse (wheel: ScrollWheel) = 
-        let state = getState()
-        dispatch (Camera (ZoomChange (ZoomOffset(wheel.Y * state.Camera.ZoomSpeed))))
+        (ctx, state, dispatch, kb, key)        
+        |> Baseline.detectFullScreenSwitch // ALT+ENTER        
+        |> Baseline.detectGameClosing // ESC        
+        |> Baseline.detectCameraMovementStart // W|A|S|D|Left_Shift|Space
+        |> Baseline.detectResolutionChange initResW initResH // F5|F6|F7
+        |> Baseline.detectCursorModeChange // F9|F10
+        |> ignore
 
-    let onLoad () = 
-        let inputs = ctx.Window.CreateInput()
+    let onKeyUp ctx state dispatch kb key =         
+        (ctx, state, dispatch, kb, key)    
+        |> Baseline.detectCameraMovementStop
+        |> ignore
 
+    let onMouseMove ctx state dispatch newPos = 
+        (ctx, state, dispatch, newPos)
+        |> Baseline.handleCameraAngularChange
+        |> ignore
+                
+    let onMouseWheel ctx state dispatch (newPos: Vector2) =
+        (ctx, state, dispatch, newPos)
+        |> Baseline.handleCameraZoom
+        |> ignore
+            
+    let onLoad (ctx: GlWindowCtx) input state dispatch =
         shader <-
             GlProg.emptyBuilder
             |> GlProg.withName "3dShader"
@@ -109,7 +79,8 @@ let main argv =
                 [ ShaderType.VertexShader, @"Textured3d.vert"
                 ; ShaderType.FragmentShader, @"DoubleTexture.frag" 
                 ;]
-            |> GlProg.withUniforms ["uTex1"; "uTex2"; "uModel"; "uView"; "uProjection"]
+            |> GlProg.withUniforms 
+                ["uTex1"; "uTex2"; "uModel"; "uView"; "uProjection"]
             |> GlProg.build ctx
 
         cubeVao <-
@@ -120,79 +91,30 @@ let main argv =
         let qubeVbo =
             GlVbo.emptyVboBuilder
             |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
-            |> GlVbo.withAttrDefinitions Cube.vertexPositionsAndTexturePositions
+            |> GlVbo.withAttrDefinitions
+                Cube.vertexPositionsAndTexturePositions
             |> GlVbo.build (cubeVao, ctx)
             
         texture1 <- GlTex.create2D @"wall.jpg" (cubeVao, ctx)
         texture2 <- GlTex.create2D @"awesomeface.png" (cubeVao, ctx)
+                        
+        aMouse dispatch UseCursorRaw
 
-        // Define en qué orden se van a dibujar los 2 triángulos que forman el cuadrilátero
-        //let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]
-                
-        let mainKeyboard = inputs.Keyboards.FirstOrDefault()
+    let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
+        (ctx, state, dispatch, deltaTime)
+        |> Baseline.updateWindowClosure
+        |> Baseline.updateWindowTitle
+        |> Baseline.updateWindowResolution
+        |> Baseline.updateWindowMode
+        |> Baseline.updateCursorMode
+        |> Baseline.updateCameraPosition
+        |> ignore
 
-        if not (mainKeyboard = null) then
-            mainKeyboard.add_KeyDown (new Action<IKeyboard, Key, int>(onKeyDown))
-            mainKeyboard.add_KeyUp (new Action<IKeyboard, Key, int>(onKeyUp))
-
-        let rec setMouseEventHandlers (mouseList: IMouse list) idx =
-            match mouseList with
-            | [] -> ()
-            | h::t ->
-                h.Cursor.CursorMode <- CursorMode.Raw
-                h.add_MouseMove (new Action<IMouse, Vector2>(onMouseMove))
-                h.add_Scroll (new Action<IMouse, ScrollWheel>(onMouseWheelScroll))
-                setMouseEventHandlers t (idx + 1)
-
-        setMouseEventHandlers (List.ofSeq inputs.Mice) 0
-        ()
-
-    let onUpdate dt =
-        let state = getState()
-
-        if state.Window.ShouldClose then 
-            ctx.Window.Close()
-
-        if state.Window.ShouldUpdateResolution then
-            let res = state.Window.Resolution
-            let newSize = new Silk.NET.Maths.Vector2D<int>(res.Width, res.Height)
-
-            ctx.Window.Size <- newSize                
-            ctx.Gl.Viewport (0, 0, uint32 newSize.X, uint32 newSize.Y)
-            dispatch (Window ResolutionUpdated)
-
-        if 
-            state.Window.IsFullscreen && 
-            not (ctx.Window.WindowState = WindowState.Fullscreen) 
-        then      
-            let displaySize = ctx.Window.Monitor.Bounds.Size
-
-            ctx.Gl.Viewport (0, 0, uint32 displaySize.X, uint32 displaySize.Y)
-            ctx.Window.WindowState <- WindowState.Fullscreen
-
-        elif 
-            state.Window.IsFullscreen = false && 
-            ctx.Window.WindowState = WindowState.Fullscreen 
-        then
-            let res = state.Window.Resolution
-            let newSize = new Silk.NET.Maths.Vector2D<int>(res.Width, res.Height)
-
-            ctx.Gl.Viewport (0, 0, uint32 newSize.X, uint32 newSize.Y)
-            ctx.Window.WindowState <- WindowState.Normal
-            sendResolutionUpdate res.Width res.Height
-                
-        ctx.Window.Title <- 
-            sprintf "%s [%i FPS]" state.Window.Title state.FpsCounter.CurrentFps
-
-        let dynCamSpeed = CameraSpeed.make <| state.Camera.MoveSpeed * single(dt)
-
-        dispatch (Camera (UpdatePosition dynCamSpeed))
-
-    let onRender dt =
-        let state = getState()
-
+    let onRender ctx state dispatch (DeltaTime deltaTime) =
         ctx.Gl.Enable GLEnum.DepthTest
-        ctx.Gl.Clear <| uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
+
+        uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
+        |> ctx.Gl.Clear
 
         (cubeVao, ctx)
         |> GlTex.bind GLEnum.Texture0 texture1
@@ -201,12 +123,13 @@ let main argv =
 
         let viewMatrix = CameraSlice.createViewMatrix state.Camera
 
-        let fovRadians = toRadians <| Degrees.value state.Camera.Fov
+        let res = state.Window.Resolution
+        let fovRads = Radians.value <| toRadF(state.Camera.Fov)
 
-        let aspectRatio = 
-            single(state.Window.Resolution.Width) / single(state.Window.Resolution.Height)
+        let ratio = single(res.Width) / single(res.Height)
         let projectionMatrix = 
-            Matrix4x4.CreatePerspectiveFieldOfView(fovRadians, aspectRatio, 0.1f, 100.0f)
+            Matrix4x4
+                .CreatePerspectiveFieldOfView(fovRads, ratio, 0.1f, 100.0f)
        
         // Prepares the shader
         (shader, ctx)
@@ -219,34 +142,53 @@ let main argv =
 
         GlVao.bind (cubeVao, ctx) |> ignore
         
-        // Draws a copy of the image per each transition registered, resulting in 
-        // multiple cubes being rendered but always using the same VAO.
+        // Draws a copy of the image per each transition registered, 
+        // resulting in multiple cubes being rendered but always using 
+        // the same VAO.
         let rec drawEachTranslation translations idx =
             match translations with
             | [] -> ()
             | h::t ->
-                let rotationX = Cube.transformations.[idx].RotationX
-                let rotationY = Cube.transformations.[idx].RotationY
-                let rotationZ = Cube.transformations.[idx].RotationZ
-
+                let currentTransform =  Cube.transformations.[idx]
+                let rotationX = toRadF(Degrees.make currentTransform.RotationX)
+                let rotationY = toRadF(Degrees.make currentTransform.RotationY)
+                let rotationZ = toRadF(Degrees.make currentTransform.RotationZ)
+                
                 let modelMatrix =
-                    Matrix4x4.CreateRotationX (toRadians rotationX)
-                    * Matrix4x4.CreateRotationY (toRadians rotationY)
-                    * Matrix4x4.CreateRotationZ (toRadians rotationZ)
-                    * Matrix4x4.CreateTranslation Cube.transformations.[idx].Translation
+                    Matrix4x4.CreateRotationX (Radians.value rotationX)
+                    * Matrix4x4.CreateRotationY (Radians.value rotationY)
+                    * Matrix4x4.CreateRotationZ (Radians.value rotationZ)
+                    * Matrix4x4.CreateTranslation currentTransform.Translation
 
-                GlProg.setUniformM4x4 "uModel" modelMatrix (shader, ctx) |> ignore    
+                GlProg.setUniformM4x4 "uModel" modelMatrix (shader, ctx) 
+                |> ignore
+
                 ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
 
                 drawEachTranslation t (idx + 1)
 
         drawEachTranslation Cube.transformations 0
 
-        dispatch (FpsCounter(FrameRenderCompleted dt))
+        dispatch (FpsCounter(FrameRenderCompleted deltaTime))
         ()
-    
-    ctx.Window.add_Update (new Action<float>(onUpdate))
-    ctx.Window.add_Load (new Action(onLoad))
-    ctx.Window.add_Render (new Action<float>(onRender))
-    ctx.Window.Run ()
+
+    let onInputContextLoaded ctx ic state dispatch = 
+        aWindow dispatch (InitializeInputContext ic)
+
+    let onWindowResize ctx state dispatch newSize =
+        (ctx, state, dispatch, newSize)
+        |> Baseline.handleWindowResize
+        |> ignore
+
+    emptyGameBuilder glWindowOptions initialState gameReducer
+    |> withOnInputContextLoadedCallback onInputContextLoaded
+    |> addOnLoad onLoad
+    |> addOnUpdate onUpdate
+    |> addOnRender onRender
+    |> addOnKeyDown onKeyDown
+    |> addOnKeyUp onKeyUp
+    |> addOnMouseMove onMouseMove
+    |> addOnMouseWheel onMouseWheel
+    |> addOnWindowResize onWindowResize
+    |> buildAndRun
     0

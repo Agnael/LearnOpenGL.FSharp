@@ -13,6 +13,8 @@
     <Compile Include="State\Slices\CameraSlice.fs" />
     <Compile Include="State\GameState.fs" />
     <Compile Include="Cube.fs" />
+    <Compile Include="Baseline.fs" />
+    <Compile Include="Program.fs" />
     <Content Include="awesomeface.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -25,7 +27,6 @@
     <None Include="Textured3d.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aether" Version="8.3.1" />

@@ -8,7 +8,7 @@ module GlProg
     open System.Numerics
     open Microsoft.FSharp.NativeInterop
 
-    let rec private loadProgramShaders pending added (ctx: GlWindowContext) =
+    let rec private loadProgramShaders pending added (ctx: GlWindowCtx) =
         match pending with
         | [] -> added
         | h::t -> 

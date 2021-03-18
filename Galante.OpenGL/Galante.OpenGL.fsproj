@@ -18,7 +18,7 @@
     <Compile Include="Models\GlVboBuilder.fs" />
     <Compile Include="Models\GlVertexArrayObject.fs" />
     <Compile Include="Models\GlVertexBufferObject.fs" />
-    <Compile Include="Models\GlWindowContext.fs" />
+    <Compile Include="Models\GlWindowCtx.fs" />
     <Compile Include="Models\GlWindowOptions.fs" />
     <Compile Include="GlVao.fs" />
     <Compile Include="GlEbo.fs" />

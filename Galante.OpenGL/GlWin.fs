@@ -8,7 +8,7 @@
     open System.IO
     open Silk.NET.Input
 
-    let create (options: GlWindowOptions): GlWindowContext =    
+    let create (options: GlWindowOptions): GlWindowCtx =    
         let windowOptions =
             new WindowOptions
                 ( options.IsVisible

@@ -34,6 +34,8 @@
         | MoveUpStop
         | MoveDownStart
         | MoveDownStop
+        | Lock
+        | Unlock
 
     type CameraState = 
         { Position: Vector3
@@ -51,6 +53,7 @@
         ; IsMovingRight: bool
         ; IsMovingUp: bool
         ; IsMovingDown: bool
+        ; IsAngleLocked: bool
         ;}
     
         static member Default = {
@@ -73,6 +76,7 @@
             IsMovingRight = false
             IsMovingUp = false
             IsMovingDown = false
+            IsAngleLocked = false
         }
 
     let createViewMatrix state = 
@@ -106,29 +110,34 @@
             }
 
         | AngularChange offset -> 
-            let newYaw = 
-                (Degrees.value state.Yaw) + (offset.X * state.Sensitivity)
-                |> Degrees.make 
+            if state.IsAngleLocked then 
+                state
+            else
+                let yawDegrees = Degrees.value state.Yaw
+                let newYaw = 
+                    yawDegrees + (offset.X * state.Sensitivity)
+                    |> Degrees.make 
 
-            let newPitch =
-                (Degrees.value state.Pitch) + (offset.Y * state.Sensitivity)
-                |> fun newPitch ->
-                    if newPitch > 89.9f then 89.0f
-                    else if newPitch < -89.0f then -89.0f
-                    else newPitch
-                |> Degrees.make
+                let pitchDegrees = Degrees.value state.Pitch
+                let newPitch =
+                    pitchDegrees + (offset.Y * state.Sensitivity)
+                    |> fun newPitch ->
+                        if newPitch > 89.9f then 89.0f
+                        else if newPitch < -89.0f then -89.0f
+                        else newPitch
+                    |> Degrees.make
 
-            let newTargetDirection =
-                Vector3.Normalize (
-                    new Vector3 (
-                        cosF(newYaw) * cosF(newPitch),
-                        sinF(newPitch),
-                        sinF(newYaw) * cosF(newPitch)))                
+                let newTargetDirection =
+                    Vector3.Normalize (
+                        new Vector3 (
+                            cosF(newYaw) * cosF(newPitch),
+                            sinF(newPitch),
+                            sinF(newYaw) * cosF(newPitch)))                
 
-            { state with 
-                Yaw = newYaw 
-                Pitch = newPitch
-                TargetDirection = newTargetDirection }
+                { state with 
+                    Yaw = newYaw 
+                    Pitch = newPitch
+                    TargetDirection = newTargetDirection }
 
         | ZoomChange (ZoomOffset offset) -> 
             { state with 
@@ -170,3 +179,8 @@
             { state with IsMovingDown = true }
         | MoveDownStop -> 
             { state with IsMovingDown = false }
+        
+        | Lock -> 
+            { state with IsAngleLocked = true }
+        | Unlock ->
+            { state with IsAngleLocked = false }

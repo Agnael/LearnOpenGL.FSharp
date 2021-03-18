@@ -2,12 +2,17 @@
     open System.Drawing
     open Silk.NET.Input
     open System.Numerics
-    
+        
+    type GameInputs =
+        | Uninitialized
+        | Initialized of IInputContext
+
     type WindowAction =
         | Close
         | ResolutionUpdate of Size
         | ResolutionUpdated
         | ToggleFullscreen
+        | InitializeInputContext of IInputContext
 
     type WindowState =
         { Title: string
@@ -15,6 +20,7 @@
         ; ShouldUpdateResolution: bool
         ; IsFullscreen: bool
         ; Resolution: Size
+        ; InputContext: GameInputs
         ;}
         static member createDefault (winTitle, winResolution) =
             { Title = winTitle
@@ -22,6 +28,7 @@
             ; ShouldUpdateResolution = false
             ; Resolution = winResolution
             ; IsFullscreen = false
+            ; InputContext = Uninitialized
             ;}
 
     let reduce a s =
@@ -35,3 +42,5 @@
             { s with ShouldUpdateResolution = false }
         | ToggleFullscreen ->
             { s with IsFullscreen = not(s.IsFullscreen) }
+        | InitializeInputContext ctx ->
+            { s with InputContext = Initialized ctx }

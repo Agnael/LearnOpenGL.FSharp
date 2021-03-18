@@ -6,6 +6,6 @@
     open Galante.OpenGL
 
     type GameContext<'TGameState, 'TGameAction> =
-        { WindowContext: GlWindowContext
+        { WindowContext: GlWindowCtx
         ;}
     

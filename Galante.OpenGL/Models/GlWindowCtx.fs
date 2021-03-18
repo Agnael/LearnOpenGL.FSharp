@@ -6,7 +6,7 @@ open Silk.NET.OpenGL
 open Silk.NET.Windowing
 open Silk.NET.Input
 
-type GlWindowContext = 
+type GlWindowCtx = 
     { Gl: GL
     ; Window: IWindow
     ; FileProvider: IFileProvider
