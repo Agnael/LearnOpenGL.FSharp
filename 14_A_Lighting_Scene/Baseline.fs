@@ -77,6 +77,9 @@ let detectResolutionChange
     | Key.F5        -> aWindowResolutionUpdate dispatch initialW initialH
     | Key.F6        -> aWindowResolutionUpdate dispatch 1280 720 
     | Key.F7        -> aWindowResolutionUpdate dispatch 1920 1080 
+    | Key.F8        -> 
+        let nullOffset = { CameraOffset.X = 0.0f; Y = 0.0f; }
+        aCamera dispatch (AngularChange nullOffset)
     | _ -> ()
     (ctx, state, dispatch, kb, key)
 
@@ -148,12 +151,21 @@ let updateWindowMode (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
 
 let updateWindowTitle (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
     ctx.Window.Title <- 
+        //sprintf 
+        //    "%s [%i FPS][x: %f | y: %f | z: %f]" state.Window.Title
+        //        state.FpsCounter.CurrentFps
+        //        state.Camera.Position.X
+        //        state.Camera.Position.Y
+        //        state.Camera.Position.Z
+        
         sprintf 
-            "%s [%i FPS][x: %f | y: %f | z: %f]" state.Window.Title
+            "%s [%i FPS][Pos %O][Dir %O][Pitch %f][Yaw %f]" 
+                state.Window.Title
                 state.FpsCounter.CurrentFps
-                state.Camera.Position.X
-                state.Camera.Position.Y
-                state.Camera.Position.Z
+                state.Camera.Position
+                state.Camera.TargetDirection
+                (Degrees.value state.Camera.Pitch)
+                (Degrees.value state.Camera.Yaw)
     (ctx, state, dispatch, dt)
 
 let updateCursorMode (ctx: GlWindowCtx, state: GameState, dispatch, dt) =

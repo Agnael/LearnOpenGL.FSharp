@@ -62,6 +62,12 @@ module GlProg
         |> List.find (fun x -> x.UniformName = name)
         |> fun uniform -> ctx.Gl.Uniform1(uniform.GlUniformHandle, value)
         (program, ctx)
+
+    let setUniformV3 name (value: Vector3) (program, ctx) =
+        program.Uniforms
+        |> List.find (fun x -> x.UniformName = name)
+        |> fun uniform -> ctx.Gl.Uniform3(uniform.GlUniformHandle, value)
+        (program, ctx)
         
     let setUniformM4x4 name (value: Matrix4x4) (program, ctx) =         
         // This block is the equivalent of the C# code:

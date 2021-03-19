@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Text.fs" />
     <Compile Include="Models\GameBuilder.fs" />
     <Compile Include="Models\GameContext.fs" />
     <Compile Include="State\StoreFactory.fs" />
@@ -17,11 +18,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aether" Version="8.3.1" />
+    <None Include="freetype6.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="3.1.12" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.12" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.12" />
+    <PackageReference Include="SharpFont.NetStandard" Version="1.0.2" />
     <PackageReference Include="Silk.NET.Input" Version="2.1.0" />
     <PackageReference Include="Silk.NET.Input.Common" Version="2.1.0" />
     <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />

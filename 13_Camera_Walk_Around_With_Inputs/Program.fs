@@ -253,8 +253,8 @@ let main argv =
         
         // Draws a copy of the image per each transition registered, resulting in 
         // multiple cubes being rendered but always using the same VAO.
-        let rec drawEachTranslation translations idx =
-            match translations with
+        let rec drawEachTransformation transformations idx =
+            match transformations with
             | [] -> ()
             | h::t ->
                 let rotationX = cubeTransformations.[idx].RotationX
@@ -270,9 +270,9 @@ let main argv =
                 GlProg.setUniformM4x4 "uModel" modelMatrix (shader, ctx) |> ignore    
                 ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
 
-                drawEachTranslation t (idx + 1)
+                drawEachTransformation t (idx + 1)
 
-        drawEachTranslation cubeTransformations 0
+        drawEachTransformation cubeTransformations 0
         ()
     
     ctx.Window.add_Update (new Action<float>(onUpdate))

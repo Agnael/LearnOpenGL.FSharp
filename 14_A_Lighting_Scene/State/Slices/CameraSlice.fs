@@ -2,6 +2,7 @@
     open Galante
     open GalanteMath
     open System.Numerics
+    open System
 
     type CameraOffset = 
         { X: single
@@ -22,6 +23,8 @@
         | AngularChange of CameraOffset
         | ZoomChange of ZoomOffset
         | UpdatePosition of CameraSpeed
+        | ForcePosition of Vector3
+        | ForceTarget of Vector3
         | MoveForwardStart
         | MoveForwardStop
         | MoveLeftStart
@@ -58,7 +61,7 @@
     
         static member Default = {
             Position = new Vector3(0.0f, 0.0f, 0.0f)
-            TargetDirection = new Vector3(0.0f, 0.0f, -1.0f)
+            TargetDirection = new Vector3(1.0f, 0.0f, 0.0f)
             UpDirection = new Vector3(0.0f, 1.0f, 0.0f)
             MoveSpeed = 2.5f
             ZoomSpeed = 3.0f
@@ -69,7 +72,7 @@
             // default we can give the yaw a default value of a 90 degree clockwise 
             // rotation. Positive degrees rotate counter-clockwise so we set the 
             // default yaw value to:
-            Yaw = Degrees.make -90.0f
+            Yaw = Degrees.make 0.0f
             IsMovingForward = false
             IsMovingBack = false
             IsMovingLeft = false
@@ -127,17 +130,17 @@
                         else newPitch
                     |> Degrees.make
 
-                let newTargetDirection =
+                let newTarget =
                     Vector3.Normalize (
                         new Vector3 (
                             cosF(newYaw) * cosF(newPitch),
                             sinF(newPitch),
                             sinF(newYaw) * cosF(newPitch)))                
-
+                            
                 { state with 
                     Yaw = newYaw 
                     Pitch = newPitch
-                    TargetDirection = newTargetDirection }
+                    TargetDirection = newTarget }
 
         | ZoomChange (ZoomOffset offset) -> 
             { state with 
@@ -149,6 +152,62 @@
                         else newFov
                         |> Degrees.make
             }
+            
+        | ForcePosition newPos ->
+            { state with Position = newPos }
+        | ForceTarget target ->
+            let xzProjection = new Vector3 (target.X, 0.0f, target.Z)
+            let yzProjection = new Vector3 (0.0f, target.Y, target.Z)
+
+            // OLD
+            //let forcedYawRadians =
+            //    normalizeDot xzProjection target
+            //    |> MathF.Acos
+            //    |> fun radVal -> radVal 
+            //    |> Radians.make
+
+            //let forcedYaw =
+            //    forcedYawRadians
+            //    |> toDegF
+            //    |> fun (Degrees deg) -> 
+            //        deg - 90.0f
+            //        |> Degrees.make
+
+            //let forcedPitch =
+            //    normalizeDot yzProjection target
+            //    |> MathF.Acos
+            //    |> fun x -> x
+            //    |> Radians.make
+            //    |> toDegF
+            // OLD END
+            
+            // YAW CALC
+            //let dot = 
+            //    xzProjection.X * target.X + 
+            //    xzProjection.Y * target.Y +
+            //    xzProjection.Z * target.Z
+
+            //let crossX = xzProjection.Y * target.Z - xzProjection.Z * target.Y
+            //let crossY = xzProjection.X * target.Z - xzProjection.Z * target.X
+            //let crossZ = xzProjection.X * target.Y - xzProjection.Y * target.X
+
+            //let crossLen =
+            //    MathF.Sqrt(crossX*crossX + crossY*crossY + crossZ*crossZ)
+
+            //let yawRads = Radians <| MathF.Atan2(dot, crossLen)
+            
+            let forcedYaw = 
+                getAngleRadians xzProjection target
+                |> fun (Degrees deg) -> -deg
+                |> Degrees.make
+                
+            let forcedPitch = 
+                getAngleRadians yzProjection target
+
+            { state with 
+                Yaw = forcedYaw 
+                Pitch = forcedPitch
+                TargetDirection = target }
 
         | MoveForwardStart -> 
             { state with IsMovingForward = true }

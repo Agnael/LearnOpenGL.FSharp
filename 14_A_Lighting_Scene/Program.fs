@@ -16,8 +16,8 @@ open Galante
 
 let initialState = 
     GameState.createDefault(
-        "13_Camera_Walk_Around_With_Inputs", 
-        new Size(720, 480))
+        "14_A_Lighting_Scene", 
+        new Size(1280, 720))
 
 let initialRes = initialState.Window.Resolution
 
@@ -33,9 +33,10 @@ let main argv =
             Size = initialRes }
 
     let mutable cubeVao = Unchecked.defaultof<_>
-    let mutable shader = Unchecked.defaultof<_>
-    let mutable texture1 = Unchecked.defaultof<_>
-    let mutable texture2 = Unchecked.defaultof<_>
+    let mutable shaderLighted = Unchecked.defaultof<_>
+    let mutable shaderLightSource = Unchecked.defaultof<_>
+
+    let lightSourcePosition = new Vector3(1.2f, 1.0f, 2.0f)
         
     let aMovement dispatch cameraAction = dispatch (Camera cameraAction)
     let aWindow dispatch windowAction = dispatch (Window windowAction)
@@ -72,15 +73,40 @@ let main argv =
         |> ignore
             
     let onLoad (ctx: GlWindowCtx) input state dispatch =
-        shader <-
+        let font =
+            Text.getFont "NovaFlat.ttf"
+            |> fun x -> 
+                x.SetPixelSizes (0ul, 48ul)
+                //x.Glyph
+
+        shaderLighted <-
             GlProg.emptyBuilder
-            |> GlProg.withName "3dShader"
+            |> GlProg.withName "Lighted"
             |> GlProg.withShaders 
-                [ ShaderType.VertexShader, @"Textured3d.vert"
-                ; ShaderType.FragmentShader, @"DoubleTexture.frag" 
+                [ ShaderType.VertexShader, @"Basic3d.vert"
+                ; ShaderType.FragmentShader, @"Lighted.frag" 
                 ;]
-            |> GlProg.withUniforms 
-                ["uTex1"; "uTex2"; "uModel"; "uView"; "uProjection"]
+            |> GlProg.withUniforms [
+                "uObjectColor"
+                "uLightColor"
+                "uModel"
+                "uView";
+                "uProjection"
+            ]
+            |> GlProg.build ctx
+
+        shaderLightSource <-
+            GlProg.emptyBuilder
+            |> GlProg.withName "LightSource"
+            |> GlProg.withShaders [
+                ShaderType.VertexShader, "Basic3d.vert"
+                ShaderType.FragmentShader, "LightSource.frag"
+            ]
+            |> GlProg.withUniforms [
+                "uModel"
+                "uView" 
+                "uProjection"
+            ]
             |> GlProg.build ctx
 
         cubeVao <-
@@ -90,15 +116,20 @@ let main argv =
 
         let qubeVbo =
             GlVbo.emptyVboBuilder
-            |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
-            |> GlVbo.withAttrDefinitions
-                Cube.vertexPositionsAndTexturePositions
+            |> GlVbo.withAttrNames ["Positions"]
+            |> GlVbo.withAttrDefinitions Cube.vertexPositions
             |> GlVbo.build (cubeVao, ctx)
-            
-        texture1 <- GlTex.create2D @"wall.jpg" (cubeVao, ctx)
-        texture2 <- GlTex.create2D @"awesomeface.png" (cubeVao, ctx)
-                        
+                                    
         aMouse dispatch UseCursorRaw
+
+        // Hardcoded camera position and target, so it looks like the
+        // LearnOpenGL.com example.
+        let forcedCamPos = new Vector3(1.3563321f, 1.5168644f, 3.8430243f)
+        let forcedCamTarget = 
+            new Vector3(-0.22922294f, -0.36110625f, -0.9039132f)
+
+        aCamera dispatch (ForcePosition forcedCamPos)
+        //aCamera dispatch (ForceTarget forcedCamTarget)
 
     let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
         (ctx, state, dispatch, deltaTime)
@@ -116,15 +147,10 @@ let main argv =
         uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
         |> ctx.Gl.Clear
 
-        (cubeVao, ctx)
-        |> GlTex.bind GLEnum.Texture0 texture1
-        |> GlTex.bind GLEnum.Texture1 texture2
-        |> ignore
-
         let viewMatrix = CameraSlice.createViewMatrix state.Camera
 
         let res = state.Window.Resolution
-        let fovRads = Radians.value <| toRadF(state.Camera.Fov)
+        let fovRads = Radians.value <| toRadians(state.Camera.Fov)
 
         let ratio = single(res.Width) / single(res.Height)
         let projectionMatrix = 
@@ -132,42 +158,29 @@ let main argv =
                 .CreatePerspectiveFieldOfView(fovRads, ratio, 0.1f, 100.0f)
        
         // Prepares the shader
-        (shader, ctx)
+        (shaderLighted, ctx)
         |> GlProg.setAsCurrent
-        |> GlProg.setUniformI "uTex1" 0
-        |> GlProg.setUniformI "uTex2" 1
+        |> GlProg.setUniformV3 "uObjectColor" (new Vector3(1.0f, 0.5f, 0.31f))
+        |> GlProg.setUniformV3 "uLightColor" (new Vector3(1.0f, 1.0f, 1.0f))
+        |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity 
         |> GlProg.setUniformM4x4 "uView" viewMatrix
         |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
         |> ignore
 
-        GlVao.bind (cubeVao, ctx) |> ignore
-        
-        // Draws a copy of the image per each transition registered, 
-        // resulting in multiple cubes being rendered but always using 
-        // the same VAO.
-        let rec drawEachTranslation translations idx =
-            match translations with
-            | [] -> ()
-            | h::t ->
-                let currentTransform =  Cube.transformations.[idx]
-                let rotationX = toRadF(Degrees.make currentTransform.RotationX)
-                let rotationY = toRadF(Degrees.make currentTransform.RotationY)
-                let rotationZ = toRadF(Degrees.make currentTransform.RotationZ)
-                
-                let modelMatrix =
-                    Matrix4x4.CreateRotationX (Radians.value rotationX)
-                    * Matrix4x4.CreateRotationY (Radians.value rotationY)
-                    * Matrix4x4.CreateRotationZ (Radians.value rotationZ)
-                    * Matrix4x4.CreateTranslation currentTransform.Translation
+        GlVao.bind (cubeVao, ctx) |> ignore        
+        ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
 
-                GlProg.setUniformM4x4 "uModel" modelMatrix (shader, ctx) 
-                |> ignore
+        let lightSourceModelMatrix =
+            Matrix4x4.CreateTranslation (lightSourcePosition / 0.2f)
+            * Matrix4x4.CreateScale (new Vector3(0.2f))
 
-                ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
-
-                drawEachTranslation t (idx + 1)
-
-        drawEachTranslation Cube.transformations 0
+        (shaderLightSource, ctx)
+        |> GlProg.setAsCurrent
+        |> GlProg.setUniformM4x4 "uModel" lightSourceModelMatrix
+        |> GlProg.setUniformM4x4 "uView" viewMatrix
+        |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
+        |> ignore
+        ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
 
         dispatch (FpsCounter(FrameRenderCompleted deltaTime))
         ()
