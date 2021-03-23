@@ -61,7 +61,7 @@
     
         static member Default = {
             Position = new Vector3(0.0f, 0.0f, 0.0f)
-            TargetDirection = new Vector3(1.0f, 0.0f, 0.0f)
+            TargetDirection = new Vector3(0.0f, -1.0f, 0.0f)
             UpDirection = new Vector3(0.0f, 1.0f, 0.0f)
             MoveSpeed = 2.5f
             ZoomSpeed = 3.0f
@@ -96,20 +96,28 @@
 
             let moveForward pos = pos + currTargetDir * camSpeed
             let moveBack pos = pos - currTargetDir * camSpeed
-            let moveLeft pos = pos - normalizeCross(currTargetDir, currUpDir) * camSpeed
-            let moveRight pos = pos + normalizeCross(currTargetDir, currUpDir) * camSpeed
+            let moveLeft pos = 
+                pos - normalizeCross(currTargetDir, currUpDir) * camSpeed
+            let moveRight pos = 
+                pos + normalizeCross(currTargetDir, currUpDir) * camSpeed
             let moveUp pos = pos + currUpDir * camSpeed
             let moveDown pos = pos - currUpDir * camSpeed
 
             { state with
                 Position =
                     state.Position
-                    |> fun pos -> if state.IsMovingForward then moveForward pos else pos
-                    |> fun pos -> if state.IsMovingBack then moveBack pos else pos
-                    |> fun pos -> if state.IsMovingLeft then moveLeft pos else pos
-                    |> fun pos -> if state.IsMovingRight then moveRight pos else pos
-                    |> fun pos -> if state.IsMovingUp then moveUp pos else pos
-                    |> fun pos -> if state.IsMovingDown then moveDown pos else pos
+                    |> fun pos -> 
+                        if state.IsMovingForward then moveForward pos else pos
+                    |> fun pos -> 
+                        if state.IsMovingBack then moveBack pos else pos
+                    |> fun pos -> 
+                        if state.IsMovingLeft then moveLeft pos else pos
+                    |> fun pos -> 
+                        if state.IsMovingRight then moveRight pos else pos
+                    |> fun pos -> 
+                        if state.IsMovingUp then moveUp pos else pos
+                    |> fun pos -> 
+                        if state.IsMovingDown then moveDown pos else pos
             }
 
         | AngularChange offset -> 
@@ -119,14 +127,18 @@
                 let yawDegrees = Degrees.value state.Yaw
                 let newYaw = 
                     yawDegrees + (offset.X * state.Sensitivity)
+                    |> fun yaw -> 
+                        if yaw >= 360.0f then 0.0f 
+                        elif yaw <= -360.0f then 0.0f
+                        else yaw
                     |> Degrees.make 
 
                 let pitchDegrees = Degrees.value state.Pitch
                 let newPitch =
                     pitchDegrees + (offset.Y * state.Sensitivity)
                     |> fun newPitch ->
-                        if newPitch > 89.9f then 89.0f
-                        else if newPitch < -89.0f then -89.0f
+                        if newPitch > 89.9f then 89.9f
+                        else if newPitch < -89.9f then -89.9f
                         else newPitch
                     |> Degrees.make
 
@@ -155,54 +167,29 @@
             
         | ForcePosition newPos ->
             { state with Position = newPos }
-        | ForceTarget target ->
-            let xzProjection = new Vector3 (target.X, 0.0f, target.Z)
-            let yzProjection = new Vector3 (0.0f, target.Y, target.Z)
+        | ForceTarget target ->        
+            let yawOrigin = new Vector3(1.0f, 0.0f, 0.0f)
+            let pitchOrigin = new Vector3(0.0f, -1.0f, 0.0f)
+                               
+            //let forcedYaw = 
+            //    //getAngle yawOrigin (new Vector3(target.X, 0.0f, target.Z))
+            //    getAngle yawOrigin (Vector3.Normalize(new Vector3(target.X, 0.0f, target.Z)))
+            //    // In our world we want a counter clockwise yaw angle
+            //    |> fun (Degrees deg) -> -deg
+            //    |> Degrees.make
 
-            // OLD
-            //let forcedYawRadians =
-            //    normalizeDot xzProjection target
-            //    |> MathF.Acos
-            //    |> fun radVal -> radVal 
-            //    |> Radians.make
-
-            //let forcedYaw =
-            //    forcedYawRadians
-            //    |> toDegF
-            //    |> fun (Degrees deg) -> 
-            //        deg - 90.0f
-            //        |> Degrees.make
-
-            //let forcedPitch =
-            //    normalizeDot yzProjection target
-            //    |> MathF.Acos
-            //    |> fun x -> x
-            //    |> Radians.make
-            //    |> toDegF
-            // OLD END
-            
-            // YAW CALC
-            //let dot = 
-            //    xzProjection.X * target.X + 
-            //    xzProjection.Y * target.Y +
-            //    xzProjection.Z * target.Z
-
-            //let crossX = xzProjection.Y * target.Z - xzProjection.Z * target.Y
-            //let crossY = xzProjection.X * target.Z - xzProjection.Z * target.X
-            //let crossZ = xzProjection.X * target.Y - xzProjection.Y * target.X
-
-            //let crossLen =
-            //    MathF.Sqrt(crossX*crossX + crossY*crossY + crossZ*crossZ)
-
-            //let yawRads = Radians <| MathF.Atan2(dot, crossLen)
-            
-            let forcedYaw = 
-                getAngleRadians xzProjection target
-                |> fun (Degrees deg) -> -deg
-                |> Degrees.make
-                
-            let forcedPitch = 
-                getAngleRadians yzProjection target
+            let forcedYaw = getYawY yawOrigin target
+                                       
+            //let forcedPitch = 
+            //    getAngle pitchOrigin target
+            //    |> fun (Degrees x) -> 
+            //        -90.0f + x
+            //    |> fun v -> 
+            //        if v < -89.0f then -89.0f
+            //        elif v > 89.0f then 89.0f
+            //        else v
+            //    |> Degrees.make
+            let forcedPitch = getPitchX pitchOrigin target
 
             { state with 
                 Yaw = forcedYaw 

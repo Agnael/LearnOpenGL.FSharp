@@ -17,7 +17,7 @@ open Galante
 let initialState = 
     GameState.createDefault(
         "14_A_Lighting_Scene", 
-        new Size(1280, 720))
+        new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
 
@@ -38,13 +38,6 @@ let main argv =
 
     let lightSourcePosition = new Vector3(1.2f, 1.0f, 2.0f)
         
-    let aMovement dispatch cameraAction = dispatch (Camera cameraAction)
-    let aWindow dispatch windowAction = dispatch (Window windowAction)
-    let aMouse dispatch mouseAction = dispatch (Mouse mouseAction)
-    let aResolutionUpdate dispatch w h  = 
-        dispatch (Window (ResolutionUpdate (new Size(w, h))))
-    let aCamera dispatch cameraAction = dispatch (Camera cameraAction)
-
     let onKeyDown ctx state dispatch kb key =
         let initResW = initialState.Window.Resolution.Width
         let initResH = initialState.Window.Resolution.Height
@@ -73,12 +66,6 @@ let main argv =
         |> ignore
             
     let onLoad (ctx: GlWindowCtx) input state dispatch =
-        let font =
-            Text.getFont "NovaFlat.ttf"
-            |> fun x -> 
-                x.SetPixelSizes (0ul, 48ul)
-                //x.Glyph
-
         shaderLighted <-
             GlProg.emptyBuilder
             |> GlProg.withName "Lighted"
@@ -114,13 +101,13 @@ let main argv =
             |> GlVao.bind
             |> fun (vao, _) -> vao
 
-        let qubeVbo =
+        let cubeVao =
             GlVbo.emptyVboBuilder
             |> GlVbo.withAttrNames ["Positions"]
             |> GlVbo.withAttrDefinitions Cube.vertexPositions
             |> GlVbo.build (cubeVao, ctx)
                                     
-        aMouse dispatch UseCursorRaw
+        dispatch (Mouse UseCursorRaw)
 
         // Hardcoded camera position and target, so it looks like the
         // LearnOpenGL.com example.
@@ -128,8 +115,11 @@ let main argv =
         let forcedCamTarget = 
             new Vector3(-0.22922294f, -0.36110625f, -0.9039132f)
 
-        aCamera dispatch (ForcePosition forcedCamPos)
-        //aCamera dispatch (ForceTarget forcedCamTarget)
+        dispatch (Camera (ForcePosition forcedCamPos))
+        dispatch (Camera (ForceTarget forcedCamTarget))
+        
+        //dispatch (Camera (ForcePosition (new Vector3(-4.9773064f, -5.346569f, -2.5255394f))))
+        //dispatch (Camera (ForceTarget (new Vector3(0.74661785f, 0.55385435f, 0.36852035f))))
 
     let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
         (ctx, state, dispatch, deltaTime)
@@ -186,7 +176,7 @@ let main argv =
         ()
 
     let onInputContextLoaded ctx ic state dispatch = 
-        aWindow dispatch (InitializeInputContext ic)
+        dispatch (Window (InitializeInputContext ic))
 
     let onWindowResize ctx state dispatch newSize =
         (ctx, state, dispatch, newSize)

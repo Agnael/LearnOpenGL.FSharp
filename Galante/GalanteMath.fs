@@ -35,14 +35,43 @@
         |> Radians.value
         |> MathF.Sin
 
-    let getAngleRadians (v1: Vector3) (v2: Vector3) =
-        //let dot = Vector3.do
-        let dot = v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z
-        let crossX = v1.Y * v2.Z - v1.Z * v2.Y
-        let crossY = v1.X * v2.Z - v1.Z * v2.X
-        let crossZ = v1.X * v2.Y - v1.Y * v2.X
-        let crossLen = MathF.Sqrt(crossX*crossX + crossY*crossY + crossZ*crossZ)
-
-        MathF.Atan2(dot, crossLen)
+    let getAngle (v1: Vector3) (v2: Vector3) =
+        // Formula: v1.v2 = |v1|.|v2|.cos(angle)
+        // then ==> angle = acos((v1.v2) / (|v1|.|v2|))
+        Vector3.Dot (v1, v2) / (v1.Length() * v2.Length())
+        |> MathF.Acos
         |> Radians.make
         |> toDegrees
+
+    /// <summary>
+    ///     The Y-Axis is taken as the rotation center and, given an origin 
+    ///     vector to take as a reference for the angle's start and another 
+    ///     vector as the target of the camera, the negated angle between 
+    ///     them is returned, expressing the degrees of a 
+    ///     counter-clockwise movement.
+    /// </summary>
+    let getYawY (yawOrigin: Vector3) (target: Vector3) =        
+        //getAngle yawOrigin (new Vector3(target.X, 0.0f, target.Z))
+        getAngle yawOrigin (new Vector3(target.X, 0.0f, target.Z))
+        // Inverts value for a counter-clockwise yaw angle
+        |> fun (Degrees deg) -> -deg
+        |> Degrees.make
+
+    /// <summary>
+    ///     The X-Axis is taken as the rotation center and, given an origin
+    ///     vector to take as a reference for the angle's start and another 
+    ///     vector as the target of the camera, the angle between 
+    ///     them is returned, adjusted with a hacky -90.0f degree start
+    ///     for the value.
+    ///     TODO: The -90.0f adjustment is a hack that just happen to make
+    ///     this work but it must be understood and removed.
+    /// </summary>
+    let getPitchX (pitchOrigin: Vector3) (target: Vector3) =
+        getAngle pitchOrigin target
+        |> fun (Degrees x) -> 
+            -90.0f + x
+        |> fun v -> 
+            if v < -89.9f then -89.9f
+            elif v > 89.9f then 89.9f
+            else v
+        |> Degrees.make

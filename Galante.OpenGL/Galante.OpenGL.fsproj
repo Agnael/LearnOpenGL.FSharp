@@ -26,6 +26,7 @@
     <Compile Include="GlProg.fs" />
     <Compile Include="GlTex.fs" />
     <Compile Include="GlVbo.fs" />
+    <Compile Include="GlFont.fs" />
     <Compile Include="GlWin.fs" />
   </ItemGroup>
 

@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Text.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Text.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Compile Include="State\Slices\WindowSlice.fs" />
     <Compile Include="State\Slices\FpsCounterSlice.fs" />
     <Compile Include="State\Slices\MouseSlice.fs" />
@@ -21,9 +15,6 @@
     <Compile Include="Cube.fs" />
     <Compile Include="Baseline.fs" />
     <Compile Include="Program.fs" />
-    <Content Include="NovaFlat.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="LightSource.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
