@@ -23,7 +23,8 @@ Each title title with a link is pointing to the original chapter from the learno
     * [12_Camera_Automove](#12_camera_automove)
     * [13_Camera_Walk_Around_With_Inputs](#13_camera_walk_around_with_inputs)   
 * **Lighting**
-  * Coming soon. 
+    * [14_A_Lighting_Scene](#14_a_lighting_scene)   
+  * In progress. 
 * **Model loading**
   * Coming soon.
 * **Advanced OpenGL**
@@ -89,7 +90,12 @@ This one looks kind of weird because the images are not centered vertically, the
 
 
 # Lighting
-Coming soon.
+## [Colors](https://learnopengl.com/Lighting/Colors) 
+#### 14_A_Lighting_Scene
+<img src="https://user-images.githubusercontent.com/32271030/112418419-2c743480-8d08-11eb-80fa-4e2908697324.gif" width="642" height="392">
+
+
+In progress.
 
 # Model loading
 Coming soon.
