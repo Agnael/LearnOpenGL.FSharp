@@ -117,9 +117,6 @@ let main argv =
 
         dispatch (Camera (ForcePosition forcedCamPos))
         dispatch (Camera (ForceTarget forcedCamTarget))
-        
-        //dispatch (Camera (ForcePosition (new Vector3(-4.9773064f, -5.346569f, -2.5255394f))))
-        //dispatch (Camera (ForceTarget (new Vector3(0.74661785f, 0.55385435f, 0.36852035f))))
 
     let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
         (ctx, state, dispatch, deltaTime)

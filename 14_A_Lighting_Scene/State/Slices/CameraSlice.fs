@@ -129,7 +129,7 @@
                     yawDegrees + (offset.X * state.Sensitivity)
                     |> fun yaw -> 
                         if yaw >= 360.0f then 0.0f 
-                        elif yaw <= -360.0f then 0.0f
+                        elif yaw <= 0.0f then 360.0f
                         else yaw
                     |> Degrees.make 
 
@@ -167,33 +167,10 @@
             
         | ForcePosition newPos ->
             { state with Position = newPos }
-        | ForceTarget target ->        
-            let yawOrigin = new Vector3(1.0f, 0.0f, 0.0f)
-            let pitchOrigin = new Vector3(0.0f, -1.0f, 0.0f)
-                               
-            //let forcedYaw = 
-            //    //getAngle yawOrigin (new Vector3(target.X, 0.0f, target.Z))
-            //    getAngle yawOrigin (Vector3.Normalize(new Vector3(target.X, 0.0f, target.Z)))
-            //    // In our world we want a counter clockwise yaw angle
-            //    |> fun (Degrees deg) -> -deg
-            //    |> Degrees.make
-
-            let forcedYaw = getYawY yawOrigin target
-                                       
-            //let forcedPitch = 
-            //    getAngle pitchOrigin target
-            //    |> fun (Degrees x) -> 
-            //        -90.0f + x
-            //    |> fun v -> 
-            //        if v < -89.0f then -89.0f
-            //        elif v > 89.0f then 89.0f
-            //        else v
-            //    |> Degrees.make
-            let forcedPitch = getPitchX pitchOrigin target
-
+        | ForceTarget target ->     
             { state with 
-                Yaw = forcedYaw 
-                Pitch = forcedPitch
+                Yaw = getYaw target 
+                Pitch = getPitch target
                 TargetDirection = target }
 
         | MoveForwardStart -> 

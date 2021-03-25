@@ -35,7 +35,11 @@
         |> Radians.value
         |> MathF.Sin
 
-    let getAngle (v1: Vector3) (v2: Vector3) =
+    /// <summary>
+    ///     Returns the unsigned degrees of the shortest angle formed by the 
+    ///     provided vectors. Values will always range from 0 to 180 degrees.
+    /// </summary>
+    let getAngleAbs (v1: Vector3) (v2: Vector3) =
         // Formula: v1.v2 = |v1|.|v2|.cos(angle)
         // then ==> angle = acos((v1.v2) / (|v1|.|v2|))
         Vector3.Dot (v1, v2) / (v1.Length() * v2.Length())
@@ -43,18 +47,18 @@
         |> Radians.make
         |> toDegrees
 
-    /// <summary>
-    ///     The Y-Axis is taken as the rotation center and, given an origin 
-    ///     vector to take as a reference for the angle's start and another 
-    ///     vector as the target of the camera, the negated angle between 
-    ///     them is returned, expressing the degrees of a 
-    ///     counter-clockwise movement.
-    /// </summary>
-    let getYawY (yawOrigin: Vector3) (target: Vector3) =        
-        //getAngle yawOrigin (new Vector3(target.X, 0.0f, target.Z))
-        getAngle yawOrigin (new Vector3(target.X, 0.0f, target.Z))
-        // Inverts value for a counter-clockwise yaw angle
-        |> fun (Degrees deg) -> -deg
+    let getYaw (target: Vector3) =     
+        let yawOrigin = new Vector3(1.0f, 0.0f, 0.0f)
+
+        // If the camera is facing towards the positive Z, then the 
+        // absolute angle is the correct one.
+        // If the camera is facing towards the NEGATIVE Z AXIS, the final 
+        // positive angle must be calculated assuming that the 
+        // absolute angle is actually a negative angle in this 3d world.
+        getAngleAbs yawOrigin (new Vector3(target.X, 0.0f, target.Z))
+        |> fun (Degrees deg) -> 
+            if MathF.Sign target.Z < 0 then 360.0f - deg
+            else deg
         |> Degrees.make
 
     /// <summary>
@@ -66,12 +70,17 @@
     ///     TODO: The -90.0f adjustment is a hack that just happen to make
     ///     this work but it must be understood and removed.
     /// </summary>
-    let getPitchX (pitchOrigin: Vector3) (target: Vector3) =
-        getAngle pitchOrigin target
-        |> fun (Degrees x) -> 
-            -90.0f + x
-        |> fun v -> 
-            if v < -89.9f then -89.9f
-            elif v > 89.9f then 89.9f
-            else v
+    let getPitch (target: Vector3) =
+        let zSign = single <| MathF.Sign target.Z
+        let ySign = single <| MathF.Sign target.Y
+        //let pitchOrigin = new Vector3(0.0f, 0.0f, zSign)
+        let pitchOrigin = new Vector3(target.X, 0.0f, target.Z)
+
+        let angle = 
+            //getAngleAbs pitchOrigin (new Vector3(target.X, target.Y, 0.0f))
+            getAngleAbs pitchOrigin target
+        
+        angle
+        |> fun (Degrees v) -> if v > 89.9f then 89.9f else v
+        |> fun v -> if MathF.Sign target.Y < 0 then -v else v
         |> Degrees.make

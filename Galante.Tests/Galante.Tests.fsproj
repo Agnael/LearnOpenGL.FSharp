@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="GalanteMath\getYawY.fs" />
+    <Compile Include="GalanteMath\getYaw.fs" />
     <Compile Include="GalanteMath\getAngle.fs" />
   </ItemGroup>
 
