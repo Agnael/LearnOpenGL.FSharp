@@ -109,14 +109,10 @@ let main argv =
                                     
         dispatch (Mouse UseCursorRaw)
 
-        // Hardcoded camera position and target, so it looks like the
-        // LearnOpenGL.com example.
-        let forcedCamPos = new Vector3(1.3563321f, 1.5168644f, 3.8430243f)
-        let forcedCamTarget = 
-            new Vector3(-0.22922294f, -0.36110625f, -0.9039132f)
-
-        dispatch (Camera (ForcePosition forcedCamPos))
-        dispatch (Camera (ForceTarget forcedCamTarget))
+        // Hardcoded camera position and target, so it looks just like the
+        // LearnOpenGL.com example right away.
+        dispatch (Camera (ForcePosition (new Vector3(1.35f, 1.51f, 3.84f))))
+        dispatch (Camera (ForceTarget (new Vector3(-0.22f, -0.36f, -0.90f))))
 
     let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
         (ctx, state, dispatch, deltaTime)
