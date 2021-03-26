@@ -92,21 +92,106 @@ This one looks kind of weird because the images are not centered vertically, the
 # Lighting
 ## [Colors](https://learnopengl.com/Lighting/Colors) 
 #### 14_A_Lighting_Scene
-<img src="https://user-images.githubusercontent.com/32271030/112418419-2c743480-8d08-11eb-80fa-4e2908697324.gif" width="642" height="392">
+<img src="https://user-images.githubusercontent.com/32271030/112563263-c941db00-8db7-11eb-9f8b-ac6c6a418fbf.png" width="642" height="392">
 
+## [Basic Lighting](https://learnopengl.com/Lighting/Basic-Lighting)  
+#### 15_Phong_Ambient_Lighting
+<img src="https://user-images.githubusercontent.com/32271030/112563349-ec6c8a80-8db7-11eb-9489-63de370d60b5.png" width="642" height="392">
 
+#### 15_Phong_Diffuse_Lighting
 In progress.
+
+#### 15_Phong_Specular_Lighting
+In progress.
+
+## [Materials](https://learnopengl.com/Lighting/Materials)  
+Coming soon.
+
+## [Lighting maps](https://learnopengl.com/Lighting/Lighting-maps)  
+Coming soon.
+
+## [Light casters](https://learnopengl.com/Lighting/Light-casters)  
+Coming soon.
+
+## [Multiple lights](https://learnopengl.com/Lighting/Multiple-lights)  
+Coming soon.
 
 # Model loading
 Coming soon.
 
 # Advanced OpenGL
+## [Depth testing](https://learnopengl.com/Advanced-OpenGL/Depth-testing)  
+Coming soon.
+
+## [Stencil testing](https://learnopengl.com/Advanced-OpenGL/Stencil-testing)  
+Coming soon.
+
+## [Blending](https://learnopengl.com/Advanced-OpenGL/Blending)  
+Coming soon.
+
+## [Face culling](https://learnopengl.com/Advanced-OpenGL/Face-culling)  
+Coming soon.
+
+## [Framebuffers](https://learnopengl.com/Advanced-OpenGL/Framebuffers)  
+Coming soon.
+
+## [Cubemaps](https://learnopengl.com/Advanced-OpenGL/Cubemaps)  
+Coming soon..
+
+## [Advanced data](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)  
+Coming soon.
+
+## [Advanced GLSL](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL)  
+Coming soon.
+
+## [Geometry shader](https://learnopengl.com/Advanced-OpenGL/Geometry-Shader)  
+Coming soon.
+
+## [Instancing](https://learnopengl.com/Advanced-OpenGL/Instancing)  
+Coming soon.
+
+## [Anti aliasing](https://learnopengl.com/Advanced-OpenGL/Anti-Aliasing)  
 Coming soon.
 
 # Advanced lighting
+## [Advanced lighting](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting)  
+Coming soon.
+
+## [Gamma Correction](https://learnopengl.com/Advanced-Lighting/Gamma-Correction)  
+Coming soon.
+
+## [Shadow mapping](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping)  
+Coming soon.
+
+## [Point shadows](https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows)  
+Coming soon.
+
+## [Normal mapping](https://learnopengl.com/Advanced-Lighting/Normal-Mapping)  
+Coming soon.
+
+## [Parallax mapping](https://learnopengl.com/Advanced-Lighting/Parallax-Mapping)  
+Coming soon.
+
+## [HDR](https://learnopengl.com/Advanced-Lighting/HDR)  
+Coming soon.
+
+## [Bloom](https://learnopengl.com/Advanced-Lighting/Bloom)  
+Coming soon.
+
+## [Deferred Shading](https://learnopengl.com/Advanced-Lighting/Deferred-Shading)  
+Coming soon.
+
+## [SSAO](https://learnopengl.com/Advanced-Lighting/SSAO)  
 Coming soon.
 
 # PBR
+## [Lighting](https://learnopengl.com/PBR/Lighting)  
+Coming soon.
+
+## [IBL - Image Based Lighting - Diffuse irradiance](https://learnopengl.com/PBR/IBL/Diffuse-irradiance)  
+Coming soon.
+
+## [IBL - Image Based Lighting - Specular IBL](https://learnopengl.com/PBR/IBL/Specular-IBL)  
 Coming soon.
 
 # In practice
