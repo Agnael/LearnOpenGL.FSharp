@@ -1,7 +1,6 @@
-﻿module WindowSlice
+﻿module BaseWindowSlice
     open System.Drawing
     open Silk.NET.Input
-    open System.Numerics
         
     type GameInputs =
         | Uninitialized

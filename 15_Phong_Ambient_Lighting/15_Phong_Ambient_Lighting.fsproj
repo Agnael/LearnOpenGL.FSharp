@@ -3,19 +3,22 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>_14_A_Lighting_Scene</RootNamespace>
+    <RootNamespace>_15_Phong_Ambient_Lighting</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="Cube.fs" />
     <Compile Include="Program.fs" />
-    <None Include="LightSource.frag">
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Basic3d.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Lighted.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Basic3d.vert">
+    <None Include="LightSource.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

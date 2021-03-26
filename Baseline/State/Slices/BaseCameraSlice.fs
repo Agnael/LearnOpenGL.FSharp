@@ -1,8 +1,6 @@
-﻿module CameraSlice
-    open Galante
+﻿module BaseCameraSlice
     open GalanteMath
     open System.Numerics
-    open System
 
     type CameraOffset = 
         { X: single
@@ -61,17 +59,13 @@
     
         static member Default = {
             Position = new Vector3(0.0f, 0.0f, 0.0f)
-            TargetDirection = new Vector3(0.0f, -1.0f, 0.0f)
+            TargetDirection = new Vector3(-1.0f, 0.0f, 0.0f)
             UpDirection = new Vector3(0.0f, 1.0f, 0.0f)
             MoveSpeed = 2.5f
             ZoomSpeed = 3.0f
             Sensitivity = 0.1f
             Fov = Degrees.make 45.0f
             Pitch = Degrees.make 0.0f
-            // To make sure the camera points towards the negative z-axis by 
-            // default we can give the yaw a default value of a 90 degree clockwise 
-            // rotation. Positive degrees rotate counter-clockwise so we set the 
-            // default yaw value to:
             Yaw = Degrees.make 0.0f
             IsMovingForward = false
             IsMovingBack = false

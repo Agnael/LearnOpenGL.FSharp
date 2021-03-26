@@ -1,24 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>_14_A_Lighting_Scene</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Cube.fs" />
-    <Compile Include="Program.fs" />
-    <None Include="LightSource.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Lighted.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Basic3d.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Compile Include="State\Slices\BaseCameraSlice.fs" />
+    <Compile Include="State\Slices\BaseFpsCounterSlice.fs" />
+    <Compile Include="State\Slices\BaseMouseSlice.fs" />
+    <Compile Include="State\Slices\BaseWindowSlice.fs" />
+    <Compile Include="State\BaselineState.fs" />
+    <Compile Include="Baseline.fs" />
   </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
@@ -26,9 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Baseline\Baseline.fsproj" />
     <ProjectReference Include="..\Galante\Galante.fsproj" />
     <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
   </ItemGroup>
-
 </Project>

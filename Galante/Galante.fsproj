@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="FontManagerTest.fs" />
     <Compile Include="Models\GameBuilder.fs" />
     <Compile Include="Models\GameContext.fs" />
     <Compile Include="State\StoreFactory.fs" />
@@ -28,6 +29,7 @@
     <PackageReference Include="Silk.NET.Windowing.Common" Version="2.1.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
     <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>

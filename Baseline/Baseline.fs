@@ -4,14 +4,14 @@ module Baseline
 open GalanteMath
 open Galante
 open Silk.NET.Input
-open WindowSlice
-open MouseSlice
+open BaseWindowSlice
+open BaseMouseSlice
 open System.Drawing
-open CameraSlice
+open BaseCameraSlice
 open System.Numerics
 open Galante.OpenGL
 open Silk.NET.Windowing
-open GameState
+open BaselineState
         
 let private aMovement dispatch cameraAction = 
     dispatch (Camera cameraAction)
@@ -115,8 +115,7 @@ let handleCameraZoom (ctx, state, dispatch, newWheelPos: Vector2) =
     (ctx, state, dispatch, newWheelPos)
 
 // On update handlers
-let updateWindowResolution (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
-
+let updateWindowResolution (ctx: GlWindowCtx, state: BaselineState, dispatch, dt) =
     if state.Window.ShouldUpdateResolution then
         let res = state.Window.Resolution
         let newSize = 
@@ -127,7 +126,7 @@ let updateWindowResolution (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
         aWindow dispatch ResolutionUpdated
     (ctx, state, dispatch, dt)
 
-let updateWindowMode (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
+let updateWindowMode (ctx: GlWindowCtx, state: BaselineState, dispatch, dt) =
     if  
         state.Window.IsFullscreen && 
         not (ctx.Window.WindowState = WindowState.Fullscreen) 
@@ -149,7 +148,7 @@ let updateWindowMode (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
         aWindowResolutionUpdate dispatch res.Width res.Height
     (ctx, state, dispatch, dt)
 
-let updateWindowTitle (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
+let updateWindowTitle (ctx: GlWindowCtx, state: BaselineState, dispatch, dt) =
     ctx.Window.Title <- 
         //sprintf 
         //    "%s [%i FPS][x: %f | y: %f | z: %f]" state.Window.Title
@@ -168,7 +167,7 @@ let updateWindowTitle (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
                 (Degrees.value state.Camera.Yaw)
     (ctx, state, dispatch, dt)
 
-let updateCursorMode (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
+let updateCursorMode (ctx: GlWindowCtx, state: BaselineState, dispatch, dt) =
     match state.Window.InputContext with
     | Initialized inputs -> 
         // All mice should have identical state
@@ -179,7 +178,7 @@ let updateCursorMode (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
     | _ -> ()
     (ctx, state, dispatch, dt)
 
-let updateWindowClosure (ctx: GlWindowCtx, state: GameState, dispatch, dt) =
+let updateWindowClosure (ctx: GlWindowCtx, state: BaselineState, dispatch, dt) =
     if state.Window.ShouldClose then 
         ctx.Window.Close()
     (ctx, state, dispatch, dt)

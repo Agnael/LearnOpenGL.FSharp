@@ -1,21 +1,16 @@
-﻿module GameState    
-    open CameraSlice
-    open MouseSlice
-    open FpsCounterSlice
-    open GalanteMath
-    open Sodium.Frp
-    open WindowSlice
-    open System.Drawing
-    open StoreFactory
-    open Silk.NET.Input
+﻿module BaselineState    
+    open BaseCameraSlice
+    open BaseMouseSlice
+    open BaseFpsCounterSlice
+    open BaseWindowSlice
     
-    type GameAction =
+    type BaselineAction =
         | Camera of CameraAction
         | Mouse of MouseAction
         | FpsCounter of FpsCounterAction
         | Window of WindowAction
     
-    type GameState =
+    type BaselineState =
         { Camera: CameraState 
         ; Mouse: MouseState
         ; FpsCounter: FpsCounterState
@@ -31,11 +26,16 @@
     let gameReducer action prevState =
         match action with
         | Camera action ->
-            { prevState with Camera = CameraSlice.reduce action prevState.Camera }
+            { prevState with 
+                Camera = BaseCameraSlice.reduce action prevState.Camera }
         | Mouse action ->
-            { prevState with Mouse = MouseSlice.reduce action prevState.Mouse }
+            { prevState with 
+                Mouse = BaseMouseSlice.reduce action prevState.Mouse }
         | FpsCounter action ->
-            { prevState with FpsCounter = FpsCounterSlice.reduce action prevState.FpsCounter }
+            { prevState with 
+                FpsCounter = 
+                    BaseFpsCounterSlice.reduce action prevState.FpsCounter }
         | Window action -> 
-            { prevState with Window = WindowSlice.reduce action prevState.Window }
+            { prevState with 
+                Window = BaseWindowSlice.reduce action prevState.Window }
         

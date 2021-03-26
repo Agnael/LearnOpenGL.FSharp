@@ -1,22 +1,20 @@
 ﻿open System
 open Galante.OpenGL
-open Silk.NET.Windowing
 open Silk.NET.OpenGL
 open System.Drawing
 open System.Numerics
-open Silk.NET.Input
-open GalanteMath
-open Game
-open Galante
-open BaselineState
 open BaseCameraSlice
 open BaseMouseSlice
 open BaseFpsCounterSlice
 open BaseWindowSlice
+open GalanteMath
+open BaselineState
+open Game
+open Galante
 
 let initialState = 
     BaselineState.createDefault(
-        "14_A_Lighting_Scene", 
+        "15_Phong_Ambient_Lighting", 
         new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution

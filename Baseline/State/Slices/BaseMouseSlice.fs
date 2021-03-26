@@ -1,4 +1,4 @@
-﻿module MouseSlice
+﻿module BaseMouseSlice
     open System.Numerics
 
     type MouseAction =

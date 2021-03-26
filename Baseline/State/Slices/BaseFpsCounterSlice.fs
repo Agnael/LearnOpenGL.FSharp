@@ -1,6 +1,4 @@
-﻿module FpsCounterSlice
-    open GalanteMath
-    
+﻿module BaseFpsCounterSlice    
     type FpsCounterAction =
         | FrameRenderCompleted of float
 
