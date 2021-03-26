@@ -149,7 +149,7 @@ This one looks kind of weird because the images are not centered vertically, the
 <img src="https://user-images.githubusercontent.com/32271030/112563349-ec6c8a80-8db7-11eb-9489-63de370d60b5.png" width="642" height="392">
 
 #### 15_Phong_Diffuse_Lighting
-In progress.
+<img src="https://user-images.githubusercontent.com/32271030/112570540-fba60500-8dc4-11eb-952c-8d375e61c85e.png" width="642" height="392">
 
 #### 15_Phong_Specular_Lighting
 In progress.
