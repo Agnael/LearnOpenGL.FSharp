@@ -27,8 +27,8 @@ Each title title with a link is pointing to the original chapter from the learno
     * [14_A_Lighting_Scene](#14_a_lighting_scene)
   * **Basic lighting** ([Original article](https://learnopengl.com/Lighting/Basic-Lighting))
     * [15_Phong_Ambient_Lighting](#15_phong_ambient_lighting)  
-    * [16_Phong_Diffuse_Lighting](#15_phong_diffuse_lighting)  
-    * [17_Phong_Specular_Lighting](#15_phong_specular_lighting)  
+    * [16_Phong_Diffuse_Lighting](#16_phong_diffuse_lighting)  
+    * [17_Phong_Specular_Lighting](#17_phong_specular_lighting)  
   * In progress. 
 * **Model loading**
     * Coming soon.
