@@ -14,7 +14,7 @@ open Galante
 
 let initialState = 
     BaselineState.createDefault(
-        "15_Phong_Ambient_Lighting", 
+        "15_Phong_Diffuse_Lighting", 
         new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -75,8 +75,9 @@ let main argv =
                 "uObjectColor"
                 "uLightColor"
                 "uModel"
-                "uView";
+                "uView"
                 "uProjection"
+                "uLightSourcePos"
             ]
             |> GlProg.build ctx
 
@@ -101,8 +102,8 @@ let main argv =
 
         let cubeVbo =
             GlVbo.emptyVboBuilder
-            |> GlVbo.withAttrNames ["Positions"]
-            |> GlVbo.withAttrDefinitions Cube.vertexPositions
+            |> GlVbo.withAttrNames ["Positions"; "Normals"]
+            |> GlVbo.withAttrDefinitions Cube.vertexPositionsAndNormals
             |> GlVbo.build (cubeVao, ctx)
                                     
         dispatch (Mouse UseCursorRaw)
@@ -144,6 +145,7 @@ let main argv =
         |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity 
         |> GlProg.setUniformM4x4 "uView" viewMatrix
         |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
+        |> GlProg.setUniformV3 "uLightSourcePos" lightSourcePosition
         |> ignore
 
         GlVao.bind (cubeVao, ctx) |> ignore        

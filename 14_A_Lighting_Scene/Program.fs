@@ -101,7 +101,7 @@ let main argv =
             |> GlVao.bind
             |> fun (vao, _) -> vao
 
-        let cubeVao =
+        let cubeVbo =
             GlVbo.emptyVboBuilder
             |> GlVbo.withAttrNames ["Positions"]
             |> GlVbo.withAttrDefinitions Cube.vertexPositions
