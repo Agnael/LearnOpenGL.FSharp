@@ -14,7 +14,7 @@ open Galante
 
 let initialState = 
     BaselineState.createDefault(
-        "15_Phong_Diffuse_Lighting", 
+        "16_Phong_Diffuse_Lighting", 
         new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
