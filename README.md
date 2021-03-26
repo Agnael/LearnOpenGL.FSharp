@@ -152,7 +152,8 @@ This one looks kind of weird because the images are not centered vertically, the
 <img src="https://user-images.githubusercontent.com/32271030/112570755-68b99a80-8dc5-11eb-803d-d38f2d08787d.png" width="642" height="392">
 
 #### 17_Phong_Specular_Lighting
-In progress.
+Note how the reflection of the light moves on each face of the cube when the camera moves.
+<img src="https://user-images.githubusercontent.com/32271030/112575657-7c69fe80-8dcf-11eb-8938-4596695771eb.gif" width="642" height="392">
 
 ## [Materials](https://learnopengl.com/Lighting/Materials)  
 Coming soon.
