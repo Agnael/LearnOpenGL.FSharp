@@ -45,6 +45,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "16_Phong_Diffuse_Lighting",
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "17_Phong_Specular_Lighting", "17_Phong_Specular_Lighting\17_Phong_Specular_Lighting.fsproj", "{6AD48C98-DC5B-4BD2-927A-47ED9312D8A9}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "18_Setting_Materials", "18_Setting_Materials\18_Setting_Materials.fsproj", "{D12DEB6D-C0CC-4E0D-86CC-5CF58630F350}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,10 @@ Global
 		{6AD48C98-DC5B-4BD2-927A-47ED9312D8A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AD48C98-DC5B-4BD2-927A-47ED9312D8A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AD48C98-DC5B-4BD2-927A-47ED9312D8A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D12DEB6D-C0CC-4E0D-86CC-5CF58630F350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D12DEB6D-C0CC-4E0D-86CC-5CF58630F350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D12DEB6D-C0CC-4E0D-86CC-5CF58630F350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D12DEB6D-C0CC-4E0D-86CC-5CF58630F350}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
