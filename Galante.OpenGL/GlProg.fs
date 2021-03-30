@@ -87,7 +87,7 @@ module GlProg
         |> List.find (fun x -> x.UniformName = name)
         |> fun uniform -> ctx.Gl.Uniform4 (uniform.GlUniformHandle, x, y, z, w)
         (program, ctx)
-       
+               
     let emptyBuilder =
         { Name = (); ShaderDefinitions = (); UniformNames = (); }
 

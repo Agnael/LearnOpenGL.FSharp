@@ -170,7 +170,7 @@ let main argv =
             MathF.Cos(time) * MathF.Sin(time)
             |> fun v -> 
                 if v <= 0.08f then 0.08f
-                elif v >= 0.3f then 0.3f 
+                elif v >= 0.2f then 0.2f 
                 else v
 
         let lightColor = new Vector3(1.0f)

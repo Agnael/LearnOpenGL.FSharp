@@ -160,7 +160,6 @@ let main argv =
         let projectionMatrix = 
             Matrix4x4.CreatePerspectiveFieldOfView(fov, ratio, 0.1f, 100.0f)
        
-        let materialSpecularColor = new Vector3(0.5f, 0.5f, 0.5f)
         let materialShininess = 32.0f
 
         let lightColor = new Vector3(1.0f)
