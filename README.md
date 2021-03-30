@@ -29,7 +29,16 @@ Each title title with a link is pointing to the original chapter from the learno
     * [15_Phong_Ambient_Lighting](#15_phong_ambient_lighting)  
     * [16_Phong_Diffuse_Lighting](#16_phong_diffuse_lighting)  
     * [17_Phong_Specular_Lighting](#17_phong_specular_lighting)  
-  * In progress. 
+  * **Materials** ([Original article](https://learnopengl.com/Lighting/Materials))
+    * [18_Setting_Materials](#18_setting_materials)  
+    * [19_Light_Properties](#19_light_properties)  
+    * [20_Different_Light_Colors](#20_different_light_colors)  
+  * **Lighting maps** ([Original article](https://learnopengl.com/Lighting/Lighting-maps))
+    * Coming soon.
+  * **Light casters** ([Original article](https://learnopengl.com/Lighting/Light-casters))
+    * Coming soon.
+  * **Multiple lights** ([Original article](https://learnopengl.com/Lighting/Multiple-lights))
+    * Coming soon.
 * **Model loading**
     * Coming soon.
 * **Advanced OpenGL**
@@ -156,7 +165,14 @@ Note how the reflection of the light moves on each face of the cube when the cam
 <img src="https://user-images.githubusercontent.com/32271030/112575657-7c69fe80-8dcf-11eb-8938-4596695771eb.gif" width="642" height="392">
 
 ## [Materials](https://learnopengl.com/Lighting/Materials)  
-Coming soon.
+#### 18_Setting_Materials
+<img src="https://user-images.githubusercontent.com/32271030/112924274-34f0b480-90e6-11eb-8acf-414888800d95.png" width="642" height="392">  
+
+#### 19_Light_Properties
+<img src="https://user-images.githubusercontent.com/32271030/112923955-a11ee880-90e5-11eb-93d9-2df6f38fe222.png" width="642" height="392">  
+
+#### 20_Different_Light_Colors
+<img src="https://user-images.githubusercontent.com/32271030/112923956-a2e8ac00-90e5-11eb-9980-91338a512591.gif" width="642" height="392">
 
 ## [Lighting maps](https://learnopengl.com/Lighting/Lighting-maps)  
 Coming soon.
