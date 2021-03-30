@@ -14,7 +14,7 @@ open Galante
 
 let initialState = 
     BaselineState.createDefault(
-        "21_Diffuse_Maps", 
+        "22_Specular_Maps", 
         new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -34,6 +34,7 @@ let main argv =
     let mutable shaderLighted = Unchecked.defaultof<_>
     let mutable shaderLightSource = Unchecked.defaultof<_>
     let mutable containerDiffuseMapTex = Unchecked.defaultof<_>
+    let mutable containerSpecularMapTex = Unchecked.defaultof<_>
             
     let onKeyDown ctx state dispatch kb key =
         let initResW = initialState.Window.Resolution.Width
@@ -76,7 +77,7 @@ let main argv =
                 "uProjection"
                 "uViewerPos"
                 "uMaterial.diffuseMap"
-                "uMaterial.specularColor"
+                "uMaterial.specularMap"
                 "uMaterial.shininess"
                 "uLight.position"
                 "uLight.ambientColor"
@@ -113,6 +114,7 @@ let main argv =
             |> GlVbo.build (cubeVao, ctx)
 
         containerDiffuseMapTex <- GlTex.create2D "container_diffuse.png" (cubeVao, ctx)
+        containerSpecularMapTex <- GlTex.create2D "container_specular.png" (cubeVao, ctx)
                                     
         // Hardcoded camera position and target, so it looks just like the
         // LearnOpenGL.com example right away.
@@ -169,6 +171,7 @@ let main argv =
 
         (cubeVao, ctx)
         |> GlTex.bind GLEnum.Texture0 containerDiffuseMapTex
+        |> GlTex.bind GLEnum.Texture1 containerSpecularMapTex
         |> ignore
 
         // Prepares the shader
@@ -179,7 +182,7 @@ let main argv =
         |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
         |> GlProg.setUniformV3 "uViewerPos" state.Camera.Position
         |> GlProg.setUniformI "uMaterial.diffuseMap" 0
-        |> GlProg.setUniformV3 "uMaterial.specularColor" materialSpecularColor
+        |> GlProg.setUniformI "uMaterial.specularMap" 1
         |> GlProg.setUniformF "uMaterial.shininess" materialShininess
         |> GlProg.setUniformV3 "uLight.position" lightSrcPosition
         |> GlProg.setUniformV3 "uLight.ambientColor" lightAmbientColor

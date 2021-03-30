@@ -7,7 +7,6 @@ struct Material {
 
 struct Light {
 	vec3 position;
-
 	vec3 ambientColor;
 	vec3 diffuseColor;
 	vec3 specularColor;
