@@ -47,9 +47,11 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "17_Phong_Specular_Lighting"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "18_Setting_Materials", "18_Setting_Materials\18_Setting_Materials.fsproj", "{D12DEB6D-C0CC-4E0D-86CC-5CF58630F350}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "19_Light_Properties", "19_Light_Properties\19_Light_Properties.fsproj", "{389FF5D1-41B5-4787-95E2-2810CFDA6BF2}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "19_Light_Properties", "19_Light_Properties\19_Light_Properties.fsproj", "{389FF5D1-41B5-4787-95E2-2810CFDA6BF2}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "20_Different_Light_Colors", "20_Different_Light_Colors\20_Different_Light_Colors.fsproj", "{96667657-EBDE-4856-BCB9-62AF650AE3AC}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "20_Different_Light_Colors", "20_Different_Light_Colors\20_Different_Light_Colors.fsproj", "{96667657-EBDE-4856-BCB9-62AF650AE3AC}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "21_Diffuse_Maps", "21_Diffuse_Maps\21_Diffuse_Maps.fsproj", "{7BDF7A72-3B03-4164-9459-2BD7228FF692}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +155,10 @@ Global
 		{96667657-EBDE-4856-BCB9-62AF650AE3AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96667657-EBDE-4856-BCB9-62AF650AE3AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96667657-EBDE-4856-BCB9-62AF650AE3AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BDF7A72-3B03-4164-9459-2BD7228FF692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BDF7A72-3B03-4164-9459-2BD7228FF692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BDF7A72-3B03-4164-9459-2BD7228FF692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BDF7A72-3B03-4164-9459-2BD7228FF692}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -54,7 +54,7 @@
         ; IsMovingRight: bool
         ; IsMovingUp: bool
         ; IsMovingDown: bool
-        ; IsAngleLocked: bool
+        ; IsLocked: bool
         ;}
     
         static member Default = {
@@ -73,7 +73,7 @@
             IsMovingRight = false
             IsMovingUp = false
             IsMovingDown = false
-            IsAngleLocked = false
+            IsLocked = false
         }
 
     let createViewMatrix state = 
@@ -85,37 +85,42 @@
     let reduce action state =
         match action with
         | UpdatePosition (CameraSpeed camSpeed) ->
-            let currTargetDir = state.TargetDirection
-            let currUpDir = state.UpDirection
 
-            let moveForward pos = pos + currTargetDir * camSpeed
-            let moveBack pos = pos - currTargetDir * camSpeed
-            let moveLeft pos = 
-                pos - normalizeCross(currTargetDir, currUpDir) * camSpeed
-            let moveRight pos = 
-                pos + normalizeCross(currTargetDir, currUpDir) * camSpeed
-            let moveUp pos = pos + currUpDir * camSpeed
-            let moveDown pos = pos - currUpDir * camSpeed
+            if state.IsLocked then 
+                state
+            else
+                let currTargetDir = state.TargetDirection
+                let currUpDir = state.UpDirection
 
-            { state with
-                Position =
-                    state.Position
-                    |> fun pos -> 
-                        if state.IsMovingForward then moveForward pos else pos
-                    |> fun pos -> 
-                        if state.IsMovingBack then moveBack pos else pos
-                    |> fun pos -> 
-                        if state.IsMovingLeft then moveLeft pos else pos
-                    |> fun pos -> 
-                        if state.IsMovingRight then moveRight pos else pos
-                    |> fun pos -> 
-                        if state.IsMovingUp then moveUp pos else pos
-                    |> fun pos -> 
-                        if state.IsMovingDown then moveDown pos else pos
-            }
+                let moveForward pos = pos + currTargetDir * camSpeed
+                let moveBack pos = pos - currTargetDir * camSpeed
+                let moveLeft pos = 
+                    pos - normalizeCross(currTargetDir, currUpDir) * camSpeed
+                let moveRight pos = 
+                    pos + normalizeCross(currTargetDir, currUpDir) * camSpeed
+                let moveUp pos = pos + currUpDir * camSpeed
+                let moveDown pos = pos - currUpDir * camSpeed
+
+                { state with
+                    Position =
+                        state.Position
+                        |> fun pos -> 
+                            if state.IsMovingForward then moveForward pos 
+                            else pos
+                        |> fun pos -> 
+                            if state.IsMovingBack then moveBack pos else pos
+                        |> fun pos -> 
+                            if state.IsMovingLeft then moveLeft pos else pos
+                        |> fun pos -> 
+                            if state.IsMovingRight then moveRight pos else pos
+                        |> fun pos -> 
+                            if state.IsMovingUp then moveUp pos else pos
+                        |> fun pos -> 
+                            if state.IsMovingDown then moveDown pos else pos
+                }
 
         | AngularChange offset -> 
-            if state.IsAngleLocked then 
+            if state.IsLocked then 
                 state
             else
                 let yawDegrees = Degrees.value state.Yaw
@@ -198,6 +203,6 @@
             { state with IsMovingDown = false }
         
         | Lock -> 
-            { state with IsAngleLocked = true }
+            { state with IsLocked = true }
         | Unlock ->
-            { state with IsAngleLocked = false }
+            { state with IsLocked = false }
