@@ -34,7 +34,9 @@ Each title title with a link is pointing to the original chapter from the learno
     * [19_Light_Properties](#19_light_properties)  
     * [20_Different_Light_Colors](#20_different_light_colors)  
   * **Lighting maps** ([Original article](https://learnopengl.com/Lighting/Lighting-maps))
-    * Coming soon.
+    * [21_Diffuse_Maps](#21_diffuse_maps)  
+    * [22_Specular_Maps](#22_specular_maps)  
+    * [23_Emission_Maps](#23_emission_maps)  
   * **Light casters** ([Original article](https://learnopengl.com/Lighting/Light-casters))
     * Coming soon.
   * **Multiple lights** ([Original article](https://learnopengl.com/Lighting/Multiple-lights))
@@ -175,7 +177,14 @@ Note how the reflection of the light moves on each face of the cube when the cam
 <img src="https://user-images.githubusercontent.com/32271030/112923956-a2e8ac00-90e5-11eb-9980-91338a512591.gif" width="642" height="392">
 
 ## [Lighting maps](https://learnopengl.com/Lighting/Lighting-maps)  
-Coming soon.
+#### 21_Diffuse_Maps
+<img src="https://user-images.githubusercontent.com/32271030/112937135-835d7d80-90fd-11eb-8a85-c649352fa5b2.gif" width="642" height="392">
+
+#### 22_Specular_Maps
+<img src="https://user-images.githubusercontent.com/32271030/112937162-8f493f80-90fd-11eb-82e8-ae5ebb93d61a.gif" width="642" height="392">
+
+#### 23_Emission_Maps
+<img src="https://user-images.githubusercontent.com/32271030/112937189-98d2a780-90fd-11eb-8ca4-30c5cb71cdeb.gif" width="642" height="392">
 
 ## [Light casters](https://learnopengl.com/Lighting/Light-casters)  
 Coming soon.
