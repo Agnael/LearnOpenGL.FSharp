@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>_18_Setting_Materials</RootNamespace>
+    <RootNamespace>_19_Light_Properties</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

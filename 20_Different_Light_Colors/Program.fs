@@ -14,7 +14,7 @@ open Galante
 
 let initialState = 
     BaselineState.createDefault(
-        "18_Setting_Materials", 
+        "20_Different_Light_Colors", 
         new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -72,16 +72,18 @@ let main argv =
                 ; ShaderType.FragmentShader, @"Lighted.frag" 
                 ;]
             |> GlProg.withUniforms [
-                "uLightColor"
                 "uModel"
                 "uView"
                 "uProjection"
-                "uLightSourcePos"
                 "uViewerPos"
                 "uMaterial.ambientColor"
                 "uMaterial.diffuseColor"
                 "uMaterial.specularColor"
                 "uMaterial.shininess"
+                "uLight.position"
+                "uLight.ambientColor"
+                "uLight.diffuseColor"
+                "uLight.specularColor"
             ]
             |> GlProg.build ctx
 
@@ -96,6 +98,7 @@ let main argv =
                 "uModel"
                 "uView" 
                 "uProjection"
+                "uEmittedLightColor"
             ]
             |> GlProg.build ctx
 
@@ -132,6 +135,9 @@ let main argv =
 
         uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
         |> ctx.Gl.Clear
+        
+        // Sets a dark grey background so the cube´s color changes are visible
+        ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
 
         let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
 
@@ -146,19 +152,32 @@ let main argv =
         let materialSpecularColor = new Vector3(0.5f, 0.5f, 0.5f)
         let materialShininess = 32.0f
 
+        let time = single ctx.Window.Time
+        let lightColor = 
+            new Vector3(
+                MathF.Sin(time * 2.0f), 
+                MathF.Sin(time * 0.7f), 
+                MathF.Sin(time * 1.3f))
+            
+        let lightDiffuseColor = lightColor * new Vector3(0.5f)
+        let lightAmbientColor = lightDiffuseColor * new Vector3(0.2f)
+        let lightSpecularColor = new Vector3(1.0f, 1.0f, 1.0f)
+
         // Prepares the shader
         (shaderLighted, ctx)
         |> GlProg.setAsCurrent
-        |> GlProg.setUniformV3 "uLightColor" (new Vector3(1.0f, 1.0f, 1.0f))
         |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity 
         |> GlProg.setUniformM4x4 "uView" viewMatrix
         |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
-        |> GlProg.setUniformV3 "uLightSourcePos" lightSourcePosition
         |> GlProg.setUniformV3 "uViewerPos" state.Camera.Position
         |> GlProg.setUniformV3 "uMaterial.ambientColor" materialAmbientColor
         |> GlProg.setUniformV3 "uMaterial.diffuseColor" materialDiffuseColor
         |> GlProg.setUniformV3 "uMaterial.specularColor" materialSpecularColor
         |> GlProg.setUniformF "uMaterial.shininess" materialShininess
+        |> GlProg.setUniformV3 "uLight.position" lightSourcePosition
+        |> GlProg.setUniformV3 "uLight.ambientColor" lightAmbientColor
+        |> GlProg.setUniformV3 "uLight.diffuseColor" lightDiffuseColor
+        |> GlProg.setUniformV3 "uLight.specularColor" lightSpecularColor
         |> ignore
 
         GlVao.bind (cubeVao, ctx) |> ignore        
@@ -173,6 +192,7 @@ let main argv =
         |> GlProg.setUniformM4x4 "uModel" lightSourceModelMatrix
         |> GlProg.setUniformM4x4 "uView" viewMatrix
         |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
+        |> GlProg.setUniformV3 "uEmittedLightColor" lightColor
         |> ignore
         ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
 
