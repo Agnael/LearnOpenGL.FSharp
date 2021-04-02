@@ -51,11 +51,13 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "19_Light_Properties", "19_L
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "20_Different_Light_Colors", "20_Different_Light_Colors\20_Different_Light_Colors.fsproj", "{96667657-EBDE-4856-BCB9-62AF650AE3AC}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "21_Diffuse_Maps", "21_Diffuse_Maps\21_Diffuse_Maps.fsproj", "{7BDF7A72-3B03-4164-9459-2BD7228FF692}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "21_Diffuse_Maps", "21_Diffuse_Maps\21_Diffuse_Maps.fsproj", "{7BDF7A72-3B03-4164-9459-2BD7228FF692}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "22_Specular_Maps", "22_Specular_Maps\22_Specular_Maps.fsproj", "{595676CE-A636-4B23-8435-61F7B8585C13}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "22_Specular_Maps", "22_Specular_Maps\22_Specular_Maps.fsproj", "{595676CE-A636-4B23-8435-61F7B8585C13}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "23_Emission_Maps", "23_Emission_Maps\23_Emission_Maps.fsproj", "{9B74A216-F615-42E5-9805-C3958E4894BF}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "23_Emission_Maps", "23_Emission_Maps\23_Emission_Maps.fsproj", "{9B74A216-F615-42E5-9805-C3958E4894BF}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "24_Directional_Light", "24_Directional_Light\24_Directional_Light.fsproj", "{C45656D2-8B3C-46C2-A636-A943199C5843}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +173,10 @@ Global
 		{9B74A216-F615-42E5-9805-C3958E4894BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B74A216-F615-42E5-9805-C3958E4894BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B74A216-F615-42E5-9805-C3958E4894BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C45656D2-8B3C-46C2-A636-A943199C5843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C45656D2-8B3C-46C2-A636-A943199C5843}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C45656D2-8B3C-46C2-A636-A943199C5843}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C45656D2-8B3C-46C2-A636-A943199C5843}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
