@@ -108,7 +108,8 @@ Each title title with a link is pointing to the original chapter from the learno
 
 ## [Hello triangle](https://learnopengl.com/Getting-started/Hello-Triangle) + [Shaders](https://learnopengl.com/Getting-started/Shaders)
 #### 02_Triangle
-###### (GIF)
+<sub><sup>(GIF)</sub></sup>
+
 <img src="https://user-images.githubusercontent.com/32271030/110713867-6827de00-81e1-11eb-93d7-fed43910db31.gif" width="400" height="420">
 
 #### 03_Quad
