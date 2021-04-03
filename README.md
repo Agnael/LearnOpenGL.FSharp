@@ -194,6 +194,7 @@ Note how the reflection of the light moves on each face of the cube when the cam
 
 #### 25_Point_Light
 Note that although this light source looks similar as in the previous examples, this time it's not reaching the objects that are too far away from it, giving a more realisting feel to the source.
+
 <img src="https://user-images.githubusercontent.com/32271030/113493545-743c4e00-94b6-11eb-83cf-43e66d4509a3.gif" width="642" height="392">
 
 #### 26_Spotlight
