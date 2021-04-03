@@ -38,7 +38,9 @@ Each title title with a link is pointing to the original chapter from the learno
     * [22_Specular_Maps](#22_specular_maps)  
     * [23_Emission_Maps](#23_emission_maps)  
   * **Light casters** ([Original article](https://learnopengl.com/Lighting/Light-casters))
-    * Coming soon.
+    * [24_Directional_Light](#24_directional_light)  
+    * [25_Point_Light](#25_point_light)  
+    * [26_Spotlight](#26_spotlight)  
   * **Multiple lights** ([Original article](https://learnopengl.com/Lighting/Multiple-lights))
     * Coming soon.
 * **Model loading**
@@ -186,8 +188,15 @@ Note how the reflection of the light moves on each face of the cube when the cam
 #### 23_Emission_Maps
 <img src="https://user-images.githubusercontent.com/32271030/112937189-98d2a780-90fd-11eb-8ca4-30c5cb71cdeb.gif" width="642" height="392">
 
-## [Light casters](https://learnopengl.com/Lighting/Light-casters)  
-Coming soon.
+## [Light casters](https://learnopengl.com/Lighting/Light-casters)
+#### 24_Directional_Light
+<img src="https://user-images.githubusercontent.com/32271030/113493539-6d154000-94b6-11eb-8064-def97620a384.png" width="642" height="392">
+
+#### 25_Point_Light
+<img src="https://user-images.githubusercontent.com/32271030/113493545-743c4e00-94b6-11eb-83cf-43e66d4509a3.gif" width="642" height="392">
+
+#### 26_Spotlight
+<img src="https://user-images.githubusercontent.com/32271030/113493549-7bfbf280-94b6-11eb-8f73-f4f5e2f58467.png" width="642" height="392">
 
 ## [Multiple lights](https://learnopengl.com/Lighting/Multiple-lights)  
 Coming soon.
