@@ -108,12 +108,9 @@ Each title title with a link is pointing to the original chapter from the learno
 
 ## [Hello triangle](https://learnopengl.com/Getting-started/Hello-Triangle) + [Shaders](https://learnopengl.com/Getting-started/Shaders)
 #### 02_Triangle
-<sub><sup>(GIF)</sub></sup>
-
 <img src="https://user-images.githubusercontent.com/32271030/110713867-6827de00-81e1-11eb-93d7-fed43910db31.gif" width="400" height="420">
 
 #### 03_Quad
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/110714970-2009bb00-81e3-11eb-8eb4-f499916d2f43.gif" width="400" height="420">
 
 ## [Textures](https://learnopengl.com/Getting-started/Textures) 
@@ -128,35 +125,28 @@ Each title title with a link is pointing to the original chapter from the learno
 
 ## [Transformations](https://learnopengl.com/Getting-started/Transformations) 
 #### 07_Transformations
-###### (GIF)
 This one looks kind of weird because the images are not centered vertically, the intention is to be forced to realize that rotations in OpenGL are calculated taking the origin as the rotation center (and not the object's center) and if a rotation of an object is needed around itself, then said object must be translated to the origin, rotated and then translated back to it's initial position, which may be somewhat counterintuitive.
 
 <img src="https://user-images.githubusercontent.com/32271030/110715001-2bf57d00-81e3-11eb-9dc7-98df6fd2cca2.gif" width="400" height="420">
 
 ## [Coordinate systems](https://learnopengl.com/Getting-started/Coordinate-Systems) 
 #### 08_Coordinate_Systems_Perspective
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/110715008-2ef06d80-81e3-11eb-8952-f2eaf02fb067.gif" width="400" height="420">
 
 #### 09_Coordinate_Systems_Cube
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/110715016-34e64e80-81e3-11eb-8251-8f75491dbb3c.gif" width="400" height="420">
 
 #### 10_Coordinate_Systems_Cube_With_Depth_Testing
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/110715030-39126c00-81e3-11eb-827b-db4022ad8837.gif" width="400" height="420">
 
 #### 11_Coordinate_Systems_Many_Cubes
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/110715170-7b3bad80-81e3-11eb-83aa-37c7205d0e14.gif" width="400" height="420">
 
 ## [Camera](https://learnopengl.com/Getting-started/Camera) 
 #### 12_Camera_Automove
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/110715048-40d21080-81e3-11eb-8f9e-3b52a85512b9.gif" width="400" height="420">
 
 #### 13_Camera_Walk_Around_With_Inputs
-###### (GIF)
 **W** forward | **A** left | **S** back | **D** right | **SHIFT_LEFT** down | **SPACEBAR** up | **MOUSE_MOVE** for camera | **MOUSE_WHEEL** zoom in/out
 
 <img src="https://user-images.githubusercontent.com/32271030/110715084-55aea400-81e3-11eb-8c91-41a2990751cc.gif" width="400" height="420">
@@ -176,7 +166,6 @@ This one looks kind of weird because the images are not centered vertically, the
 
 #### 17_Phong_Specular_Lighting
 Note how the reflection of the light moves on each face of the cube when the camera moves.
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/112575657-7c69fe80-8dcf-11eb-8938-4596695771eb.gif" width="642" height="392">
 
 ## [Materials](https://learnopengl.com/Lighting/Materials)  
@@ -187,20 +176,16 @@ Note how the reflection of the light moves on each face of the cube when the cam
 <img src="https://user-images.githubusercontent.com/32271030/112923955-a11ee880-90e5-11eb-93d9-2df6f38fe222.png" width="642" height="392">  
 
 #### 20_Different_Light_Colors
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/112923956-a2e8ac00-90e5-11eb-9980-91338a512591.gif" width="642" height="392">
 
 ## [Lighting maps](https://learnopengl.com/Lighting/Lighting-maps)  
 #### 21_Diffuse_Maps
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/112937135-835d7d80-90fd-11eb-8a85-c649352fa5b2.gif" width="642" height="392">
 
 #### 22_Specular_Maps
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/112937162-8f493f80-90fd-11eb-82e8-ae5ebb93d61a.gif" width="642" height="392">
 
 #### 23_Emission_Maps
-###### (GIF)
 <img src="https://user-images.githubusercontent.com/32271030/112937189-98d2a780-90fd-11eb-8ca4-30c5cb71cdeb.gif" width="642" height="392">
 
 ## [Light casters](https://learnopengl.com/Lighting/Light-casters)
@@ -208,7 +193,6 @@ Note how the reflection of the light moves on each face of the cube when the cam
 <img src="https://user-images.githubusercontent.com/32271030/113493539-6d154000-94b6-11eb-8064-def97620a384.png" width="642" height="392">
 
 #### 25_Point_Light
-###### (GIF)
 Note that although this light source looks similar as in the previous examples, this time it's not reaching the objects that are too far away from it, giving a more realisting feel to the source.
 <img src="https://user-images.githubusercontent.com/32271030/113493545-743c4e00-94b6-11eb-83cf-43e66d4509a3.gif" width="642" height="392">
 
