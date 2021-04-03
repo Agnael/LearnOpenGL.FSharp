@@ -59,6 +59,10 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "23_Emission_Maps", "23_Emis
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "24_Directional_Light", "24_Directional_Light\24_Directional_Light.fsproj", "{C45656D2-8B3C-46C2-A636-A943199C5843}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "25_Point_Light", "25_Point_Light\25_Point_Light.fsproj", "{252F6E4E-85EA-4A8D-9A87-B17B5C51A2CC}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "26_Spotlight", "26_Spotlight\26_Spotlight.fsproj", "{31912158-B091-4B88-9F85-3401EE398CBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -177,6 +181,14 @@ Global
 		{C45656D2-8B3C-46C2-A636-A943199C5843}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C45656D2-8B3C-46C2-A636-A943199C5843}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C45656D2-8B3C-46C2-A636-A943199C5843}.Release|Any CPU.Build.0 = Release|Any CPU
+		{252F6E4E-85EA-4A8D-9A87-B17B5C51A2CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{252F6E4E-85EA-4A8D-9A87-B17B5C51A2CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{252F6E4E-85EA-4A8D-9A87-B17B5C51A2CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{252F6E4E-85EA-4A8D-9A87-B17B5C51A2CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31912158-B091-4B88-9F85-3401EE398CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31912158-B091-4B88-9F85-3401EE398CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31912158-B091-4B88-9F85-3401EE398CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31912158-B091-4B88-9F85-3401EE398CBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

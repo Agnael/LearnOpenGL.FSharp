@@ -14,7 +14,7 @@ open Galante
 
 let initialState = 
     BaselineState.createDefault(
-        "24_Directional_Light", 
+        "26_Spotlight", 
         new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -78,7 +78,13 @@ let main argv =
                 "uMaterial.diffuseMap"
                 "uMaterial.specularMap"
                 "uMaterial.shininess"
+                "uLight.position"
                 "uLight.direction"
+                "uLight.innerCutOffAngleCos"
+                "uLight.outerCutOffAngleCos"
+                "uLight.constantComponent"
+                "uLight.linearComponent"
+                "uLight.quadraticComponent"
                 "uLight.ambientColor"
                 "uLight.diffuseColor"
                 "uLight.specularColor"
@@ -102,8 +108,8 @@ let main argv =
                                     
         // Hardcoded camera position and target, so it looks just like the
         // LearnOpenGL.com example right away.
-        dispatch (Camera (ForcePosition (new Vector3(-3.05f, 5.9f, 5.1f))))
-        dispatch (Camera (ForceTarget (new Vector3(0.27f, -0.49f, -0.82f))))
+        dispatch (Camera (ForcePosition (new Vector3(-1.74f, -1.51f, 1.86f))))
+        dispatch (Camera (ForceTarget (new Vector3(0.56f, 0.53f, -0.62f))))
 
         // Comment this or press F10 to unlock the camera
         dispatch (Mouse UseCursorNormal)
@@ -128,7 +134,13 @@ let main argv =
         // Sets a dark grey background so the cube´s color changes are visible
         ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
         
-        let lightSrcDirection = new Vector3(-0.2f, -1.0f, -0.3f)
+        let time = single ctx.Window.Time
+        let lightSrcPathRadius = 2.0f
+        let lightSrcPathCurrX = MathF.Sin(time) * lightSrcPathRadius
+        let lightSrcPathCurrZ = MathF.Cos(time) * lightSrcPathRadius
+
+        let lightSrcPosition = 
+            new Vector3(lightSrcPathCurrX, 1.3f, lightSrcPathCurrZ)
 
         let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
 
@@ -150,23 +162,36 @@ let main argv =
         |> GlTex.bind GLEnum.Texture0 containerDiffuseMapTex
         |> GlTex.bind GLEnum.Texture1 containerSpecularMapTex
         |> ignore
+        
+        let outerCutOffCos = 
+            Degrees.make 18.0f
+            |> cosF
+
+        let innerCutOffCos = 
+            Degrees.make 14.0f
+            |> cosF
 
         // Prepares the shader
         (shaderLighted, ctx)
         |> GlProg.setAsCurrent
-        |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity 
         |> GlProg.setUniformM4x4 "uView" viewMatrix
         |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
         |> GlProg.setUniformV3 "uViewerPos" state.Camera.Position
         |> GlProg.setUniformI "uMaterial.diffuseMap" 0
         |> GlProg.setUniformI "uMaterial.specularMap" 1
         |> GlProg.setUniformF "uMaterial.shininess" materialShininess
-        |> GlProg.setUniformV3 "uLight.direction" lightSrcDirection
+        |> GlProg.setUniformV3 "uLight.position" state.Camera.Position
+        |> GlProg.setUniformV3 "uLight.direction" state.Camera.TargetDirection
+        |> GlProg.setUniformF "uLight.innerCutOffAngleCos" innerCutOffCos
+        |> GlProg.setUniformF "uLight.outerCutOffAngleCos" outerCutOffCos
+        |> GlProg.setUniformF "uLight.constantComponent" 1.0f
+        |> GlProg.setUniformF "uLight.linearComponent" 0.09f
+        |> GlProg.setUniformF "uLight.quadraticComponent" 0.032f
         |> GlProg.setUniformV3 "uLight.ambientColor" lightAmbientColor
         |> GlProg.setUniformV3 "uLight.diffuseColor" lightDiffuseColor
         |> GlProg.setUniformV3 "uLight.specularColor" lightSpecularColor
         |> ignore
-
+        
         let rec drawEachTransformation transformations idx =
             match transformations with
             | [] -> ()

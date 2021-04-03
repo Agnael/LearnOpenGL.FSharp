@@ -14,7 +14,7 @@ open Galante
 
 let initialState = 
     BaselineState.createDefault(
-        "24_Directional_Light", 
+        "25_Point_Light", 
         new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -32,6 +32,7 @@ let main argv =
 
     let mutable cubeVao = Unchecked.defaultof<_>
     let mutable shaderLighted = Unchecked.defaultof<_>
+    let mutable shaderLightSource = Unchecked.defaultof<_>
     let mutable containerDiffuseMapTex = Unchecked.defaultof<_>
     let mutable containerSpecularMapTex = Unchecked.defaultof<_>
             
@@ -78,10 +79,28 @@ let main argv =
                 "uMaterial.diffuseMap"
                 "uMaterial.specularMap"
                 "uMaterial.shininess"
-                "uLight.direction"
+                "uLight.position"
+                "uLight.constantComponent"
+                "uLight.linearComponent"
+                "uLight.quadraticComponent"
                 "uLight.ambientColor"
                 "uLight.diffuseColor"
                 "uLight.specularColor"
+            ]
+            |> GlProg.build ctx
+
+        shaderLightSource <-
+            GlProg.emptyBuilder
+            |> GlProg.withName "LightSource"
+            |> GlProg.withShaders [
+                ShaderType.VertexShader, "Basic3d.vert"
+                ShaderType.FragmentShader, "LightSource.frag"
+            ]
+            |> GlProg.withUniforms [
+                "uModel"
+                "uView" 
+                "uProjection"
+                "uEmittedLightColor"
             ]
             |> GlProg.build ctx
 
@@ -128,7 +147,13 @@ let main argv =
         // Sets a dark grey background so the cube´s color changes are visible
         ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
         
-        let lightSrcDirection = new Vector3(-0.2f, -1.0f, -0.3f)
+        let time = single ctx.Window.Time
+        let lightSrcPathRadius = 3.0f
+        let lightSrcPathCurrX = MathF.Sin(time) * lightSrcPathRadius
+        let lightSrcPathCurrZ = MathF.Cos(time) * lightSrcPathRadius
+
+        let lightSrcPosition = 
+            new Vector3(lightSrcPathCurrX, 0.9f, lightSrcPathCurrZ)
 
         let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
 
@@ -154,19 +179,21 @@ let main argv =
         // Prepares the shader
         (shaderLighted, ctx)
         |> GlProg.setAsCurrent
-        |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity 
         |> GlProg.setUniformM4x4 "uView" viewMatrix
         |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
         |> GlProg.setUniformV3 "uViewerPos" state.Camera.Position
         |> GlProg.setUniformI "uMaterial.diffuseMap" 0
         |> GlProg.setUniformI "uMaterial.specularMap" 1
         |> GlProg.setUniformF "uMaterial.shininess" materialShininess
-        |> GlProg.setUniformV3 "uLight.direction" lightSrcDirection
+        |> GlProg.setUniformV3 "uLight.position" lightSrcPosition
+        |> GlProg.setUniformF "uLight.constantComponent" 1.0f
+        |> GlProg.setUniformF "uLight.linearComponent" 0.09f
+        |> GlProg.setUniformF "uLight.quadraticComponent" 0.032f
         |> GlProg.setUniformV3 "uLight.ambientColor" lightAmbientColor
         |> GlProg.setUniformV3 "uLight.diffuseColor" lightDiffuseColor
         |> GlProg.setUniformV3 "uLight.specularColor" lightSpecularColor
         |> ignore
-
+        
         let rec drawEachTransformation transformations idx =
             match transformations with
             | [] -> ()
@@ -184,6 +211,19 @@ let main argv =
                 ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
                 drawEachTransformation t (idx + 1)
         drawEachTransformation Cube.transformations 0
+
+        let lightSourceModelMatrix =
+            Matrix4x4.CreateTranslation (lightSrcPosition / 0.2f)
+            * Matrix4x4.CreateScale (new Vector3(0.2f))
+
+        (shaderLightSource, ctx)
+        |> GlProg.setAsCurrent
+        |> GlProg.setUniformM4x4 "uModel" lightSourceModelMatrix
+        |> GlProg.setUniformM4x4 "uView" viewMatrix
+        |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
+        |> GlProg.setUniformV3 "uEmittedLightColor" lightColor
+        |> ignore
+        ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
 
         dispatch (FpsCounter(FrameRenderCompleted deltaTime))
         ()
