@@ -42,7 +42,7 @@ Each title title with a link is pointing to the original chapter from the learno
     * [25_Point_Light](#25_point_light)  
     * [26_Spotlight](#26_spotlight)  
   * **Multiple lights** ([Original article](https://learnopengl.com/Lighting/Multiple-lights))
-    * Coming soon.
+    * [27_Multiple_Lights](#27_multiple_lights)  
 * **Model loading**
     * Coming soon.
 * **Advanced OpenGL**
@@ -201,7 +201,8 @@ Note that although this light source looks similar as in the previous examples, 
 <img src="https://user-images.githubusercontent.com/32271030/113493549-7bfbf280-94b6-11eb-8f73-f4f5e2f58467.png" width="642" height="392">
 
 ## [Multiple lights](https://learnopengl.com/Lighting/Multiple-lights)  
-Coming soon.
+#### 27_Multiple_Lights
+<img src="https://user-images.githubusercontent.com/32271030/113494742-b1f2a400-94c1-11eb-8ed3-cf4b73fa2031.gif" width="642" height="392">
 
 # Model loading
 Coming soon.
