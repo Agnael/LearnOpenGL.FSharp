@@ -44,7 +44,8 @@ Each title title with a link is pointing to the original chapter from the learno
   * **Multiple lights** ([Original article](https://learnopengl.com/Lighting/Multiple-lights))
     * [27_Multiple_Lights](#27_multiple_lights)  
 * **Model loading**
-    * Coming soon.
+  * **Model loading** ([Original article](https://learnopengl.com/Model-Loading/Model))
+    * [28_Model_Loading](#28_model_loading)
 * **Advanced OpenGL**
   * **Depth testing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Depth-testing))
     * Coming soon.
@@ -205,7 +206,11 @@ Note that although this light source looks similar as in the previous examples, 
 <img src="https://user-images.githubusercontent.com/32271030/113494742-b1f2a400-94c1-11eb-8ed3-cf4b73fa2031.gif" width="642" height="392">
 
 # Model loading
-Coming soon.
+## [Model loading](https://learnopengl.com/Model-Loading/Model) 
+#### 28_Model_Loading
+<img src="https://user-images.githubusercontent.com/32271030/114671951-01637c00-9cdb-11eb-98b1-a6fc02eb570c.gif" width="642" height="392">
+
+<img src="https://user-images.githubusercontent.com/32271030/114672225-48ea0800-9cdb-11eb-9ca9-c06e75bc8d97.gif" width="642" height="392">
 
 # Advanced OpenGL
 ## [Depth testing](https://learnopengl.com/Advanced-OpenGL/Depth-testing)  
