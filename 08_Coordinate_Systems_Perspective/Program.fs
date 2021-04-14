@@ -43,16 +43,16 @@ let main argv =
         let quadVbo =
             GlVbo.emptyVboBuilder
             |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
-            |> GlVbo.withAttrDefinitions [
-                [[-0.5f; 0.5f; 0.0f]; [0.0f; 1.0f]]
-                [[0.5f; 0.5f; 0.0f]; [1.0f; 1.0f]]
-                [[-0.5f; -0.5f; 0.0f]; [0.0f; 0.0f]]
-                [[0.5f; -0.5f; 0.0f]; [1.0f; 0.0f]]
-            ]
+            |> GlVbo.withAttrDefinitions [|
+                [| [| -0.5f;  0.5f; 0.0f |]; [| 0.0f; 1.0f |] |]
+                [| [|  0.5f;  0.5f; 0.0f |]; [| 1.0f; 1.0f |] |]
+                [| [| -0.5f; -0.5f; 0.0f |]; [| 0.0f; 0.0f |] |]
+                [| [|  0.5f; -0.5f; 0.0f |]; [| 1.0f; 0.0f |] |]
+            |]
             |> GlVbo.build (quadVao, ctx)
             
-        texture1 <- GlTex.create2D @"wall.jpg" (quadVao, ctx)
-        texture2 <- GlTex.create2D @"awesomeface.png" (quadVao, ctx)
+        texture1 <- GlTex.create2D @"wall.jpg" ctx
+        texture2 <- GlTex.create2D @"awesomeface.png" ctx
 
         // Define en qué orden se van a dibujar los 2 triángulos que forman el cuadrilátero
         let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]
@@ -68,8 +68,8 @@ let main argv =
         ctx.Gl.Clear <| uint32 GLEnum.ColorBufferBit
 
         (quadVao, ctx)
-        |> GlTex.bind GLEnum.Texture0 texture1
-        |> GlTex.bind GLEnum.Texture1 texture2
+        |> GlTex.setActive GLEnum.Texture0 texture1
+        |> GlTex.setActive GLEnum.Texture1 texture2
         |> ignore
 
         let modelMatrix =

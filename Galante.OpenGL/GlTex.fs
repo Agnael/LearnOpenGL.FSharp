@@ -15,15 +15,13 @@ open System.IO
 open Microsoft.FSharp.NativeInterop
 open Microsoft.Extensions.Logging
 
-let bind (glTextureSlotId: GLEnum) (texture: GlTexture) (vao, ctx) =
+let setActive (glTextureSlotId: GLEnum) texture (vao, ctx) =    
     GlVao.bind (vao, ctx) |> ignore
     ctx.Gl.ActiveTexture glTextureSlotId
     ctx.Gl.BindTexture (GLEnum.Texture2D, texture.GlTexHandle)
     (vao, ctx)
 
-let create (texTarget, texGlTarget, filePath, format, internalFormat: GLEnum, wrapModeS, wrapModeT, filterModeMin, filterModeMag) (vao, ctx) =
-    GlVao.bind (vao, ctx) |> ignore
-    
+let loadImage filePath (ctx: GlWindowCtx) =
     let (img: Image<Rgba32>, imgSharpFormat) =
         ctx.FileProvider.GetFileInfo(filePath)
         |> fun fileInfo ->
@@ -34,28 +32,34 @@ let create (texTarget, texGlTarget, filePath, format, internalFormat: GLEnum, wr
                 else Image.Load (fileInfo.PhysicalPath, ref format)
             (image, format)
 
-    img.Mutate (fun x -> 
-        x.Rotate(RotateMode.Rotate180) 
-        |> ignore)
+    //img.Mutate 
+    //    (fun x -> 
+    //        x.Rotate(RotateMode.Rotate180) 
+    //        |> ignore
+    //    )
+    img
 
-    let imgBytes =
-        use memStream = new MemoryStream ()
-        img.SaveAsJpegAsync memStream
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-        memStream.ToArray()
+let create (texTarget, texGlTarget, img: Image<Rgba32>, format, internalFormat: GLEnum, wrapModeS, wrapModeT, filterModeMin, filterModeMag) (ctx: GlWindowCtx) =    
     
     let imgPtr = &&MemoryMarshal.GetReference(img.GetPixelRowSpan(0))
     let imgVoidPtr = NativePtr.toVoidPtr imgPtr
 
-    let tex =
+    // TEST START
+    // Generate raw bytes
+    //let pixelArray = img.GetPixelRowSpan(0).ToArray()
+    
+    //// Cast to Rgba32 array
+    //use imgBytesPtr: Span<Rgba32> = imgBytes
+    //let imgVoidPtr = NativePtr.toVoidPtr imgBytesPtr
+    // TEST END
+
+    let texture =
         { GlTexture.GlTexHandle = ctx.Gl.GenTexture ()
-        ; FilePath = filePath
+        //; FilePath = image
         ; TextureTarget = texTarget
         ; TextureTargetGl = texGlTarget
         ; Width = img.Width
         ; Height = img.Height
-        ; DataVoidPtr = imgVoidPtr
         ; Format = format
         ; InternalFormat = LanguagePrimitives.EnumToValue internalFormat
         ; WrapModeS = wrapModeS
@@ -63,8 +67,8 @@ let create (texTarget, texGlTarget, filePath, format, internalFormat: GLEnum, wr
         ; TextureFilterModeMin = filterModeMin
         ; TextureFilterModeMag = filterModeMag
         ;}
-
-    ctx.Gl.BindTexture (GLEnum.Texture2D, tex.GlTexHandle)
+    
+    ctx.Gl.BindTexture (GLEnum.Texture2D, texture.GlTexHandle)
 
     // 1 the texture wrapping/filtering options (on the currently bound texture object)
     let mutable wrapParams = GLEnum.Repeat |> LanguagePrimitives.EnumToValue
@@ -72,41 +76,43 @@ let create (texTarget, texGlTarget, filePath, format, internalFormat: GLEnum, wr
     let wrapParamsNativePtr: nativeptr<int> = NativePtr.ofNativeInt wrapParamsIntPtr
     ctx.Gl.TexParameterI (GLEnum.Texture2D, GLEnum.TextureWrapS, wrapParamsNativePtr)
     ctx.Gl.TexParameterI (GLEnum.Texture2D, GLEnum.TextureWrapT, wrapParamsNativePtr)
-    
+       
     let mutable textureFilterParams = GLEnum.Linear |> LanguagePrimitives.EnumToValue
     let textureFilterParamsIntPtr = NativePtr.toNativeInt<int> &&textureFilterParams
     let textureFilterNativePtr: nativeptr<int> = NativePtr.ofNativeInt textureFilterParamsIntPtr
     ctx.Gl.TexParameterI (GLEnum.Texture2D, GLEnum.TextureMinFilter, textureFilterNativePtr)
     ctx.Gl.TexParameterI (GLEnum.Texture2D, GLEnum.TextureMagFilter, textureFilterNativePtr)
-    
+       
     ctx.Gl.TexImage2D 
-        ( tex.TextureTargetGl
+        ( texture.TextureTargetGl
         , 0
-        , tex.InternalFormat
-        , uint32 tex.Width
-        , uint32 tex.Height
+        , texture.InternalFormat
+        , uint32 texture.Width
+        , uint32 texture.Height
         , 0
-        , tex.Format
+        , texture.Format
         , GLEnum.UnsignedByte
-        , tex.DataVoidPtr)
+        , imgVoidPtr)
 
     let glError = ctx.Gl.GetError()
-    ctx.Gl.GenerateMipmap tex.TextureTarget
+    ctx.Gl.GenerateMipmap texture.TextureTarget
     let isEnabled = ctx.Gl.IsEnabled (GLEnum.Texture2D)
     ctx.Gl.Enable (GLEnum.Texture2D)
-    ctx.Logger.LogInformation <| "olaaaaa"
-    tex
+    texture
 
-let create2D filePath (vao, ctx) =
-    (vao, ctx)
+
+let create2D image ctx =
+    ctx
     |> create 
         ( TextureTarget.Texture2D
         , GLEnum.Texture2D
-        , filePath
+        , image
         , GLEnum.Rgba
         , GLEnum.Rgba
         , GLEnum.Repeat
         , GLEnum.Repeat
-        , GLEnum.Linear
+        // Changed when troubleshooting texture bug in model loading
+        //, GLEnum.Linear
+        , GLEnum.LinearMipmapLinear
         , GLEnum.Linear
         )

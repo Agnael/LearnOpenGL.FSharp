@@ -35,10 +35,11 @@ let main argv =
         let triangleVbo =
             GlVbo.emptyVboBuilder
             |> GlVbo.withAttrNames [ "Positions"]
-            |> GlVbo.withAttrDefinitions [
-                [[-0.5f;  -0.5f;  0.0f;]]
-                [[0.5f; -0.5f;  0.0f;]]
-                [[0.00f; 0.5f;   0.0f;]] ]
+            |> GlVbo.withAttrDefinitions [|
+                [| [|-0.5f; -0.5f;  0.0f;|] |]
+                [| [| 0.5f; -0.5f;  0.0f;|] |]
+                [| [| 0.00f; 0.5f;  0.0f;|] |] 
+            |]
             |> GlVbo.build (triangleVao, ctx)
         ()
 

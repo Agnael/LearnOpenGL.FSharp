@@ -75,14 +75,17 @@ module GlProg
         // where value is of type System.Numerics.Matrix4x4.
         let mutable auxVal = value
         let valPtr = NativePtr.toNativeInt<Matrix4x4> &&auxVal
-        let valFloatPtr: nativeptr<float32> = NativePtr.ofNativeInt<float32> valPtr 
+        let valFloatPtr: nativeptr<float32> = 
+            NativePtr.ofNativeInt<float32> valPtr 
 
         program.Uniforms
         |> List.find (fun x -> x.UniformName = name)
-        |> fun uniform -> ctx.Gl.UniformMatrix4(uniform.GlUniformHandle, 1ul, false, valFloatPtr)
+        |> fun uniform -> 
+            ctx.Gl.UniformMatrix4(
+                uniform.GlUniformHandle, 1ul, false, valFloatPtr)
         (program, ctx)
 
-    let setUniformV4 name (x: single, y, z, w) (program: GlProgram, ctx) =             
+    let setUniformV4 name (x: single, y, z, w) (program: GlProgram, ctx) = 
         program.Uniforms
         |> List.find (fun x -> x.UniformName = name)
         |> fun uniform -> ctx.Gl.Uniform4 (uniform.GlUniformHandle, x, y, z, w)

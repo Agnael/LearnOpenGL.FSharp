@@ -44,7 +44,7 @@
             ; Title = "Default window title"
             ; WindowState = WindowState.Normal
             ; WindowBorder = WindowBorder.Resizable
-            ; IsVsync = true
+            ; IsVsync = false
             ; RunningSlowTolerance = 5 // TODO: 5 qué??? lo tomé así del fuente de SILK
             ; ShouldSwapAutomatically = true
             ; VideoMode = VideoMode.Default

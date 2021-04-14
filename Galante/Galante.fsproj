@@ -10,14 +10,18 @@
 
   <ItemGroup>
     <Compile Include="FontManagerTest.fs" />
-    <Compile Include="Models\GameBuilder.fs" />
-    <Compile Include="Models\GameContext.fs" />
     <Compile Include="State\StoreFactory.fs" />
+    <Compile Include="Builders\GameBuilder.fs" />
+    <Compile Include="Vertex.fs" />
+    <Compile Include="Texture.fs" />
+    <Compile Include="Mesh.fs" />
+    <Compile Include="Model.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="GalanteMath.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="4.1.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="3.1.12" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.12" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />

@@ -35,12 +35,12 @@ let main argv =
         let quadVbo =
             GlVbo.emptyVboBuilder
             |> GlVbo.withAttrNames ["Positions"]
-            |> GlVbo.withAttrDefinitions [
-                [[-0.5f; 0.5f; 0.0f]]
-                [[0.5f; 0.5f; 0.0f]]
-                [[-0.5f; -0.5f; 0.0f]]
-                [[0.5f; -0.5f; 0.0f]]
-            ]
+            |> GlVbo.withAttrDefinitions [|
+                [| [| -0.5f;  0.5f; 0.0f |] |]
+                [| [|  0.5f;  0.5f; 0.0f |] |]
+                [| [| -0.5f; -0.5f; 0.0f |] |]
+                [| [|  0.5f; -0.5f; 0.0f |] |]
+            |]
             |> GlVbo.build (quadVao, ctx)
 
         // Define en qué orden se van a dibujar los 2 triángulos que forman el cuadrilátero

@@ -2,12 +2,13 @@
 
 open Silk.NET.OpenGL
 
+[<Struct>]
 type GlTexture =
     { GlTexHandle: uint32 
-    ; FilePath: string
+    //; FilePath: string
     ; Width: int
     ; Height: int
-    ; DataVoidPtr: voidptr
+    //; DataVoidPtr: voidptr
     ; TextureTarget: TextureTarget
     ; TextureTargetGl: GLEnum
     ; Format: GLEnum

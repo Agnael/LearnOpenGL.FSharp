@@ -6,12 +6,14 @@
     open System.Numerics
     open Silk.NET.Maths
     open Silk.NET.Windowing
+    open StoreFactory
 
     let emptyGameBuilder<'gs, 'ga> 
-        winOpts (initState: 'gs) (reducer: 'ga -> 'gs -> 'gs) =
-        { WindowOptions = winOpts
+        winOpts (initState: 'gs) (reducer: 'ga -> 'gs -> 'gs) (actionFilter: 'ga -> 'gs -> ActionDispatcher<'ga> -> IoDispatcher<'ga> -> GlWindowCtx -> 'ga option) =
+        { GameBuilder.WindowOptions = winOpts
         ; InitialState = initState
         ; Reducer = reducer
+        ; ActionFilter = actionFilter
         ; OnInputContextLoaded = fun ctx ic state dispatch -> ()
         ; OnLoad = []
         ; OnUpdate = []
@@ -21,7 +23,11 @@
         ; OnMouseMove = []
         ; OnMouseWheel = []
         ; OnWindowResize = []
+        ; OnActionListen = []
         ;}
+
+    let addOnActionListener (h: 's -> 'a -> ('a->unit) -> GlWindowCtx -> unit) b =
+        { b with OnActionListen = h::b.OnActionListen }
 
     let withWindowOptions winOpts b = 
         { b with WindowOptions = winOpts }
@@ -53,6 +59,8 @@
 
     let addOnWindowResize h (b: GameBuilder<'gs, 'ga>) =
         { b with OnWindowResize = h::b.OnWindowResize }
+
+
 
     let private registerOnUpdateHandlers 
         handlers (window: IWindow, ctx, getState, dispatch) =
@@ -96,23 +104,23 @@
         onKeyUpHandlers 
         onMouseMoveHandlers 
         onMouseWheelHandlers 
-        (w: IWindow, ctx: GlWindowCtx, getState, dispatch) =
+        (w: IWindow, ctx: GlWindowCtx, getState, dispatchAction, dispatchIo) =
 
         // Master onLoad handler, executes the rest of the onLoads
         // after itself.
         let onLoad () =
             let state = getState()
             let input = w.CreateInput()
-            onInputContextLoaded ctx input state dispatch
+            onInputContextLoaded ctx input state dispatchAction
 
-            let onLoadHandlerExecute h = h ctx input state dispatch
+            let onLoadHandlerExecute h = h ctx input state dispatchAction
             List.iter onLoadHandlerExecute handlers
             
             let addOnEachKeyboard handlerType h =
                 let mapAndRegisterHandler (keyboard: IKeyboard) =
                     if not (keyboard = null) then
                         let mappedHandler keyboard key keyCode =
-                            h ctx (getState()) dispatch keyboard key
+                            h ctx (getState()) dispatchAction keyboard key
 
                         match handlerType with
                         | OnKeyDown -> 
@@ -130,14 +138,14 @@
                         match handlerType with
                         | OnMove ->
                             let mapped _ pos = 
-                                h ctx (getState()) dispatch pos
+                                h ctx (getState()) dispatchAction pos
                             mouse.add_MouseMove 
                                 (new Action<_,_>(mapped))
                         | OnWheel ->
                             let mapped _ (wheel: ScrollWheel) =
                                 let posV = 
                                     new Vector2(wheel.X, wheel.Y)
-                                h ctx (getState()) dispatch posV
+                                h ctx (getState()) dispatchAction posV
                             mouse.add_Scroll (new Action<_,_>(mapped))
                 Seq.iter mapAndRegisterHandler input.Mice
 
@@ -148,15 +156,15 @@
             List.iter (addOnEachMouse OnWheel) onMouseWheelHandlers
         
         w.add_Load (new Action(onLoad))
-        (w, ctx, getState, dispatch)
+        (w, ctx, getState, dispatchAction)
 
-    let buildAndRun (b: GameBuilder<'gs, 'ga>) =      
-        let (getState, dispatch) = 
-            StoreFactory.createStore(b.InitialState, b.Reducer)
-
+    let buildAndRun (b: GameBuilder<'gs, 'ga>) =    
         let ctx = GlWin.create b.WindowOptions
+        
+        let (getState, dispatchAction, addActionListener) = 
+            StoreFactory.createStore(b.InitialState, b.Reducer, b.ActionFilter, ctx)
 
-        (ctx.Window, ctx, getState, dispatch)
+        (ctx.Window, ctx, getState, dispatchAction, addActionListener)
         |> registerOnLoadHandlers 
             b.OnLoad 
             b.OnInputContextLoaded
@@ -169,4 +177,8 @@
         |> registerOnWindowResizeHandlers b.OnWindowResize
         |> ignore
 
+        b.OnActionListen
+        |> List.iter (fun h -> addActionListener h)
+
         ctx.Window.Run()
+        addActionListener

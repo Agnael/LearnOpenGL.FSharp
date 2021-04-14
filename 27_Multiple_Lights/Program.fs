@@ -163,9 +163,14 @@ let main argv =
             |> GlVbo.withAttrDefinitions 
                 Cube.vertexPositionsAndNormalsAndTextureCoords
             |> GlVbo.build (cubeVao, ctx)
+            
+        containerDiffuseMapTex <- 
+            GlTex.loadImage "container_diffuse.png" ctx
+            |> fun img -> GlTex.create2D img ctx
 
-        containerDiffuseMapTex <- GlTex.create2D "container_diffuse.png" (cubeVao, ctx)
-        containerSpecularMapTex <- GlTex.create2D "container_specular.png" (cubeVao, ctx)
+        containerSpecularMapTex <- 
+            GlTex.loadImage "container_specular.png" ctx
+            |> fun img -> GlTex.create2D img ctx
                                     
         // Hardcoded camera position and target, so it looks just like the
         // LearnOpenGL.com example right away.
@@ -220,8 +225,8 @@ let main argv =
         let lightSpecularColor = new Vector3(1.0f, 1.0f, 1.0f)
 
         (cubeVao, ctx)
-        |> GlTex.bind GLEnum.Texture0 containerDiffuseMapTex
-        |> GlTex.bind GLEnum.Texture1 containerSpecularMapTex
+        |> GlTex.setActive GLEnum.Texture0 containerDiffuseMapTex
+        |> GlTex.setActive GLEnum.Texture1 containerSpecularMapTex
         |> ignore
         
         let outerCutOffCos = 
@@ -348,7 +353,7 @@ let main argv =
         |> Baseline.handleWindowResize
         |> ignore
 
-    emptyGameBuilder glWindowOptions initialState gameReducer
+    emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
     |> withOnInputContextLoadedCallback onInputContextLoaded
     |> addOnLoad onLoad
     |> addOnUpdate onUpdate

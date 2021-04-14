@@ -2,5 +2,5 @@
 
 type GlElementBufferObject = {
         GlEboHandle: uint32
-        indices: uint32[]
+        //indices: uint32[]
     }

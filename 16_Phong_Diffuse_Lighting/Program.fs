@@ -174,7 +174,7 @@ let main argv =
         |> Baseline.handleWindowResize
         |> ignore
 
-    emptyGameBuilder glWindowOptions initialState gameReducer
+    emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
     |> withOnInputContextLoadedCallback onInputContextLoaded
     |> addOnLoad onLoad
     |> addOnUpdate onUpdate

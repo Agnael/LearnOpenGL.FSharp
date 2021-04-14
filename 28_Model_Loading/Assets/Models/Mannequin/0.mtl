@@ -1,0 +1,54 @@
+# Blender MTL File: 'ModelRenderLighting2.blend'
+# Material Count: 4
+
+newmtl 4_CharacterMesh0_1_0_0
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.432731 0.548742 0.422135
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd T_M_SK_Mannequin.PNG
+map_Bump T_UE4_Mannequin.PNG
+map_d T_M_SK_Mannequin.PNG
+
+newmtl 4_CharacterMesh_1_0_0
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.715181 0.745621 0.646899
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd T_M_SK_Mannequin.PNG
+map_Bump T_UE4_Mannequin.PNG
+map_d T_M_SK_Mannequin.PNG
+
+newmtl 4_Mannequin_1_0_0
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.589106 0.653365 0.406937
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd T_M_SK_Mannequin.PNG
+map_Bump T_UE4_Mannequin.PNG
+map_d T_M_SK_Mannequin.PNG
+
+newmtl 6_UE4_1_0_0
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.663022 0.676146 0.729214
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 1
+map_Kd T_UE4_LOGO_CARD.PNG
+map_Bump T_UE4Man_Logo_N.PNG
+map_d T_UE4_LOGO_CARD.PNG
