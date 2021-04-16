@@ -7,258 +7,248 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Cube.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\Models\Backpack\ao.jpg">
+    <Content Include="..\Resources\Models\Backpack\ao.jpg" Link="Resources\Models\Backpack\ao.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Backpack\diffuse.jpg">
+    <Content Include="..\Resources\Models\Backpack\diffuse.jpg" Link="Resources\Models\Backpack\diffuse.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Backpack\normal.png">
+    <Content Include="..\Resources\Models\Backpack\normal.png" Link="Resources\Models\Backpack\normal.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Backpack\roughness.jpg">
+    <Content Include="..\Resources\Models\Backpack\roughness.jpg" Link="Resources\Models\Backpack\roughness.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Backpack\source_attribution.txt">
+    <Content Include="..\Resources\Models\Backpack\source_attribution.txt" Link="Resources\Models\Backpack\source_attribution.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Backpack\specular.jpg">
+    <Content Include="..\Resources\Models\Backpack\specular.jpg" Link="Resources\Models\Backpack\specular.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Cyborg\cyborg_diffuse.png">
+    <Content Include="..\Resources\Models\Cyborg\cyborg_diffuse.png" Link="Resources\Models\Cyborg\cyborg_diffuse.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Cyborg\cyborg_normal.png">
+    <Content Include="..\Resources\Models\Cyborg\cyborg_normal.png" Link="Resources\Models\Cyborg\cyborg_normal.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Cyborg\cyborg_specular.png">
+    <Content Include="..\Resources\Models\Cyborg\cyborg_specular.png" Link="Resources\Models\Cyborg\cyborg_specular.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Cyborg\LICENSE.txt">
+    <Content Include="..\Resources\Models\Cyborg\LICENSE.txt" Link="Resources\Models\Cyborg\LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Mannequin\T_M_SK_Mannequin.png">
+    <Content Include="..\Resources\Models\Mannequin\T_M_SK_Mannequin.png" Link="Resources\Models\Mannequin\T_M_SK_Mannequin.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Mannequin\T_M_SK_Mannequin.TGA">
+    <Content Include="..\Resources\Models\Mannequin\T_M_SK_Mannequin.TGA" Link="Resources\Models\Mannequin\T_M_SK_Mannequin.TGA">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Mannequin\T_UE4Man_Logo_N.png">
+    <Content Include="..\Resources\Models\Mannequin\T_UE4Man_Logo_N.png" Link="Resources\Models\Mannequin\T_UE4Man_Logo_N.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Mannequin\T_UE4Man_Logo_N.TGA">
+    <Content Include="..\Resources\Models\Mannequin\T_UE4Man_Logo_N.TGA" Link="Resources\Models\Mannequin\T_UE4Man_Logo_N.TGA">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Mannequin\T_UE4_LOGO_CARD.png">
+    <Content Include="..\Resources\Models\Mannequin\T_UE4_LOGO_CARD.png" Link="Resources\Models\Mannequin\T_UE4_LOGO_CARD.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Mannequin\T_UE4_LOGO_CARD.TGA">
+    <Content Include="..\Resources\Models\Mannequin\T_UE4_LOGO_CARD.TGA" Link="Resources\Models\Mannequin\T_UE4_LOGO_CARD.TGA">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Mannequin\T_UE4_Mannequin.png">
+    <Content Include="..\Resources\Models\Mannequin\T_UE4_Mannequin.png" Link="Resources\Models\Mannequin\T_UE4_Mannequin.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Mannequin\T_UE4_Mannequin.TGA">
+    <Content Include="..\Resources\Models\Mannequin\T_UE4_Mannequin.TGA" Link="Resources\Models\Mannequin\T_UE4_Mannequin.TGA">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\arm_dif.png">
+    <Content Include="..\Resources\Models\Nanosuit\arm_dif.png" Link="Resources\Models\Nanosuit\arm_dif.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\arm_showroom_ddn.png">
+    <Content Include="..\Resources\Models\Nanosuit\arm_showroom_ddn.png" Link="Resources\Models\Nanosuit\arm_showroom_ddn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\arm_showroom_refl.png">
+    <Content Include="..\Resources\Models\Nanosuit\arm_showroom_refl.png" Link="Resources\Models\Nanosuit\arm_showroom_refl.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\arm_showroom_spec.png">
+    <Content Include="..\Resources\Models\Nanosuit\arm_showroom_spec.png" Link="Resources\Models\Nanosuit\arm_showroom_spec.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\back.jpg">
+    <Content Include="..\Resources\Models\Nanosuit\back.jpg" Link="Resources\Models\Nanosuit\back.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\body_dif.png">
+    <Content Include="..\Resources\Models\Nanosuit\body_dif.png" Link="Resources\Models\Nanosuit\body_dif.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\body_showroom_ddn.png">
+    <Content Include="..\Resources\Models\Nanosuit\body_showroom_ddn.png" Link="Resources\Models\Nanosuit\body_showroom_ddn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\body_showroom_refl.png">
+    <Content Include="..\Resources\Models\Nanosuit\body_showroom_refl.png" Link="Resources\Models\Nanosuit\body_showroom_refl.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\body_showroom_spec.png">
+    <Content Include="..\Resources\Models\Nanosuit\body_showroom_spec.png" Link="Resources\Models\Nanosuit\body_showroom_spec.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\cell_arm_alpha.png">
+    <Content Include="..\Resources\Models\Nanosuit\cell_arm_alpha.png" Link="Resources\Models\Nanosuit\cell_arm_alpha.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\cell_body_alpha.png">
+    <Content Include="..\Resources\Models\Nanosuit\cell_body_alpha.png" Link="Resources\Models\Nanosuit\cell_body_alpha.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\cell_ddn.png">
+    <Content Include="..\Resources\Models\Nanosuit\cell_ddn.png" Link="Resources\Models\Nanosuit\cell_ddn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\cell_hand_alpha.png">
+    <Content Include="..\Resources\Models\Nanosuit\cell_hand_alpha.png" Link="Resources\Models\Nanosuit\cell_hand_alpha.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\cell_helmet_alpha.png">
+    <Content Include="..\Resources\Models\Nanosuit\cell_helmet_alpha.png" Link="Resources\Models\Nanosuit\cell_helmet_alpha.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\cell_leg_alpha.png">
+    <Content Include="..\Resources\Models\Nanosuit\cell_leg_alpha.png" Link="Resources\Models\Nanosuit\cell_leg_alpha.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\front.jpg">
+    <Content Include="..\Resources\Models\Nanosuit\front.jpg" Link="Resources\Models\Nanosuit\front.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\glass_ddn.png">
+    <Content Include="..\Resources\Models\Nanosuit\glass_ddn.png" Link="Resources\Models\Nanosuit\glass_ddn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\glass_dif.png">
+    <Content Include="..\Resources\Models\Nanosuit\glass_dif.png" Link="Resources\Models\Nanosuit\glass_dif.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\glass_refl.png">
+    <Content Include="..\Resources\Models\Nanosuit\glass_refl.png" Link="Resources\Models\Nanosuit\glass_refl.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\hand_dif.png">
+    <Content Include="..\Resources\Models\Nanosuit\hand_dif.png" Link="Resources\Models\Nanosuit\hand_dif.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\hand_showroom_ddn.png">
+    <Content Include="..\Resources\Models\Nanosuit\hand_showroom_ddn.png" Link="Resources\Models\Nanosuit\hand_showroom_ddn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\hand_showroom_refl.png">
+    <Content Include="..\Resources\Models\Nanosuit\hand_showroom_refl.png" Link="Resources\Models\Nanosuit\hand_showroom_refl.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\hand_showroom_spec.png">
+    <Content Include="..\Resources\Models\Nanosuit\hand_showroom_spec.png" Link="Resources\Models\Nanosuit\hand_showroom_spec.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\helmet_diff.png">
+    <Content Include="..\Resources\Models\Nanosuit\helmet_diff.png" Link="Resources\Models\Nanosuit\helmet_diff.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\helmet_showroom_ddn.png">
+    <Content Include="..\Resources\Models\Nanosuit\helmet_showroom_ddn.png" Link="Resources\Models\Nanosuit\helmet_showroom_ddn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\helmet_showroom_refl.png">
+    <Content Include="..\Resources\Models\Nanosuit\helmet_showroom_refl.png" Link="Resources\Models\Nanosuit\helmet_showroom_refl.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\helmet_showroom_spec.png">
+    <Content Include="..\Resources\Models\Nanosuit\helmet_showroom_spec.png" Link="Resources\Models\Nanosuit\helmet_showroom_spec.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\leg_dif.png">
+    <Content Include="..\Resources\Models\Nanosuit\leg_dif.png" Link="Resources\Models\Nanosuit\leg_dif.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\leg_showroom_ddn.png">
+    <Content Include="..\Resources\Models\Nanosuit\leg_showroom_ddn.png" Link="Resources\Models\Nanosuit\leg_showroom_ddn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\leg_showroom_refl.png">
+    <Content Include="..\Resources\Models\Nanosuit\leg_showroom_refl.png" Link="Resources\Models\Nanosuit\leg_showroom_refl.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Nanosuit\leg_showroom_spec.png">
+    <Content Include="..\Resources\Models\Nanosuit\leg_showroom_spec.png" Link="Resources\Models\Nanosuit\leg_showroom_spec.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Planet\mars.png">
+    <Content Include="..\Resources\Models\Planet\mars.png" Link="Resources\Models\Planet\mars.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Planet\source.txt">
+    <Content Include="..\Resources\Models\Planet\source.txt" Link="Resources\Models\Planet\source.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Rock\rock.png">
+    <Content Include="..\Resources\Models\Rock\rock.png" Link="Resources\Models\Rock\rock.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Vampire\textures\Vampire_diffuse.png">
+    <Content Include="..\Resources\Models\Vampire\textures\Vampire_diffuse.png" Link="Resources\Models\Vampire\textures\Vampire_diffuse.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Vampire\textures\Vampire_emission.png">
+    <Content Include="..\Resources\Models\Vampire\textures\Vampire_emission.png" Link="Resources\Models\Vampire\textures\Vampire_emission.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Vampire\textures\Vampire_normal.png">
+    <Content Include="..\Resources\Models\Vampire\textures\Vampire_normal.png" Link="Resources\Models\Vampire\textures\Vampire_normal.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Models\Vampire\textures\Vampire_specular.png">
+    <Content Include="..\Resources\Models\Vampire\textures\Vampire_specular.png" Link="Resources\Models\Vampire\textures\Vampire_specular.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Textures\fallback.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="container_diffuse.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="container_specular.png">
+    <Content Include="..\Resources\Textures\fallback.jpg" Link="Resources\Textures\fallback.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Assets\Models\Backpack\backpack.mtl">
+    <None Include="..\Resources\Models\Backpack\backpack.mtl" Link="Resources\Models\Backpack\backpack.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Backpack\backpack.obj">
+    <None Include="..\Resources\Models\Backpack\backpack.obj" Link="Resources\Models\Backpack\backpack.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Cyborg\cyborg.blend">
+    <None Include="..\Resources\Models\Cyborg\cyborg.blend" Link="Resources\Models\Cyborg\cyborg.blend">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Cyborg\cyborg.blend1">
+    <None Include="..\Resources\Models\Cyborg\cyborg.blend1" Link="Resources\Models\Cyborg\cyborg.blend1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Cyborg\cyborg.mtl">
+    <None Include="..\Resources\Models\Cyborg\cyborg.mtl" Link="Resources\Models\Cyborg\cyborg.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Cyborg\cyborg.obj">
+    <None Include="..\Resources\Models\Cyborg\cyborg.obj" Link="Resources\Models\Cyborg\cyborg.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Mannequin\0.dae">
+    <None Include="..\Resources\Models\Mannequin\0.dae" Link="Resources\Models\Mannequin\0.dae">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Mannequin\0.fbx">
+    <None Include="..\Resources\Models\Mannequin\0.fbx" Link="Resources\Models\Mannequin\0.fbx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Mannequin\0.mtl">
+    <None Include="..\Resources\Models\Mannequin\0.mtl" Link="Resources\Models\Mannequin\0.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Mannequin\0.obj">
+    <None Include="..\Resources\Models\Mannequin\0.obj" Link="Resources\Models\Mannequin\0.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Mannequin\0.stl">
+    <None Include="..\Resources\Models\Mannequin\0.stl" Link="Resources\Models\Mannequin\0.stl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Mannequin\Generic_Item.mesh.ascii">
+    <None Include="..\Resources\Models\Mannequin\Generic_Item.mesh.ascii" Link="Resources\Models\Mannequin\Generic_Item.mesh.ascii">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Mannequin\xps.xps">
+    <None Include="..\Resources\Models\Mannequin\xps.xps" Link="Resources\Models\Mannequin\xps.xps">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Nanosuit\nanosuit.mtl">
+    <None Include="..\Resources\Models\Nanosuit\nanosuit.mtl" Link="Resources\Models\Nanosuit\nanosuit.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Nanosuit\nanosuit.obj">
+    <None Include="..\Resources\Models\Nanosuit\nanosuit.obj" Link="Resources\Models\Nanosuit\nanosuit.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Planet\planet.mtl">
+    <None Include="..\Resources\Models\Planet\planet.mtl" Link="Resources\Models\Planet\planet.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Planet\planet.obj">
+    <None Include="..\Resources\Models\Planet\planet.obj" Link="Resources\Models\Planet\planet.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Rock\rock.mtl">
+    <None Include="..\Resources\Models\Rock\rock.mtl" Link="Resources\Models\Rock\rock.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Rock\rock.obj">
+    <None Include="..\Resources\Models\Rock\rock.obj" Link="Resources\Models\Rock\rock.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\Models\Vampire\dancing_vampire.dae">
+    <None Include="..\Resources\Models\Vampire\dancing_vampire.dae" Link="Resources\Models\Vampire\dancing_vampire.dae">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Simple3d.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Simple3d.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Lighted.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="LightSource.frag">

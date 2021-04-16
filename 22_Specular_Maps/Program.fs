@@ -113,8 +113,13 @@ let main argv =
                 Cube.vertexPositionsAndNormalsAndTextureCoords
             |> GlVbo.build (cubeVao, ctx)
 
-        containerDiffuseMapTex <- GlTex.create2D "container_diffuse.png" ctx
-        containerSpecularMapTex <- GlTex.create2D "container_specular.png" ctx
+        containerDiffuseMapTex <- 
+            GlTex.loadImage @"container2.png" ctx
+            |> fun img -> GlTex.create2D img ctx
+
+        containerSpecularMapTex <- 
+            GlTex.loadImage @"container2_specular.png" ctx
+            |> fun img -> GlTex.create2D img ctx
                                             
         // Hardcoded camera position and target, so it looks just like the
         // LearnOpenGL.com example right away.

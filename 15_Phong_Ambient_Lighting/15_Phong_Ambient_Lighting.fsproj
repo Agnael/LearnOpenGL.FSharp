@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Cube.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

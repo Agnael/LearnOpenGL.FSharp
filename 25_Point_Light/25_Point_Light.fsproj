@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Cube.fs" />
     <None Include="Lighted.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -15,10 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="container_diffuse.png">
+    <Content Include="..\Resources\Textures\container2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="container_specular.png">
+    <Content Include="..\Resources\Textures\container2_specular.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

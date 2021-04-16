@@ -91,7 +91,7 @@ let main argv =
         |> ignore
             
     let onLoad (ctx: GlWindowCtx) input state dispatch =
-        let fallbackImagePath = Path.Combine("Assets", "Textures", "fallback.jpg")
+        let fallbackImagePath = Path.Combine("Resources", "Textures", "fallback.jpg")
         fallbackGlTexture <-
             GlTex.loadImage fallbackImagePath ctx
             |> fun img -> GlTex.create2D img ctx
@@ -160,7 +160,7 @@ let main argv =
         dispatch (Mouse UseCursorNormal)
         dispatch (Camera Lock)
 
-        let modelsDir = Path.Combine("Assets", "Models")
+        let modelsDir = Path.Combine("Resources", "Models")
         let loadTexture path = dispatch (Asset (LoadImageStart path))
 
         let makeMdlPath pathParts = 

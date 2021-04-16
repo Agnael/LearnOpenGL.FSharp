@@ -116,8 +116,13 @@ let main argv =
                 Cube.vertexPositionsAndNormalsAndTextureCoords
             |> GlVbo.build (cubeVao, ctx)
 
-        containerDiffuseMapTex <- GlTex.create2D "container_diffuse.png" ctx
-        containerSpecularMapTex <- GlTex.create2D "container_specular.png" ctx
+        containerDiffuseMapTex <- 
+            GlTex.loadImage @"container2.png" ctx
+            |> fun img -> GlTex.create2D img ctx
+
+        containerSpecularMapTex <- 
+            GlTex.loadImage @"container2_specular.png" ctx
+            |> fun img -> GlTex.create2D img ctx
                                     
         // Hardcoded camera position and target, so it looks just like the
         // LearnOpenGL.com example right away.
@@ -200,9 +205,9 @@ let main argv =
             | h::t ->
                 let currTransform = Cube.transformations.[idx]
                 let modelMatrix =
-                    Matrix4x4.CreateRotationX currTransform.RotationRadsX
-                    * Matrix4x4.CreateRotationY currTransform.RotationRadsY
-                    * Matrix4x4.CreateRotationZ currTransform.RotationRadsZ
+                    Matrix4x4.CreateRotationX currTransform.RotationX
+                    * Matrix4x4.CreateRotationY currTransform.RotationY
+                    * Matrix4x4.CreateRotationZ currTransform.RotationZ
                     * Matrix4x4.CreateTranslation currTransform.Translation
 
                 GlProg.setUniformM4x4 "uModel" modelMatrix (shaderLighted, ctx)
@@ -247,4 +252,6 @@ let main argv =
     |> addOnMouseWheel onMouseWheel
     |> addOnWindowResize onWindowResize
     |> buildAndRun
+    |> ignore
+
     0

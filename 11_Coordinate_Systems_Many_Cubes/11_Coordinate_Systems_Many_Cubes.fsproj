@@ -11,10 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="awesomeface.png">
+    <Content Include="..\Resources\Textures\awesomeface.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="wall.jpg">
+    <Content Include="..\Resources\Textures\wall.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -35,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Baseline\Baseline.fsproj" />
     <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
   </ItemGroup>
 

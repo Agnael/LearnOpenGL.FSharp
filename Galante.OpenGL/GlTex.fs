@@ -31,27 +31,12 @@ let loadImage filePath (ctx: GlWindowCtx) =
                 then invalidOp "El archivo no existe"
                 else Image.Load (fileInfo.PhysicalPath, ref format)
             (image, format)
-
-    //img.Mutate 
-    //    (fun x -> 
-    //        x.Rotate(RotateMode.Rotate180) 
-    //        |> ignore
-    //    )
     img
 
 let create (texTarget, texGlTarget, img: Image<Rgba32>, format, internalFormat: GLEnum, wrapModeS, wrapModeT, filterModeMin, filterModeMag) (ctx: GlWindowCtx) =    
     
     let imgPtr = &&MemoryMarshal.GetReference(img.GetPixelRowSpan(0))
     let imgVoidPtr = NativePtr.toVoidPtr imgPtr
-
-    // TEST START
-    // Generate raw bytes
-    //let pixelArray = img.GetPixelRowSpan(0).ToArray()
-    
-    //// Cast to Rgba32 array
-    //use imgBytesPtr: Span<Rgba32> = imgBytes
-    //let imgVoidPtr = NativePtr.toVoidPtr imgBytesPtr
-    // TEST END
 
     let texture =
         { GlTexture.GlTexHandle = ctx.Gl.GenTexture ()

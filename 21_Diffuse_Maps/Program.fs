@@ -112,7 +112,9 @@ let main argv =
                 Cube.vertexPositionsAndNormalsAndTextureCoords
             |> GlVbo.build (cubeVao, ctx)
 
-        containerDiffuseMapTex <- GlTex.create2D "container_diffuse.png" ctx
+        containerDiffuseMapTex <- 
+            GlTex.loadImage @"container2.png" ctx
+            |> fun img -> GlTex.create2D img ctx
 
         // Hardcoded camera position and target, so it looks just like the
         // LearnOpenGL.com example right away.
@@ -214,15 +216,16 @@ let main argv =
         |> Baseline.handleWindowResize
         |> ignore
 
-    emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
-    |> withOnInputContextLoadedCallback onInputContextLoaded
-    |> addOnLoad onLoad
-    |> addOnUpdate onUpdate
-    |> addOnRender onRender
-    |> addOnKeyDown onKeyDown
-    |> addOnKeyUp onKeyUp
-    |> addOnMouseMove onMouseMove
-    |> addOnMouseWheel onMouseWheel
-    |> addOnWindowResize onWindowResize
-    |> buildAndRun
+    let addListener =
+        emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
+        |> withOnInputContextLoadedCallback onInputContextLoaded
+        |> addOnLoad onLoad
+        |> addOnUpdate onUpdate
+        |> addOnRender onRender
+        |> addOnKeyDown onKeyDown
+        |> addOnKeyUp onKeyUp
+        |> addOnMouseMove onMouseMove
+        |> addOnMouseWheel onMouseWheel
+        |> addOnWindowResize onWindowResize
+        |> buildAndRun
     0

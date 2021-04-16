@@ -43,53 +43,16 @@ let main argv =
         let qubeVbo =
             GlVbo.emptyVboBuilder
             |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
-            |> GlVbo.withAttrDefinitions [|     
-                [| [| -0.5f; -0.5f; -0.5f |]; [| 0.0f; 0.0f |] |]
-                [| [|  0.5f; -0.5f; -0.5f |]; [| 1.0f; 0.0f |] |]
-                [| [|  0.5f;  0.5f; -0.5f |]; [| 1.0f; 1.0f |] |]
-                [| [|  0.5f;  0.5f; -0.5f |]; [| 1.0f; 1.0f |] |]
-                [| [| -0.5f;  0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-                [| [| -0.5f; -0.5f; -0.5f |]; [| 0.0f; 0.0f |] |]
-                
-                [| [| -0.5f; -0.5f;  0.5f |]; [| 0.0f; 0.0f |] |]
-                [| [|  0.5f; -0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                [| [|  0.5f;  0.5f;  0.5f |]; [| 1.0f; 1.0f |] |]
-                [| [|  0.5f;  0.5f;  0.5f |]; [|  1.0f; 1.0f |] |]
-                [| [| -0.5f;  0.5f;  0.5f |]; [| 0.0f; 1.0f |] |]
-                [| [| -0.5f; -0.5f;  0.5f |]; [| 0.0f; 0.0f |] |]
-                
-                [| [| -0.5f;  0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                [| [| -0.5f;  0.5f; -0.5f |]; [| 1.0f; 1.0f |] |]
-                [| [| -0.5f; -0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-                [| [| -0.5f; -0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-                [| [| -0.5f; -0.5f;  0.5f |]; [| 0.0f; 0.0f |] |]
-                [| [| -0.5f;  0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                
-                [| [|  0.5f;  0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                [| [|  0.5f;  0.5f; -0.5f |]; [| 1.0f; 1.0f |] |]
-                [| [|  0.5f; -0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-                [| [|  0.5f; -0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-                [| [|  0.5f; -0.5f;  0.5f |]; [| 0.0f; 0.0f |] |]
-                [| [|  0.5f;  0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                
-                [| [| -0.5f; -0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-                [| [|  0.5f; -0.5f; -0.5f |]; [| 1.0f; 1.0f |] |]
-                [| [|  0.5f; -0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                [| [|  0.5f; -0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                [| [| -0.5f; -0.5f;  0.5f |]; [| 0.0f; 0.0f |] |]
-                [| [| -0.5f; -0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-                
-                [| [| -0.5f;  0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-                [| [|  0.5f;  0.5f; -0.5f |]; [| 1.0f; 1.0f |] |]
-                [| [|  0.5f;  0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                [| [|  0.5f;  0.5f;  0.5f |]; [| 1.0f; 0.0f |] |]
-                [| [| -0.5f;  0.5f;  0.5f |]; [| 0.0f; 0.0f |] |]
-                [| [| -0.5f;  0.5f; -0.5f |]; [| 0.0f; 1.0f |] |]
-             |]
+            |> GlVbo.withAttrDefinitions Cube.vertexPositionsAndTextureCoords
             |> GlVbo.build (cubeVao, ctx)
            
-        texture1 <- GlTex.create2D @"wall.jpg" ctx
-        texture2 <- GlTex.create2D @"awesomeface.png" ctx
+        texture1 <- 
+            GlTex.loadImage @"wall.jpg" ctx
+            |> fun img -> GlTex.create2D img ctx
+
+        texture2 <- 
+            GlTex.loadImage @"awesomeface.png" ctx
+            |> fun img -> GlTex.create2D img ctx
         
         // Define en qué orden se van a dibujar los 2 triángulos que forman el cuadrilátero
         let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]

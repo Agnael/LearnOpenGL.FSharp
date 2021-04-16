@@ -165,11 +165,11 @@ let main argv =
             |> GlVbo.build (cubeVao, ctx)
             
         containerDiffuseMapTex <- 
-            GlTex.loadImage "container_diffuse.png" ctx
+            GlTex.loadImage "container2.png" ctx
             |> fun img -> GlTex.create2D img ctx
 
         containerSpecularMapTex <- 
-            GlTex.loadImage "container_specular.png" ctx
+            GlTex.loadImage "container2_specular.png" ctx
             |> fun img -> GlTex.create2D img ctx
                                     
         // Hardcoded camera position and target, so it looks just like the
@@ -308,9 +308,9 @@ let main argv =
         |> Seq.iter 
             (fun transformation ->
                 let modelMatrix =
-                    Matrix4x4.CreateRotationX transformation.RotationRadsX
-                    * Matrix4x4.CreateRotationY transformation.RotationRadsY
-                    * Matrix4x4.CreateRotationZ transformation.RotationRadsZ
+                    Matrix4x4.CreateRotationX transformation.RotationX
+                    * Matrix4x4.CreateRotationY transformation.RotationY
+                    * Matrix4x4.CreateRotationZ transformation.RotationZ
                     * Matrix4x4.CreateTranslation transformation.Translation
 
                 GlProg.setUniformM4x4 "uModel" modelMatrix (shaderLighted, ctx)

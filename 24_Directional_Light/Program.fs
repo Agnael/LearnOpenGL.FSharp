@@ -97,8 +97,13 @@ let main argv =
                 Cube.vertexPositionsAndNormalsAndTextureCoords
             |> GlVbo.build (cubeVao, ctx)
 
-        containerDiffuseMapTex <- GlTex.create2D "container_diffuse.png" ctx
-        containerSpecularMapTex <- GlTex.create2D "container_specular.png" ctx
+        containerDiffuseMapTex <- 
+            GlTex.loadImage @"container2.png" ctx
+            |> fun img -> GlTex.create2D img ctx
+
+        containerSpecularMapTex <- 
+            GlTex.loadImage @"container2_specular.png" ctx
+            |> fun img -> GlTex.create2D img ctx
                                     
         // Hardcoded camera position and target, so it looks just like the
         // LearnOpenGL.com example right away.
@@ -173,9 +178,9 @@ let main argv =
             | h::t ->
                 let currTransform = Cube.transformations.[idx]
                 let modelMatrix =
-                    Matrix4x4.CreateRotationX currTransform.RotationRadsX
-                    * Matrix4x4.CreateRotationY currTransform.RotationRadsY
-                    * Matrix4x4.CreateRotationZ currTransform.RotationRadsZ
+                    Matrix4x4.CreateRotationX currTransform.RotationX
+                    * Matrix4x4.CreateRotationY currTransform.RotationY
+                    * Matrix4x4.CreateRotationZ currTransform.RotationZ
                     * Matrix4x4.CreateTranslation currTransform.Translation
 
                 GlProg.setUniformM4x4 "uModel" modelMatrix (shaderLighted, ctx)
@@ -196,15 +201,16 @@ let main argv =
         |> Baseline.handleWindowResize
         |> ignore
 
-    emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
-    |> withOnInputContextLoadedCallback onInputContextLoaded
-    |> addOnLoad onLoad
-    |> addOnUpdate onUpdate
-    |> addOnRender onRender
-    |> addOnKeyDown onKeyDown
-    |> addOnKeyUp onKeyUp
-    |> addOnMouseMove onMouseMove
-    |> addOnMouseWheel onMouseWheel
-    |> addOnWindowResize onWindowResize
-    |> buildAndRun
+    let addListener =
+        emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
+        |> withOnInputContextLoadedCallback onInputContextLoaded
+        |> addOnLoad onLoad
+        |> addOnUpdate onUpdate
+        |> addOnRender onRender
+        |> addOnKeyDown onKeyDown
+        |> addOnKeyUp onKeyUp
+        |> addOnMouseMove onMouseMove
+        |> addOnMouseWheel onMouseWheel
+        |> addOnWindowResize onWindowResize
+        |> buildAndRun
     0
