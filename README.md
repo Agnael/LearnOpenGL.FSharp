@@ -45,10 +45,10 @@ Each title title with a link is pointing to the original chapter from the learno
     * [27_Multiple_Lights](#27_multiple_lights)  
 * **Model loading**
   * **Model loading** ([Original article](https://learnopengl.com/Model-Loading/Model))
-    * [29_Visualizing_The_Depth_Buffer](#29_visualizing_the_depth_buffer)
+    * [28_Model_Loading](#28_model_loading)
 * **Advanced OpenGL**
   * **Depth testing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Depth-testing))
-    * [24_Directional_Light](#24_directional_light)  
+    * [29_Visualizing_The_Depth_Buffer](#29_visualizing_the_depth_buffer)
   * **Stencil testing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Stencil-testing))
     * Coming soon.
   * **Blending** ([Original article](https://learnopengl.com/Advanced-OpenGL/Blending))
