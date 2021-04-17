@@ -219,7 +219,7 @@ Note that although this light source looks similar as in the previous examples, 
 
 ## [Stencil testing](https://learnopengl.com/Advanced-OpenGL/Stencil-testing)  
 #### 30_Stencil_Testing
-<img src="https://user-images.githubusercontent.com/32271030/115124420-8929de80-9f98-11eb-9b30-80f7a0e5cf6a.png" width="642" height="392">
+<img src="https://user-images.githubusercontent.com/32271030/115124511-09504400-9f99-11eb-91b5-a2e87411e718.png" width="642" height="392">
 
 ## [Blending](https://learnopengl.com/Advanced-OpenGL/Blending)  
 Coming soon.
