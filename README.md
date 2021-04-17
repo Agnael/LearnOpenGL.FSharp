@@ -50,7 +50,7 @@ Each title title with a link is pointing to the original chapter from the learno
   * **Depth testing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Depth-testing))
     * [29_Visualizing_The_Depth_Buffer](#29_visualizing_the_depth_buffer)
   * **Stencil testing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Stencil-testing))
-    * Coming soon.
+    * [30_Stencil_Testing](#30_stencil_testing)
   * **Blending** ([Original article](https://learnopengl.com/Advanced-OpenGL/Blending))
     * Coming soon.
   * **Face culling** ([Original article](https://learnopengl.com/Advanced-OpenGL/Face-culling))
@@ -218,7 +218,8 @@ Note that although this light source looks similar as in the previous examples, 
 <img src="https://user-images.githubusercontent.com/32271030/114982996-78794b80-9e66-11eb-9f79-9645d7e76c1b.png" width="642" height="392">
 
 ## [Stencil testing](https://learnopengl.com/Advanced-OpenGL/Stencil-testing)  
-Coming soon.
+#### 30_Stencil_Testing
+<img src="https://user-images.githubusercontent.com/32271030/115124420-8929de80-9f98-11eb-9b30-80f7a0e5cf6a.png" width="642" height="392">
 
 ## [Blending](https://learnopengl.com/Advanced-OpenGL/Blending)  
 Coming soon.
