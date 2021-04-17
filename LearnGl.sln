@@ -67,7 +67,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "27_Multiple_Lights", "27_Mu
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "28_Model_Loading", "28_Model_Loading\28_Model_Loading.fsproj", "{FF9EEFC6-1513-4F72-9517-1E45ED81B502}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "29_Visualizing_The_Depth_Buffer", "29_Visualizing_The_Depth_Buffer\29_Visualizing_The_Depth_Buffer.fsproj", "{932F6E27-B0C4-4F83-A584-0A8730ABF435}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "29_Visualizing_The_Depth_Buffer", "29_Visualizing_The_Depth_Buffer\29_Visualizing_The_Depth_Buffer.fsproj", "{932F6E27-B0C4-4F83-A584-0A8730ABF435}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "30_Stencil_Testing", "30_Stencil_Testing\30_Stencil_Testing.fsproj", "{F8187886-C117-4307-92A6-1B7FCB3471D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -207,6 +209,10 @@ Global
 		{932F6E27-B0C4-4F83-A584-0A8730ABF435}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{932F6E27-B0C4-4F83-A584-0A8730ABF435}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{932F6E27-B0C4-4F83-A584-0A8730ABF435}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8187886-C117-4307-92A6-1B7FCB3471D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8187886-C117-4307-92A6-1B7FCB3471D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8187886-C117-4307-92A6-1B7FCB3471D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8187886-C117-4307-92A6-1B7FCB3471D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

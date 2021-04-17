@@ -48,8 +48,8 @@
             ; RunningSlowTolerance = 5 // TODO: 5 qué??? lo tomé así del fuente de SILK
             ; ShouldSwapAutomatically = true
             ; VideoMode = VideoMode.Default
-            ; PreferredDepthBufferBits = None
-            ; PreferredStencilBufferBits = None
+            ; PreferredDepthBufferBits = Some 24
+            ; PreferredStencilBufferBits = Some 8
             ; PreferredBitDepth = None
             ; TransparentFrameBuffer = false
             ; IsEventDriven = false
