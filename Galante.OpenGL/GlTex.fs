@@ -33,7 +33,40 @@ let loadImage filePath (ctx: GlWindowCtx) =
             (image, format)
     img
 
-let create (texTarget, texGlTarget, img: Image<Rgba32>, format, internalFormat: GLEnum, wrapModeS, wrapModeT, filterModeMin, filterModeMag) (ctx: GlWindowCtx) =    
+/// <summary>
+/// Loads and flips the image vertically.
+/// </summary>
+let loadImageF filePath (ctx: GlWindowCtx) =
+    let (img: Image<Rgba32>, imgSharpFormat) =
+        ctx.FileProvider.GetFileInfo(filePath)
+        |> fun fileInfo ->
+            let format = Unchecked.defaultof<_>
+            let image: Image<Rgba32> =
+                if fileInfo = null
+                then invalidOp "El archivo no existe"
+                else Image.Load (fileInfo.PhysicalPath, ref format)
+            (image, format)
+
+    img.Mutate(
+        new Action<IImageProcessingContext>(
+            fun x -> x.Flip(FlipMode.Vertical) |> ignore
+        )
+    )
+
+    img
+
+let create 
+    ( texTarget
+    , texGlTarget
+    , img: Image<Rgba32>
+    , format
+    , internalFormat: GLEnum
+    , wrapModeS
+    , wrapModeT
+    , filterModeMin
+    , filterModeMag
+    ) 
+    (ctx: GlWindowCtx) =    
     
     let imgPtr = &&MemoryMarshal.GetReference(img.GetPixelRowSpan(0))
     let imgVoidPtr = NativePtr.toVoidPtr imgPtr
@@ -56,11 +89,15 @@ let create (texTarget, texGlTarget, img: Image<Rgba32>, format, internalFormat: 
     ctx.Gl.BindTexture (GLEnum.Texture2D, texture.GlTexHandle)
 
     // 1 the texture wrapping/filtering options (on the currently bound texture object)
-    let mutable wrapParams = GLEnum.Repeat |> LanguagePrimitives.EnumToValue
-    let wrapParamsIntPtr = NativePtr.toNativeInt<int> &&wrapParams
-    let wrapParamsNativePtr: nativeptr<int> = NativePtr.ofNativeInt wrapParamsIntPtr
-    ctx.Gl.TexParameterI (GLEnum.Texture2D, GLEnum.TextureWrapS, wrapParamsNativePtr)
-    ctx.Gl.TexParameterI (GLEnum.Texture2D, GLEnum.TextureWrapT, wrapParamsNativePtr)
+    let mutable textureWrapS = wrapModeS |> LanguagePrimitives.EnumToValue
+    let textureWrapSIntPtr = NativePtr.toNativeInt<int> &&textureWrapS
+    let textureWrapSNativePtr: nativeptr<int> = NativePtr.ofNativeInt textureWrapSIntPtr
+    ctx.Gl.TexParameterI (GLEnum.Texture2D, GLEnum.TextureWrapS, textureWrapSNativePtr)
+    
+    let mutable textureWrapT = wrapModeS |> LanguagePrimitives.EnumToValue
+    let textureWrapTIntPtr = NativePtr.toNativeInt<int> &&textureWrapT
+    let textureWrapTNativePtr: nativeptr<int> = NativePtr.ofNativeInt textureWrapTIntPtr
+    ctx.Gl.TexParameterI (GLEnum.Texture2D, GLEnum.TextureWrapT, textureWrapTNativePtr)
        
     let mutable textureFilterParams = GLEnum.Linear |> LanguagePrimitives.EnumToValue
     let textureFilterParamsIntPtr = NativePtr.toNativeInt<int> &&textureFilterParams
@@ -96,6 +133,22 @@ let create2D image ctx =
         , GLEnum.Rgba
         , GLEnum.Repeat
         , GLEnum.Repeat
+        // Changed when troubleshooting texture bug in model loading
+        //, GLEnum.Linear
+        , GLEnum.LinearMipmapLinear
+        , GLEnum.Linear
+        )
+        
+let create2Dtransparent image ctx =
+    ctx
+    |> create 
+        ( TextureTarget.Texture2D
+        , GLEnum.Texture2D
+        , image
+        , GLEnum.Rgba
+        , GLEnum.Rgba
+        , GLEnum.ClampToEdge
+        , GLEnum.ClampToEdge
         // Changed when troubleshooting texture bug in model loading
         //, GLEnum.Linear
         , GLEnum.LinearMipmapLinear

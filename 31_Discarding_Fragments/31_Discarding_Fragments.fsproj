@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>_31_Discarding_Fragments</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\Resources\Textures\marble.jpg" Link="marble.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Resources\Textures\metal.png" Link="metal.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Resources\Textures\grass.png" Link="grass.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Simple3D.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="SImple3D.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="SingleColor.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup />
+
+  <ItemGroup />
+
+	<ItemGroup>
+		<PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
+		<PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+		<PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Baseline\Baseline.fsproj" />
+		<ProjectReference Include="..\Galante\Galante.fsproj" />
+		<ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
+	</ItemGroup>
+</Project>
