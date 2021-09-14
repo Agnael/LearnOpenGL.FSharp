@@ -17,10 +17,26 @@ open Model
 
 let initialState = 
    BaselineState.createDefault(
-      "30_Stencil_Testing", 
+      "32_Blending", 
       new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
+
+let grassPositions = 
+   [|
+      new Vector3(-1.5f, 0.0f, -0.48f)
+      new Vector3(1.5f, 0.0f, 0.51f)
+      new Vector3(0.0f, 0.0f, 0.7f)
+      new Vector3(-0.3f, 0.0f, -2.3f)
+      new Vector3(0.5f, 0.0f, -0.6f)
+   |]
+
+let v3toFloatArray (v3: Vector3): single array = 
+   [| v3.X; v3.Y; v3.X |]
+
+let v3arrayToFloatArrayArray (v3array: Vector3 array) =
+   v3array
+   |> Array.map (fun x -> [| v3toFloatArray x |])
 
 [<EntryPoint>]
 let main argv =
@@ -35,11 +51,11 @@ let main argv =
 
    let mutable cubeVao = Unchecked.defaultof<_>
    let mutable planeVao = Unchecked.defaultof<_>
-   let mutable mdlNanosuit = Unchecked.defaultof<_>
+   let mutable windowVao = Unchecked.defaultof<_>
    let mutable shaderSimple = Unchecked.defaultof<_>
-   let mutable shaderSingleColor = Unchecked.defaultof<_>
    let mutable cubeTexture = Unchecked.defaultof<_>
    let mutable floorTexture = Unchecked.defaultof<_>
+   let mutable windowTexture = Unchecked.defaultof<_>
             
    let onKeyDown ctx state dispatch kb key =
       let initResW = initialState.Window.Resolution.Width
@@ -83,20 +99,6 @@ let main argv =
                "uTexture"
          ]
          |> GlProg.build ctx
-
-      shaderSingleColor <-
-         GlProg.emptyBuilder
-         |> GlProg.withName "SingleColor"
-         |> GlProg.withShaders 
-               [ ShaderType.VertexShader, @"Simple3D.vert"
-               ; ShaderType.FragmentShader, @"SingleColor.frag" 
-               ;]
-         |> GlProg.withUniforms [
-               "uModel"
-               "uView"
-               "uProjection"
-         ]
-         |> GlProg.build ctx
             
       // CUBE
       cubeVao <-
@@ -134,11 +136,28 @@ let main argv =
       floorTexture <- 
          GlTex.loadImage "metal.png" ctx
          |> fun img -> GlTex.create2D img ctx
+
+      // WINDOW
+      windowVao <-
+         GlVao.create ctx
+         |> GlVao.bind
+         |> fun (vao, _) -> vao
+            
+      GlVbo.emptyVboBuilder
+      |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
+      |> GlVbo.withAttrDefinitions 
+         Cube.vertexPositionsAndTextureCoords
+      |> GlVbo.build (windowVao, ctx)
+      |> ignore
+
+      windowTexture <-
+         GlTex.loadImageF "window.png" ctx
+         |> fun img -> GlTex.create2Dtransparent img ctx
                                             
       // Hardcoded camera position and target, so it looks just like the
       // LearnOpenGL.com example right away.
-      dispatch (Camera (ForcePosition (new Vector3(-2.99f, 0.95f, -3.46f))))
-      dispatch (Camera (ForceTarget (new Vector3(0.66f, -0.29f, 0.68f))))
+      dispatch (Camera (ForcePosition (new Vector3(-1.11f, 0.71f, -4.88f))))
+      dispatch (Camera (ForceTarget (new Vector3(0.20f, -0.13f, 0.96f))))
 
       // Comment this or press F10 to unlock the camera
       dispatch (Mouse UseCursorNormal)
@@ -157,11 +176,14 @@ let main argv =
    let onRender ctx state dispatch (DeltaTime deltaTime) =
       ctx.Gl.Enable GLEnum.DepthTest
       ctx.Gl.DepthFunc GLEnum.Less
-      ctx.Gl.Enable GLEnum.StencilTest
-      ctx.Gl.StencilFunc (GLEnum.Notequal, 1, 255u)
-      ctx.Gl.StencilOp (GLEnum.Keep, GLEnum.Keep, GLEnum.Replace)
 
-      uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit ||| GLEnum.StencilBufferBit)
+      // Specific for the blending exercise
+      ctx.Gl.Enable GLEnum.Blend
+      ctx.Gl.BlendFunc (
+         BlendingFactor.SrcAlpha, 
+         BlendingFactor.OneMinusSrcAlpha)
+
+      uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
       |> ctx.Gl.Clear
         
       // Sets a dark grey background so the cube´s color changes are visible
@@ -183,9 +205,6 @@ let main argv =
       |> ignore
 
       // PLANE
-      // Renders the floor without writing to the stencil buffer
-      ctx.Gl.StencilMask 0u
-
       GlVao.bind (planeVao, ctx) |> ignore
         
       (planeVao, ctx)
@@ -208,18 +227,10 @@ let main argv =
       |> GlTex.setActive GLEnum.Texture0 cubeTexture
       |> ignore        
         
-      // CUBES 1st PASS
-      // Write the cube to the stencil buffer so the 2nd pass will skip this area
-      ctx.Gl.StencilFunc (GLEnum.Always, 1, 255u)
-      ctx.Gl.StencilMask (uint 255u)
-
-      let cube1pos = new Vector3(-1.0f, 0.0f, -1.0f);
-      let cube2pos = new Vector3(2.0f, 0.0f, 0.0f);
-
       // Cube 1
       let cube1_ModelMatrix = 
          Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(cube1pos)
+         Matrix4x4.CreateTranslation(new Vector3(-1.0f, 0.0f, -1.0f))
         
       (shaderSimple, ctx)
       |> GlProg.setUniformM4x4 "uModel" cube1_ModelMatrix
@@ -230,66 +241,42 @@ let main argv =
       // Cube 2
       let cube2_ModelMatrix = 
          Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(cube2pos)
+         Matrix4x4.CreateTranslation(new Vector3(2.0f, 0.0f, 0.0f))
         
       (shaderSimple, ctx)
       |> GlProg.setUniformM4x4 "uModel" cube2_ModelMatrix
       |> GlProg.setUniformI "uTexture" 0
       |> ignore        
       ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-        
-      // CUBES 2nd PASS
-      // Changes the stencil mode so the tests pass only where the buffer was 
-      // not marked by the previous render pass.
-      // Renders the 1st cube again but scaled up.
-      ctx.Gl.StencilFunc (GLEnum.Notequal, 1, 255u)
-      ctx.Gl.StencilMask (uint 0u)
-      ctx.Gl.Disable GLEnum.DepthTest
-        
-      (shaderSingleColor, ctx)
+                
+      // Draws grass
+      (shaderSimple, ctx)
       |> GlProg.setAsCurrent
       |> GlProg.setUniformM4x4 "uView" viewMatrix
       |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
-      |> ignore    
+      |> ignore
+              
+      (windowVao, ctx)
+      |> GlTex.setActive GLEnum.Texture0 windowTexture
+      |> ignore
 
-      // Cube 1 border
-      let depthBufferBits =
-         ctx.Gl.GetFramebufferAttachmentParameter(
-            GLEnum.DrawFramebuffer, 
-            GLEnum.Depth, 
-            GLEnum.FramebufferAttachmentDepthSize)
+      grassPositions
+      // NOTE that semitransparent objects are ordered by their distance from
+      // the camera. The furthest ones get to be rendered first.
+      |> Array.sortByDescending (
+         fun grassPos -> Vector3.Distance(state.Camera.Position, grassPos))
+      |> Array.iter (
+         fun grassPosition ->
+            let grassPosModel = 
+                  Matrix4x4.Identity *
+                  Matrix4x4.CreateTranslation grassPosition
 
-      let stencilBufferBits = 
-         ctx.Gl.GetFramebufferAttachmentParameter(
-            GLEnum.DrawFramebuffer, 
-            GLEnum.Stencil, 
-            GLEnum.FramebufferAttachmentStencilSize)
+            (shaderSimple, ctx)
+            |> GlProg.setUniformM4x4 "uModel" grassPosModel
+            |> ignore
 
-      let adapted_Cube1_ModelMatrix =
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(cube1pos / borderScale) *
-         Matrix4x4.CreateScale borderScale
-        
-      (shaderSingleColor, ctx)
-      |> GlProg.setUniformM4x4 "uModel" adapted_Cube1_ModelMatrix
-      |> ignore    
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-        
-      // Cube 2 border
-      let adapted_Cube2_ModelMatrix =
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(new Vector3(cube2pos / borderScale) *
-         Matrix4x4.CreateScale borderScale
-
-      (shaderSingleColor, ctx)
-      |> GlProg.setUniformM4x4 "uModel" adapted_Cube2_ModelMatrix
-      |> ignore    
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-        
-      ctx.Gl.BindVertexArray 0u
-      ctx.Gl.StencilMask (uint 255u)
-      ctx.Gl.StencilFunc (GLEnum.Always, 0, 255u)
-      ctx.Gl.Enable GLEnum.DepthTest
+            ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 6u)
+      )
 
       // Frame completed
       dispatch (FpsCounter(FrameRenderCompleted deltaTime))

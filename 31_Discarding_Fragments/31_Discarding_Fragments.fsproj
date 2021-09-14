@@ -22,9 +22,6 @@
     <None Include="SImple3D.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="SingleColor.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Compile Include="Program.fs" />
   </ItemGroup>
 
