@@ -52,7 +52,8 @@ Each title title with a link is pointing to the original chapter from the learno
   * **Stencil testing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Stencil-testing))
     * [30_Stencil_Testing](#30_stencil_testing)
   * **Blending** ([Original article](https://learnopengl.com/Advanced-OpenGL/Blending))
-    * Coming soon.
+    * [31_Discarding_Fragments](#31_discarding_fragments)
+    * [32_Blending](#32_blending)
   * **Face culling** ([Original article](https://learnopengl.com/Advanced-OpenGL/Face-culling))
     * Coming soon.
   * **Framebuffers** ([Original article](https://learnopengl.com/Advanced-OpenGL/Framebuffers))
@@ -222,7 +223,12 @@ Note that although this light source looks similar as in the previous examples, 
 <img src="https://user-images.githubusercontent.com/32271030/115124511-09504400-9f99-11eb-91b5-a2e87411e718.png" width="642" height="392">
 
 ## [Blending](https://learnopengl.com/Advanced-OpenGL/Blending)  
-Coming soon.
+#### 31_Discarding_Fragments
+<img src="https://user-images.githubusercontent.com/32271030/133192360-5b4748f2-d88f-49ff-9d72-48a8cfb09ea1.png" width="642" height="392">
+
+#### 32_Blending
+<img src="https://user-images.githubusercontent.com/32271030/133192366-7a9a0f81-7c97-4572-a37b-3ffd301ad853.png" width="642" height="392">
+
 
 ## [Face culling](https://learnopengl.com/Advanced-OpenGL/Face-culling)  
 Coming soon.
