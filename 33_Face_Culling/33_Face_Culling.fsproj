@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
    <PropertyGroup>
       <OutputType>Exe</OutputType>
       <TargetFramework>netcoreapp3.1</TargetFramework>
-      <RootNamespace>_32_Blending</RootNamespace>
+      <RootNamespace>_33_Face_Culling</RootNamespace>
    </PropertyGroup>
 
    <ItemGroup>
@@ -17,16 +16,12 @@
    </ItemGroup>
 
    <ItemGroup>
-      <Content Include="..\Resources\Textures\window.png" Link="window.png">
-         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Resources\Textures\marble.jpg" Link="marble.jpg">
-         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="..\Resources\Textures\metal.png" Link="metal.png">
+      <Content Include="..\Resources\Textures\matrix.jpg" Link="matrix.jpg">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
    </ItemGroup>
+
+   <ItemGroup />
 
    <ItemGroup>
       <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
@@ -39,5 +34,4 @@
       <ProjectReference Include="..\Galante\Galante.fsproj" />
       <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
    </ItemGroup>
-
 </Project>

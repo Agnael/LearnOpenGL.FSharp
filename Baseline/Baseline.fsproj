@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Figures\CubeCounterClockwiseWinding.fs" />
     <Compile Include="Figures\Plane.fs" />
     <Compile Include="Figures\Cube.fs" />
     <Compile Include="State\Slices\BaseAssetSlice.fs" />

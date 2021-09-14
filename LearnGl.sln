@@ -73,7 +73,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "30_Stencil_Testing", "30_St
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "31_Discarding_Fragments", "31_Discarding_Fragments\31_Discarding_Fragments.fsproj", "{200A4D9D-AA17-442F-AA88-894FFA2CC227}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "32_Blending", "32_Blending\32_Blending.fsproj", "{A2169A75-2281-4087-BB26-918FB36A2180}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "32_Blending", "32_Blending\32_Blending.fsproj", "{A2169A75-2281-4087-BB26-918FB36A2180}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "33_Face_Culling", "33_Face_Culling\33_Face_Culling.fsproj", "{ADA29357-E537-4DCE-8DA1-B4A755458453}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -225,6 +227,10 @@ Global
 		{A2169A75-2281-4087-BB26-918FB36A2180}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2169A75-2281-4087-BB26-918FB36A2180}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2169A75-2281-4087-BB26-918FB36A2180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADA29357-E537-4DCE-8DA1-B4A755458453}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADA29357-E537-4DCE-8DA1-B4A755458453}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADA29357-E537-4DCE-8DA1-B4A755458453}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADA29357-E537-4DCE-8DA1-B4A755458453}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
