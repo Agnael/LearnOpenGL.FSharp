@@ -55,7 +55,7 @@ Each title title with a link is pointing to the original chapter from the learno
     * [31_Discarding_Fragments](#31_discarding_fragments)
     * [32_Blending](#32_blending)
   * **Face culling** ([Original article](https://learnopengl.com/Advanced-OpenGL/Face-culling))
-    * Coming soon.
+    * [33_Face_Culling](#33_face_culling)
   * **Framebuffers** ([Original article](https://learnopengl.com/Advanced-OpenGL/Framebuffers))
     * Coming soon.
   * **Cubemaps** ([Original article](https://learnopengl.com/Advanced-OpenGL/Cubemaps))
@@ -231,7 +231,9 @@ Note that although this light source looks similar as in the previous examples, 
 
 
 ## [Face culling](https://learnopengl.com/Advanced-OpenGL/Face-culling)  
-Coming soon.
+#### 33_Face_Culling
+Only half of the faces are rendered. For demonstration purposes, the front faces were removed this time.
+<img src="https://user-images.githubusercontent.com/32271030/133198964-249688d1-5417-4766-89c9-d47b0350886c.png" width="642" height="392">
 
 ## [Framebuffers](https://learnopengl.com/Advanced-OpenGL/Framebuffers)  
 Coming soon.
