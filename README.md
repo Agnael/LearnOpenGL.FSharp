@@ -57,7 +57,8 @@ Each title title with a link is pointing to the original chapter from the learno
   * **Face culling** ([Original article](https://learnopengl.com/Advanced-OpenGL/Face-culling))
     * [33_Face_Culling](#33_face_culling)
   * **Framebuffers** ([Original article](https://learnopengl.com/Advanced-OpenGL/Framebuffers))
-    * Coming soon.
+    * [34_Rendering_To_A_Texture](#34_rendering_to_a_texture)
+    * [35_PostProcessing_Kernel_Effects](#35_postprocessing_kernel_effects)
   * **Cubemaps** ([Original article](https://learnopengl.com/Advanced-OpenGL/Cubemaps))
     * Coming soon.
   * **Advanced data** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-Data))
@@ -236,10 +237,14 @@ Only half of the faces are rendered. For demonstration purposes, the front faces
 <img src="https://user-images.githubusercontent.com/32271030/133198964-249688d1-5417-4766-89c9-d47b0350886c.png" width="642" height="392">
 
 ## [Framebuffers](https://learnopengl.com/Advanced-OpenGL/Framebuffers)  
-Coming soon.
+#### 34_Rendering_To_A_Texture
+<img src="https://user-images.githubusercontent.com/32271030/133543205-6cf18a10-52eb-4789-8b90-c9af7ca01ee0.gif" width="642" height="392">
+
+#### 35_PostProcessing_Kernel_Effects
+<img src="https://user-images.githubusercontent.com/32271030/133543181-108f8599-c501-47c4-8763-46423961cce7.png" width="642" height="392">
 
 ## [Cubemaps](https://learnopengl.com/Advanced-OpenGL/Cubemaps)  
-Coming soon..
+Coming soon.
 
 ## [Advanced data](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)  
 Coming soon.
