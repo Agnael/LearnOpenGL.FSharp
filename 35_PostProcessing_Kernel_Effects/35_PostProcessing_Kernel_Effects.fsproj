@@ -1,25 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <OutputType>Exe</OutputType>
-      <TargetFramework>netcoreapp3.1</TargetFramework>
-      <RootNamespace>_33_Face_Culling</RootNamespace>
-   </PropertyGroup>
 
-   <ItemGroup>
-      <None Include="Simple3D.frag">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>_35_PostProcessing_Kernel_Effects</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="KernelPostProcessing.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="KernelPostProcessing.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Simple3D.frag">
        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
      </None>
-      <None Include="SImple3D.vert">
+    <None Include="SImple3D.vert">
        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
      </None>
-      <Compile Include="Program.fs" />
-   </ItemGroup>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
 
    <ItemGroup>
-      <Content Include="..\Resources\Textures\matrix.jpg" Link="matrix.jpg">
+      <Content Include="..\Resources\Textures\container.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\metal.png">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
    </ItemGroup>
+
+   <ItemGroup />
 
    <ItemGroup>
       <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />

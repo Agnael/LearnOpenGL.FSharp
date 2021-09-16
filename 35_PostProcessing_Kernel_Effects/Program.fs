@@ -6,18 +6,16 @@ open System.Numerics
 open BaseCameraSlice
 open BaseMouseSlice
 open BaseFpsCounterSlice
-open BaseAssetSlice
 open BaseWindowSlice
 open GalanteMath
 open BaselineState
 open Game
+open GlFbo
 open Galante
-open System.IO
-open Model
 
 let initialState = 
    BaselineState.createDefault(
-      "30_Stencil_Testing", 
+      "35_PostProcessing_Kernel_Effects", 
       new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -36,9 +34,12 @@ let main argv =
    let mutable cubeVao = Unchecked.defaultof<_>
    let mutable planeVao = Unchecked.defaultof<_>
    let mutable shaderSimple = Unchecked.defaultof<_>
-   let mutable shaderSingleColor = Unchecked.defaultof<_>
    let mutable cubeTexture = Unchecked.defaultof<_>
    let mutable floorTexture = Unchecked.defaultof<_>
+
+   let mutable customFramebuffer = Unchecked.defaultof<_>
+   let mutable screenQuadVao = Unchecked.defaultof<_>
+   let mutable shaderKernelPostProcessing = Unchecked.defaultof<_>
             
    let onKeyDown ctx state dispatch kb key =
       let initResW = initialState.Window.Resolution.Width
@@ -83,25 +84,14 @@ let main argv =
          ]
          |> GlProg.build ctx
 
-      shaderSingleColor <-
-         GlProg.emptyBuilder
-         |> GlProg.withName "SingleColor"
-         |> GlProg.withShaders 
-               [ ShaderType.VertexShader, @"Simple3D.vert"
-               ; ShaderType.FragmentShader, @"SingleColor.frag" 
-               ;]
-         |> GlProg.withUniforms [
-               "uModel"
-               "uView"
-               "uProjection"
-         ]
-         |> GlProg.build ctx
-            
       // CUBE
       cubeVao <-
          GlVao.create ctx
          |> GlVao.bind
          |> fun (vao, _) -> vao
+
+      let asd =
+         Cube.vertexPositionsAndTextureCoords
 
       GlVbo.emptyVboBuilder
       |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
@@ -111,7 +101,7 @@ let main argv =
       |> ignore
 
       cubeTexture <- 
-         GlTex.loadImage "marble.jpg" ctx
+         GlTex.loadImage "container.jpg" ctx
          |> fun img -> GlTex.create2D img ctx
 
       // PLANE
@@ -133,12 +123,55 @@ let main argv =
                                             
       // Hardcoded camera position and target, so it looks just like the
       // LearnOpenGL.com example right away.
-      dispatch (Camera (ForcePosition (new Vector3(-2.99f, 0.95f, -3.46f))))
-      dispatch (Camera (ForceTarget (new Vector3(0.66f, -0.29f, 0.68f))))
+      dispatch (Camera (ForcePosition (new Vector3(-2.13f, 0.64f, 2.64f))))
+      dispatch (Camera (ForceTarget (new Vector3(0.60f, -0.22f, -0.76f))))
 
       // Comment this or press F10 to unlock the camera
       dispatch (Mouse UseCursorNormal)
       dispatch (Camera Lock)
+
+      // Custom framebuffer
+      customFramebuffer <-
+         fboCreateStandard ctx.Window.Size.X ctx.Window.Size.Y ctx
+         |> fun (fbo, _) -> fbo
+
+      // Target screen-sized quad
+      screenQuadVao <-
+         GlVao.create ctx
+         |> GlVao.bind
+         |> fun (vao, _) -> vao
+
+      // vertex attributes for a quad that fills the entire screen in 
+      // Normalized Device Coordinates.
+      GlVbo.emptyVboBuilder
+      |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
+      |> GlVbo.withAttrDefinitions [|
+         [| [| -1.0f; 1.0f |]; [| 0.0f; 1.0f |] |]
+         [| [| -1.0f; -1.0f |]; [| 0.0f; 0.0f |] |]
+         [| [| 1.0f; -1.0f |]; [| 1.0f; 0.0f |] |]
+         
+         [| [| -1.0f; 1.0f |]; [| 0.0f; 1.0f |] |]
+         [| [| 1.0f; -1.0f |]; [| 1.0f; 0.0f |] |]
+         [| [| 1.0f; 1.0f |]; [| 1.0f; 1.0f |] |]
+
+      |]
+      |> GlVbo.build (screenQuadVao, ctx)
+      |> ignore
+
+      // During FBO creation, that framebuffer is left as bound, so the default
+      // one is bound again. Not necessary to do though.
+      fboBindDefault ctx |> ignore
+
+      // Shader that doesn´t do any camera calculations and expects direct UVs
+      shaderKernelPostProcessing <-
+         GlProg.emptyBuilder
+         |> GlProg.withName "KernelPostProcessing"
+         |> GlProg.withShaders 
+               [ ShaderType.VertexShader, @"KernelPostProcessing.vert"
+               ; ShaderType.FragmentShader, @"KernelPostProcessing.frag" 
+               ;]
+         |> GlProg.withUniforms ["uTexture"]
+         |> GlProg.build ctx
 
    let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
       (ctx, state, dispatch, deltaTime)
@@ -150,19 +183,7 @@ let main argv =
       |> Baseline.updateCameraPosition
       |> ignore
 
-   let onRender ctx state dispatch (DeltaTime deltaTime) =
-      ctx.Gl.Enable GLEnum.DepthTest
-      ctx.Gl.DepthFunc GLEnum.Less
-      ctx.Gl.Enable GLEnum.StencilTest
-      ctx.Gl.StencilFunc (GLEnum.Notequal, 1, 255u)
-      ctx.Gl.StencilOp (GLEnum.Keep, GLEnum.Keep, GLEnum.Replace)
-
-      uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit ||| GLEnum.StencilBufferBit)
-      |> ctx.Gl.Clear
-        
-      // Sets a dark grey background so the cube´s color changes are visible
-      ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
-        
+   let renderScene ctx state =
       let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
 
       let res = state.Window.Resolution
@@ -170,132 +191,124 @@ let main argv =
       let ratio = single(res.Width) / single(res.Height)
       let projectionMatrix = 
          Matrix4x4.CreatePerspectiveFieldOfView(fov, ratio, 0.1f, 100.0f)
-       
-      // Prepares the shaders
+      
+      // Prepares the shader
       (shaderSimple, ctx)
       |> GlProg.setAsCurrent
       |> GlProg.setUniformM4x4 "uView" viewMatrix
       |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
       |> ignore
 
-      // PLANE
-      // Renders the floor without writing to the stencil buffer
-      ctx.Gl.StencilMask 0u
+      // CUBES PREP
+      GlVao.bind (cubeVao, ctx) |> ignore
 
+      (cubeVao, ctx)
+      |> GlTex.setActive GLEnum.Texture0 cubeTexture
+      |> ignore        
+
+      // CUBE 1
+      let cube1_ModelMatrix = 
+         Matrix4x4.Identity *
+         Matrix4x4.CreateTranslation(new Vector3(-1.0f, 0.0f, -1.0f))
+
+      (shaderSimple, ctx)
+      |> GlProg.setUniformM4x4 "uModel" cube1_ModelMatrix
+      |> GlProg.setUniformI "uTexture" 0
+      |> ignore
+
+      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
+       
+      // CUBE 2
+      let cube2_ModelMatrix = 
+         Matrix4x4.Identity *
+         Matrix4x4.CreateTranslation(new Vector3(2.0f, 0.0f, 0.0f))
+
+      (shaderSimple, ctx)
+      |> GlProg.setUniformM4x4 "uModel" cube2_ModelMatrix
+      |> GlProg.setUniformI "uTexture" 0
+      |> ignore
+
+      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36ul)
+
+      // PLANE
       GlVao.bind (planeVao, ctx) |> ignore
-        
+       
       (planeVao, ctx)
       |> GlTex.setActive GLEnum.Texture0 floorTexture
       |> ignore
-        
+       
       (shaderSimple, ctx)
       |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity
       |> GlProg.setUniformI "uTexture" 0
       |> ignore
 
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 6u)
-      ctx.Gl.BindVertexArray 0u
-                
-      // CUBES PREP
-      let borderScale = 1.05f
-      GlVao.bind (cubeVao, ctx) |> ignore
-        
-      (cubeVao, ctx)
-      |> GlTex.setActive GLEnum.Texture0 cubeTexture
-      |> ignore        
-        
-      // CUBES 1st PASS
-      // Write the cube to the stencil buffer so the 2nd pass will skip this area
-      ctx.Gl.StencilFunc (GLEnum.Always, 1, 255u)
-      ctx.Gl.StencilMask (uint 255u)
+      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 6ul)
+      //ctx.Gl.BindVertexArray 0ul
+      ()
 
-      let cube1pos = new Vector3(-1.0f, 0.0f, -1.0f);
-      let cube2pos = new Vector3(2.0f, 0.0f, 0.0f);
 
-      // Cube 1
-      let cube1_ModelMatrix = 
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(cube1pos)
-        
-      (shaderSimple, ctx)
-      |> GlProg.setUniformM4x4 "uModel" cube1_ModelMatrix
-      |> GlProg.setUniformI "uTexture" 0
-      |> ignore        
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-                        
-      // Cube 2
-      let cube2_ModelMatrix = 
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(cube2pos)
-        
-      (shaderSimple, ctx)
-      |> GlProg.setUniformM4x4 "uModel" cube2_ModelMatrix
-      |> GlProg.setUniformI "uTexture" 0
-      |> ignore        
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-        
-      // CUBES 2nd PASS
-      // Changes the stencil mode so the tests pass only where the buffer was 
-      // not marked by the previous render pass.
-      // Renders the 1st cube again but scaled up.
-      ctx.Gl.StencilFunc (GLEnum.Notequal, 1, 255u)
-      ctx.Gl.StencilMask (uint 0u)
+   let onRender ctx state dispatch (DeltaTime deltaTime) =
+      // First pass (Real scene on the custom framebuffer)
+      fboBind (customFramebuffer, ctx)
+      |> ignore
+      
+      ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
+
+      uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
+      |> ctx.Gl.Clear
+
+      ctx.Gl.Enable GLEnum.DepthTest
+      ctx.Gl.DepthFunc GLEnum.Less
+
+      let customFbColorAtt =
+         match customFramebuffer.ColorAttachment with
+         | Some colorAttachment -> colorAttachment
+         | None -> failwith "No color attachment was associated to this FBO"
+
+      ctx.Gl.Viewport (
+         new Size(customFbColorAtt.Width, customFbColorAtt.Height))
+      
+      renderScene ctx state
+
+      // Second pass (Custom framebuffer texture result on default framebuffer)
+      fboBindDefault ctx |> ignore
+
+      ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
+      ctx.Gl.Clear (uint32 (GLEnum.ColorBufferBit))
+
+      let winRes = state.Window.Resolution
+      ctx.Gl.Viewport (new Size(winRes.Width, winRes.Height))
+
+      // Disabled depth testing just to be 100% sure this quad will get 
+      // rendered on the front.
       ctx.Gl.Disable GLEnum.DepthTest
-        
-      (shaderSingleColor, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uView" viewMatrix
-      |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
-      |> ignore    
 
-      // Cube 1 border
-      let depthBufferBits =
-         ctx.Gl.GetFramebufferAttachmentParameter(
-            GLEnum.DrawFramebuffer, 
-            GLEnum.Depth, 
-            GLEnum.FramebufferAttachmentDepthSize)
-
-      let stencilBufferBits = 
-         ctx.Gl.GetFramebufferAttachmentParameter(
-            GLEnum.DrawFramebuffer, 
-            GLEnum.Stencil, 
-            GLEnum.FramebufferAttachmentStencilSize)
-
-      let adapted_Cube1_ModelMatrix =
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(cube1pos / borderScale) *
-         Matrix4x4.CreateScale borderScale
-        
-      (shaderSingleColor, ctx)
-      |> GlProg.setUniformM4x4 "uModel" adapted_Cube1_ModelMatrix
+      (screenQuadVao, ctx)
+      |> GlTex.setActiveEmptyTexture GLEnum.Texture0 customFbColorAtt
       |> ignore
 
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-        
-      // Cube 2 border
-      let adapted_Cube2_ModelMatrix =
-         Matrix4x4.Identity 
-         * Matrix4x4.CreateTranslation(Vector3.Divide(cube2pos, borderScale)) 
-         * Matrix4x4.CreateScale borderScale
+      // Prepares the shader
+      (shaderKernelPostProcessing, ctx)
+      |> GlProg.setAsCurrent
+      |> GlProg.setUniformI "uTexture" 0
+      |> ignore
 
-      (shaderSingleColor, ctx)
-      |> GlProg.setUniformM4x4 "uModel" adapted_Cube2_ModelMatrix
-      |> ignore    
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-        
-      ctx.Gl.BindVertexArray 0u
-      ctx.Gl.StencilMask (uint 255u)
-      ctx.Gl.StencilFunc (GLEnum.Always, 0, 255u)
-      ctx.Gl.Enable GLEnum.DepthTest
+      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 6ul)
 
-      // Frame completed
       dispatch (FpsCounter(FrameRenderCompleted deltaTime))
       ()
 
    let onInputContextLoaded ctx ic state dispatch = 
       dispatch (Window (InitializeInputContext ic))
 
-   let onWindowResize ctx state dispatch newSize =
+   let onWindowResize ctx state dispatch (newSize: Vector2) =
+      // Destroys the previous framebuffer, which now has an outdated size
+      fboDestroy customFramebuffer ctx
+
+      customFramebuffer <-
+         fboCreateStandard (int newSize.X) (int newSize.Y) ctx
+         |> fun (fbo, _) -> fbo
+
       (ctx, state, dispatch, newSize)
       |> Baseline.handleWindowResize
       |> ignore
@@ -312,13 +325,5 @@ let main argv =
       |> addOnMouseMove onMouseMove
       |> addOnMouseWheel onMouseWheel
       |> addOnWindowResize onWindowResize
-      |> addOnActionListener (fun state action dispatch ctx ->
-         match action with
-         | Asset assetAction ->
-               let assetDispatch a = dispatch (Asset a)
-               BaseAssetSlice.listen state.Asset assetAction assetDispatch ctx
-         | _ -> 
-               ()
-      )
       |> buildAndRun
    0

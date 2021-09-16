@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Models\GlRenderBufferObject.fs" />
     <Compile Include="Models\GlElementBufferObject.fs" />
     <Compile Include="Models\GlProgramBuilder.fs" />
     <Compile Include="Models\GlProgramLinkingStatus.fs" />
@@ -12,9 +13,11 @@
     <Compile Include="Models\GlShaderStatus.fs" />
     <Compile Include="Models\GlShader.fs" />
     <Compile Include="Models\GlProgram.fs" />
+    <Compile Include="Models\GlEmptyTexture.fs" />
     <Compile Include="Models\GlTexture.fs" />
     <Compile Include="Models\GlTextureSlotsState.fs" />
     <Compile Include="Models\GlVboAttribute.fs" />
+    <Compile Include="Models\GlFrameBufferObject.fs" />
     <Compile Include="Models\GlVboBuilder.fs" />
     <Compile Include="Models\GlVertexArrayObject.fs" />
     <Compile Include="Models\GlVertexBufferObject.fs" />
@@ -28,6 +31,8 @@
     <Compile Include="GlVbo.fs" />
     <Compile Include="GlFont.fs" />
     <Compile Include="GlWin.fs" />
+    <Compile Include="GlRbo.fs" />
+    <Compile Include="GlFbo.fs" />
   </ItemGroup>
 
   <ItemGroup>
