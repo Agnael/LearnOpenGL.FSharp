@@ -2,6 +2,10 @@
 Exercises based on the https://learnopengl.com/ tutorials, using F# and SILK.NET as the OpenGL wrapper.
 Each title title with a link is pointing to the original chapter from the learnopengl.com site on which the theory is explained and all of the math is being copied from.
 
+This repo can be useful if you are following the excelent tutorials on your own and get stuck on some of them (pointer manipulation is a bitch), but please note that this code is not supposed to set any guideline about how you should structure your own projects. It´s just the result of me trying to learn OpenGL, F#, FRP and functional programming in general, so expect the code to be suboptimal at best. 
+
+Also note that the 'Galante' library i wrote here is just a set of helpers i needed along the way and will need a complete refactor once i have a better understanding about OpenGl, but that´s not likely to happen within this repo.
+
 # Table of contents
 * **Getting started**
   * **Hello window** ([Original article](https://learnopengl.com/Getting-started/Hello-Window))
