@@ -118,13 +118,13 @@ let main argv =
       |> ignore
 
       cubeTexture <- 
-         GlTex.loadImage "matrix.jpg" ctx
+         GlTex.loadImage "container.jpg" ctx
          |> fun img -> GlTex.create2d img ctx
                                                      
       // Hardcoded camera position and target, so it looks just like the
       // LearnOpenGL.com example right away.
-      dispatch (Camera (ForcePosition (new Vector3(-1.41f, 0.73f, -1.60f))))
-      dispatch (Camera (ForceTarget (new Vector3(0.61f, -0.36f, 0.69f))))
+      dispatch (Camera (ForcePosition (new Vector3(2.12f, 1.16f, -3.46f))))
+      dispatch (Camera (ForceTarget (new Vector3(-0.36f, -0.15f, 0.91f))))
 
       // Comment this or press F10 to unlock the camera
       dispatch (Mouse UseCursorNormal)

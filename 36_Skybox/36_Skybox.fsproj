@@ -23,7 +23,7 @@
   </ItemGroup>
 
    <ItemGroup>
-      <Content Include="..\Resources\Textures\matrix.jpg" Link="matrix.jpg">
+      <Content Include="..\Resources\Textures\container.jpg" Link="container.jpg">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
 
