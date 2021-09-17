@@ -64,7 +64,7 @@ Also note that the 'Galante' library i wrote here is just a set of helpers i nee
     * [34_Rendering_To_A_Texture](#34_rendering_to_a_texture)
     * [35_PostProcessing_Kernel_Effects](#35_postprocessing_kernel_effects)
   * **Cubemaps** ([Original article](https://learnopengl.com/Advanced-OpenGL/Cubemaps))
-    * Coming soon.
+    * [36_Skybox](#36_skybox)
   * **Advanced data** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-Data))
     * Coming soon.
   * **Advanced GLSL** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL))
@@ -248,7 +248,8 @@ Only half of the faces are rendered. For demonstration purposes, the front faces
 <img src="https://user-images.githubusercontent.com/32271030/133543181-108f8599-c501-47c4-8763-46423961cce7.png" width="642" height="392">
 
 ## [Cubemaps](https://learnopengl.com/Advanced-OpenGL/Cubemaps)  
-Coming soon.
+#### 36_Skybox
+<img src="https://user-images.githubusercontent.com/32271030/133737078-d1802b6e-7f5d-4c25-a85b-2223bac19b2a.png" width="642" height="392">
 
 ## [Advanced data](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)  
 Coming soon.
