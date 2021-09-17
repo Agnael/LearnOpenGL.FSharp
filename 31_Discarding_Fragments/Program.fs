@@ -118,7 +118,7 @@ let main argv =
 
         cubeTexture <- 
             GlTex.loadImage "marble.jpg" ctx
-            |> fun img -> GlTex.create2D img ctx
+            |> fun img -> GlTex.create2d img ctx
 
         // PLANE
         planeVao <-
@@ -135,7 +135,7 @@ let main argv =
 
         floorTexture <- 
             GlTex.loadImage "metal.png" ctx
-            |> fun img -> GlTex.create2D img ctx
+            |> fun img -> GlTex.create2d img ctx
 
         // GRASS
         grassVao <-
@@ -153,7 +153,7 @@ let main argv =
 
         grassTexture <-
             GlTex.loadImageF "grass.png" ctx
-            |> fun img -> GlTex.create2Dtransparent img ctx
+            |> fun img -> GlTex.create2dTransparent img ctx
                                             
         // Hardcoded camera position and target, so it looks just like the
         // LearnOpenGL.com example right away.

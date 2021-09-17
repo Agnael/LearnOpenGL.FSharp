@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Models\CubeMapImage.fs" />
     <Compile Include="Models\GlRenderBufferObject.fs" />
     <Compile Include="Models\GlElementBufferObject.fs" />
     <Compile Include="Models\GlProgramBuilder.fs" />
@@ -23,6 +24,7 @@
     <Compile Include="Models\GlVertexBufferObject.fs" />
     <Compile Include="Models\GlWindowCtx.fs" />
     <Compile Include="Models\GlWindowOptions.fs" />
+    <Compile Include="Gl.fs" />
     <Compile Include="GlVao.fs" />
     <Compile Include="GlEbo.fs" />
     <Compile Include="GlShad.fs" />

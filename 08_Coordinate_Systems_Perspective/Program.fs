@@ -54,12 +54,12 @@ let main argv =
       texture1 <-  
          ctx
          |> GlTex.loadImage "wall.jpg"
-         |> fun img -> GlTex.create2D img ctx
+         |> fun img -> GlTex.create2d img ctx
 
       texture2 <- 
          ctx
          |> GlTex.loadImage "awesomeface.png"
-         |> fun img -> GlTex.create2D img ctx
+         |> fun img -> GlTex.create2d img ctx
 
       // Define en qué orden se van a dibujar los 2 triángulos que forman el cuadrilátero
       let quadEbo = GlEbo.create ctx [| 0ul; 1ul; 2ul; 2ul; 1ul; 3ul; |]

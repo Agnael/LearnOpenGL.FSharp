@@ -94,7 +94,7 @@ let main argv =
         let fallbackImagePath = Path.Combine("Resources", "Textures", "fallback.jpg")
         fallbackGlTexture <-
             GlTex.loadImage fallbackImagePath ctx
-            |> fun img -> GlTex.create2D img ctx
+            |> fun img -> GlTex.create2d img ctx
 
         shaderSimple3d <-
             GlProg.emptyBuilder
@@ -205,7 +205,7 @@ let main argv =
         state.Asset.ImagesLoaded
         |> Map.iter (fun imgPath imgAsset ->
             if imgAsset.GlTexture.IsNone then
-                let glTexture = GlTex.create2D imgAsset.Image ctx
+                let glTexture = GlTex.create2d imgAsset.Image ctx
                 dispatch (Asset (BindedImageAsTexture(imgPath, glTexture)))
         )
 

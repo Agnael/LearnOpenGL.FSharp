@@ -11,6 +11,7 @@ open GalanteMath
 open BaselineState
 open Game
 open GlFbo
+open GlTex
 open Galante
 
 let initialState = 
@@ -102,7 +103,7 @@ let main argv =
 
       cubeTexture <- 
          GlTex.loadImage "marble.jpg" ctx
-         |> fun img -> GlTex.create2D img ctx
+         |> fun img -> GlTex.create2d img ctx
 
       // PLANE
       planeVao <-
@@ -119,7 +120,7 @@ let main argv =
 
       floorTexture <- 
          GlTex.loadImage "metal.png" ctx
-         |> fun img -> GlTex.create2D img ctx
+         |> fun img -> GlTex.create2d img ctx
                                             
       // Hardcoded camera position and target, so it looks just like the
       // LearnOpenGL.com example right away.

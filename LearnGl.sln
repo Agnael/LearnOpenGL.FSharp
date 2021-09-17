@@ -79,7 +79,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "33_Face_Culling", "33_Face_
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "34_Rendering_To_A_Texture", "34_Rendering_To_A_Texture\34_Rendering_To_A_Texture.fsproj", "{642B56AF-F0E8-4F09-AD61-37164D539ED7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "35_PostProcessing_Kernel_Effects", "35_PostProcessing_Kernel_Effects\35_PostProcessing_Kernel_Effects.fsproj", "{F4F45B8B-1A37-4F43-A56F-8F81104C27E4}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "35_PostProcessing_Kernel_Effects", "35_PostProcessing_Kernel_Effects\35_PostProcessing_Kernel_Effects.fsproj", "{F4F45B8B-1A37-4F43-A56F-8F81104C27E4}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "36_Skybox", "36_Skybox\36_Skybox.fsproj", "{1E155149-D969-4D1D-B8B5-82E034292499}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -243,6 +245,10 @@ Global
 		{F4F45B8B-1A37-4F43-A56F-8F81104C27E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4F45B8B-1A37-4F43-A56F-8F81104C27E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4F45B8B-1A37-4F43-A56F-8F81104C27E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E155149-D969-4D1D-B8B5-82E034292499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E155149-D969-4D1D-B8B5-82E034292499}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E155149-D969-4D1D-B8B5-82E034292499}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E155149-D969-4D1D-B8B5-82E034292499}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
