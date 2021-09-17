@@ -2,6 +2,10 @@
 Exercises based on the https://learnopengl.com/ tutorials, using F# and SILK.NET as the OpenGL wrapper.
 Each title title with a link is pointing to the original chapter from the learnopengl.com site on which the theory is explained and all of the math is being copied from.
 
+This repo can be useful if you are following the excelent tutorials on your own and get stuck on some of them (pointer manipulation is a bitch), but please note that this code is not supposed to set any guideline about how you should structure your own projects. It´s just the result of me trying to learn OpenGL, F#, FRP and functional programming in general, so expect the code to be suboptimal at best. 
+
+Also note that the 'Galante' library i wrote here is just a set of helpers i needed along the way and will need a complete refactor once i have a better understanding about OpenGl, but that´s not likely to happen within this repo.
+
 # Table of contents
 * **Getting started**
   * **Hello window** ([Original article](https://learnopengl.com/Getting-started/Hello-Window))
@@ -57,7 +61,8 @@ Each title title with a link is pointing to the original chapter from the learno
   * **Face culling** ([Original article](https://learnopengl.com/Advanced-OpenGL/Face-culling))
     * [33_Face_Culling](#33_face_culling)
   * **Framebuffers** ([Original article](https://learnopengl.com/Advanced-OpenGL/Framebuffers))
-    * Coming soon.
+    * [34_Rendering_To_A_Texture](#34_rendering_to_a_texture)
+    * [35_PostProcessing_Kernel_Effects](#35_postprocessing_kernel_effects)
   * **Cubemaps** ([Original article](https://learnopengl.com/Advanced-OpenGL/Cubemaps))
     * Coming soon.
   * **Advanced data** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-Data))
@@ -236,10 +241,14 @@ Only half of the faces are rendered. For demonstration purposes, the front faces
 <img src="https://user-images.githubusercontent.com/32271030/133198964-249688d1-5417-4766-89c9-d47b0350886c.png" width="642" height="392">
 
 ## [Framebuffers](https://learnopengl.com/Advanced-OpenGL/Framebuffers)  
-Coming soon.
+#### 34_Rendering_To_A_Texture
+<img src="https://user-images.githubusercontent.com/32271030/133543205-6cf18a10-52eb-4789-8b90-c9af7ca01ee0.gif" width="642" height="392">
+
+#### 35_PostProcessing_Kernel_Effects
+<img src="https://user-images.githubusercontent.com/32271030/133543181-108f8599-c501-47c4-8763-46423961cce7.png" width="642" height="392">
 
 ## [Cubemaps](https://learnopengl.com/Advanced-OpenGL/Cubemaps)  
-Coming soon..
+Coming soon.
 
 ## [Advanced data](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)  
 Coming soon.
