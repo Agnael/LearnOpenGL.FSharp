@@ -249,7 +249,7 @@ Only half of the faces are rendered. For demonstration purposes, the front faces
 
 ## [Cubemaps](https://learnopengl.com/Advanced-OpenGL/Cubemaps)  
 #### 36_Skybox
-<img src="https://user-images.githubusercontent.com/32271030/133737078-d1802b6e-7f5d-4c25-a85b-2223bac19b2a.png" width="642" height="392">
+<img src="https://user-images.githubusercontent.com/32271030/133737513-e4237c93-943c-4bb7-97ae-c84f6dac0ac5.gif" width="642" height="392">
 
 ## [Advanced data](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)  
 Coming soon.
