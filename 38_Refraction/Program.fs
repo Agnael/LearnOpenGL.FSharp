@@ -18,7 +18,7 @@ open Model
 
 let initialState = 
    BaselineState.createDefault(
-      "37_Reflection", 
+      "38_Refraction", 
       new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -88,10 +88,10 @@ let main argv =
    let onLoad (ctx: GlWindowCtx) input state dispatch =
       shaderSimple <-
          GlProg.emptyBuilder
-         |> GlProg.withName "Reflective"
+         |> GlProg.withName "Refractive"
          |> GlProg.withShaders 
-               [ ShaderType.VertexShader, @"Reflective.vert"
-               ; ShaderType.FragmentShader, @"Reflective.frag" 
+               [ ShaderType.VertexShader, @"Refractive.vert"
+               ; ShaderType.FragmentShader, @"Refractive.frag" 
                ;]
          |> GlProg.withUniforms [
                "uModel"
@@ -121,8 +121,8 @@ let main argv =
       dispatch (Camera (ForceTarget (new Vector3(-0.36f, -0.15f, 0.91f))))
 
       // Comment this or press F10 to unlock the camera
-      //dispatch (Mouse UseCursorNormal)
-      //dispatch (Camera Lock)
+      dispatch (Mouse UseCursorNormal)
+      dispatch (Camera Lock)
 
       shaderSkybox <-
          GlProg.emptyBuilder

@@ -3,24 +3,25 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>_37_Reflection</RootNamespace>
+    <RootNamespace>_38_Refraction</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Reflective.frag">
-       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-     </None>
-    <None Include="Reflective.vert">
-       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-     </None>
     <None Include="Skybox.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Skybox.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Refractive.frag">
        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
      </None>
-    <None Include="Skybox.vert">
+    <None Include="Refractive.vert">
        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
      </None>
     <Compile Include="Program.fs" />
   </ItemGroup>
+
 
    <ItemGroup>
       <Content Include="..\Resources\Textures\Skyboxes\water_sky\back.jpg" Link="Skyboxes\water_sky\back.jpg">
@@ -61,6 +62,9 @@
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
    </ItemGroup>
+
+
+   <ItemGroup />
 
    <ItemGroup>
       <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
