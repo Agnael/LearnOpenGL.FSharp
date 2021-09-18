@@ -65,6 +65,7 @@ Also note that the 'Galante' library i wrote here is just a set of helpers i nee
     * [35_PostProcessing_Kernel_Effects](#35_postprocessing_kernel_effects)
   * **Cubemaps** ([Original article](https://learnopengl.com/Advanced-OpenGL/Cubemaps))
     * [36_Skybox](#36_skybox)
+    * [37_Reflection](#37_reflection)
   * **Advanced data** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-Data))
     * Coming soon.
   * **Advanced GLSL** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL))
@@ -251,10 +252,13 @@ Only half of the faces are rendered. For demonstration purposes, the front faces
 #### 36_Skybox
 <img src="https://user-images.githubusercontent.com/32271030/133737513-e4237c93-943c-4bb7-97ae-c84f6dac0ac5.gif" width="642" height="392">
 
+#### 37_Reflection
+<img src="https://user-images.githubusercontent.com/32271030/133899732-354a458e-3488-4549-8aa6-5a18ed9978ac.gif" width="642" height="392">
+
 ## [Advanced data](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)  
 Coming soon.
 
-## [Advanced GLSL](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL)  
+## [Advanced GLSL](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL)
 Coming soon.
 
 ## [Geometry shader](https://learnopengl.com/Advanced-OpenGL/Geometry-Shader)  
