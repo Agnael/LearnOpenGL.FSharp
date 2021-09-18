@@ -100,18 +100,19 @@ let main argv =
         if key = Key.ShiftLeft then isMovingDown <- false
 
     let onMouseMove mouse (position: Vector2) = 
-        // Without this block, you'll notice the camera makes a large sudden jump 
-        // whenever the window first receives focus of your mouse cursor. The cause 
-        // for this sudden jump is that as soon as your cursor enters the window the 
-        // mouse callback function is called with an xpos and ypos position equal to 
-        // the location your mouse entered the screen from. This is often a position 
-        // that is significantly far away from the center of the screen, resulting in 
-        // large offsets and thus a large movement jump. We can circumvent this issue 
-        // by defining a global bool variable to check if this is the first time we 
-        // receive mouse input. If it is the first time, we update the initial mouse 
-        // positions to the new xpos and ypos values. The resulting mouse movements 
-        // will then use the newly entered mouse's position coordinates to calculate 
-        // the offsets.
+        // Without this block, you'll notice the camera makes a large sudden
+        // jump whenever the window first receives focus of your mouse cursor.
+        // The cause for this sudden jump is that as soon as your cursor enters
+        // the window the mouse callback function is called with an xpos and
+        // ypos position equal to the location your mouse entered the screen
+        // from. This is often a position that is significantly far away from
+        // the center of the screen, resulting in large offsets and thus a
+        // large movement jump. We can circumvent this issue by defining a
+        // global bool variable to check if this is the first time we receive
+        // mouse input. If it is the first time, we update the initial mouse 
+        // positions to the new xpos and ypos values. The resulting mouse
+        // movements will then use the newly entered mouse's position
+        // coordinates to calculate the offsets.
         if isAbsoluteFirstMouseInput then
             lastMouseX <- position.X
             lastMouseY <- position.Y

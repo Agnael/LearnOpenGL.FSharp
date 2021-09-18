@@ -127,8 +127,8 @@ let main argv =
       dispatch (Camera (ForceTarget (new Vector3(-0.36f, -0.15f, 0.91f))))
 
       // Comment this or press F10 to unlock the camera
-      dispatch (Mouse UseCursorNormal)
-      dispatch (Camera Lock)
+      //dispatch (Mouse UseCursorNormal)
+      //dispatch (Camera Lock)
 
       shaderSkybox <-
          GlProg.emptyBuilder
