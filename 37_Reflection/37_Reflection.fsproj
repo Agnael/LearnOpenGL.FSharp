@@ -1,0 +1,82 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>_37_Reflection</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Simple3D.frag">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </None>
+    <None Include="SImple3D.vert">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </None>
+    <None Include="Skybox.frag">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </None>
+    <None Include="Skybox.vert">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </None>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+   <ItemGroup>
+      <Content Include="..\Resources\Textures\container.jpg" Link="container.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+
+      <Content Include="..\Resources\Textures\Skyboxes\water_sky\back.jpg" Link="Skyboxes\water_sky\back.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\water_sky\bottom.jpg" Link="Skyboxes\water_sky\bottom.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\water_sky\front.jpg" Link="Skyboxes\water_sky\front.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\water_sky\left.jpg" Link="Skyboxes\water_sky\left.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\water_sky\right.jpg" Link="Skyboxes\water_sky\right.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\water_sky\top.jpg" Link="Skyboxes\water_sky\top.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+
+      <Content Include="..\Resources\Textures\Skyboxes\storforsen\back.jpg" Link="Skyboxes\storforsen\back.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\storforsen\bottom.jpg" Link="Skyboxes\storforsen\bottom.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\storforsen\front.jpg" Link="Skyboxes\storforsen\front.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\storforsen\left.jpg" Link="Skyboxes\storforsen\left.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\storforsen\right.jpg" Link="Skyboxes\storforsen\right.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Textures\Skyboxes\storforsen\top.jpg" Link="Skyboxes\storforsen\top.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+   </ItemGroup>
+
+   <ItemGroup />
+
+   <ItemGroup>
+      <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
+      <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+      <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <ProjectReference Include="..\Baseline\Baseline.fsproj" />
+      <ProjectReference Include="..\Galante\Galante.fsproj" />
+      <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
+   </ItemGroup>
+</Project>

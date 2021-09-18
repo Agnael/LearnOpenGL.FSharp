@@ -176,7 +176,11 @@ let main argv =
 
    let onRender ctx state dispatch (DeltaTime deltaTime) =
       ctx.Gl.Enable GLEnum.DepthTest
-      ctx.Gl.DepthFunc GLEnum.Less
+
+      // Needs to be Lequal instead of Less, so that the z-depth trick works
+      // for the skybox, and it gets drawn behind everything even though
+      // it´s rendered last.
+      ctx.Gl.DepthFunc GLEnum.Lequal
 
       uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
       |> ctx.Gl.Clear
@@ -192,28 +196,6 @@ let main argv =
       let projectionMatrix = 
          Matrix4x4.CreatePerspectiveFieldOfView(fov, ratio, 0.1f, 100.0f)
        
-      // SKYBOX
-      // Renders the skybox first, with disabled depth writing so it´s 
-      // always in the background.
-      ctx.Gl.DepthMask false
-      (shaderSkybox, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uView" viewMatrix
-      |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
-      |> ignore
-
-      (skyboxVao, ctx)
-      |> GlTex.setActive GLEnum.Texture0 skyboxCubemap
-      |> ignore   
-       
-      (shaderSkybox, ctx)
-      |> GlProg.setUniformI "uSkybox" 0
-      |> ignore        
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)  
-
-      // Re enables the depth writing after the skybox is rendered
-      ctx.Gl.DepthMask true
-
        // CUBES
       (shaderSimple, ctx)
       |> GlProg.setAsCurrent
@@ -238,6 +220,28 @@ let main argv =
       |> ignore        
       ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
                 
+      // SKYBOX
+      // Renders the skybox first, with disabled depth writing so it´s 
+      // always in the background.
+      ctx.Gl.DepthMask false
+      (shaderSkybox, ctx)
+      |> GlProg.setAsCurrent
+      |> GlProg.setUniformM4x4 "uView" viewMatrix
+      |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
+      |> ignore
+
+      (skyboxVao, ctx)
+      |> GlTex.setActive GLEnum.Texture0 skyboxCubemap
+      |> ignore   
+       
+      (shaderSkybox, ctx)
+      |> GlProg.setUniformI "uSkybox" 0
+      |> ignore        
+      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)  
+
+      // Re enables the depth writing after the skybox is rendered
+      ctx.Gl.DepthMask true
+
       // Frame completed
       dispatch (FpsCounter(FrameRenderCompleted deltaTime))
       ()
