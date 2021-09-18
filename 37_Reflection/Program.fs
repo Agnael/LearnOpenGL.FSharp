@@ -88,16 +88,17 @@ let main argv =
    let onLoad (ctx: GlWindowCtx) input state dispatch =
       shaderSimple <-
          GlProg.emptyBuilder
-         |> GlProg.withName "Simple"
+         |> GlProg.withName "Reflective"
          |> GlProg.withShaders 
-               [ ShaderType.VertexShader, @"Simple3D.vert"
-               ; ShaderType.FragmentShader, @"Simple3D.frag" 
+               [ ShaderType.VertexShader, @"Reflective.vert"
+               ; ShaderType.FragmentShader, @"Reflective.frag" 
                ;]
          |> GlProg.withUniforms [
                "uModel"
                "uView"
                "uProjection"
-               "uTexture"
+               "uAmbientCubemap"
+               "uCameraPosition"
          ]
          |> GlProg.build ctx
             
@@ -107,19 +108,12 @@ let main argv =
          |> GlVao.bind
          |> fun (vao, _) -> vao
 
-      let asd =
-         Cube.vertexPositionsAndTextureCoords
-
       GlVbo.emptyVboBuilder
-      |> GlVbo.withAttrNames ["Positions"; "Texture coords"]
+      |> GlVbo.withAttrNames ["Positions"; "Normals"]
       |> GlVbo.withAttrDefinitions 
-         Cube.vertexPositionsAndTextureCoords
+         Cube.vertexPositionsAndNormals
       |> GlVbo.build (cubeVao, ctx)
       |> ignore
-
-      cubeTexture <- 
-         GlTex.loadImage "container.jpg" ctx
-         |> fun img -> GlTex.create2d img ctx
                                                      
       // Hardcoded camera position and target, so it looks just like the
       // LearnOpenGL.com example right away.
@@ -201,13 +195,14 @@ let main argv =
       |> GlProg.setAsCurrent
       |> GlProg.setUniformM4x4 "uView" viewMatrix
       |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
+      |> GlProg.setUniformV3 "uCameraPosition" state.Camera.Position
       |> ignore
                      
       let borderScale = 1.05f
       GlVao.bind (cubeVao, ctx) |> ignore
         
       (cubeVao, ctx)
-      |> GlTex.setActive GLEnum.Texture0 cubeTexture
+      |> GlTex.setActive GLEnum.Texture0 skyboxCubemap
       |> ignore        
         
       let cube_ModelMatrix = 
@@ -216,7 +211,7 @@ let main argv =
         
       (shaderSimple, ctx)
       |> GlProg.setUniformM4x4 "uModel" cube_ModelMatrix
-      |> GlProg.setUniformI "uTexture" 0
+      |> GlProg.setUniformI "uAmbientCubemap" 0
       |> ignore        
       ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
                 

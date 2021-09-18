@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Simple3D.frag">
+    <None Include="Reflective.frag">
        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
      </None>
-    <None Include="SImple3D.vert">
+    <None Include="Reflective.vert">
        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
      </None>
     <None Include="Skybox.frag">
