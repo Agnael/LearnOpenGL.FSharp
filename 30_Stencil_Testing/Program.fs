@@ -137,8 +137,8 @@ let main argv =
       dispatch (Camera (ForceTarget (new Vector3(0.66f, -0.29f, 0.68f))))
 
       // Comment this or press F10 to unlock the camera
-      dispatch (Mouse UseCursorNormal)
-      dispatch (Camera Lock)
+      //dispatch (Mouse UseCursorNormal)
+      //dispatch (Camera Lock)
 
    let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
       (ctx, state, dispatch, deltaTime)

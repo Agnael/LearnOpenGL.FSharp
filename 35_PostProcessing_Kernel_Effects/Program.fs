@@ -127,8 +127,8 @@ let main argv =
       dispatch (Camera (ForceTarget (new Vector3(0.60f, -0.22f, -0.76f))))
 
       // Comment this or press F10 to unlock the camera
-      dispatch (Mouse UseCursorNormal)
-      dispatch (Camera Lock)
+      //dispatch (Mouse UseCursorNormal)
+      //dispatch (Camera Lock)
 
       // Custom framebuffer
       customFramebuffer <-
