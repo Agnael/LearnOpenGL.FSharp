@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Overrides the .obj ignore rule for the "Resources" directory, because that same extension is used for character model data and we DO want that commited.
+!Resources/**
