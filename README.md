@@ -66,6 +66,7 @@ Also note that the 'Galante' library i wrote here is just a set of helpers i nee
   * **Cubemaps** ([Original article](https://learnopengl.com/Advanced-OpenGL/Cubemaps))
     * [36_Skybox](#36_skybox)
     * [37_Reflection](#37_reflection)
+    * [38_Refraction](#38_refraction)
   * **Advanced data** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-Data))
     * Coming soon.
   * **Advanced GLSL** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL))
@@ -254,6 +255,9 @@ Only half of the faces are rendered. For demonstration purposes, the front faces
 
 #### 37_Reflection
 <img src="https://user-images.githubusercontent.com/32271030/133899732-354a458e-3488-4549-8aa6-5a18ed9978ac.gif" width="642" height="392">
+
+#### 38_Refraction
+<img src="https://user-images.githubusercontent.com/32271030/133935594-4d76d620-3dd7-4c5f-8e19-3173741636f3.gif" width="642" height="392">
 
 ## [Advanced data](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)  
 Coming soon.
