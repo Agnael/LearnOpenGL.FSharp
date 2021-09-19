@@ -6,6 +6,7 @@ in vec3 Position;
 
 uniform vec3 uCameraPosition;
 uniform samplerCube uAmbientCubemap;
+uniform float uAlpha;
 
 void main()
 {    
@@ -19,5 +20,5 @@ void main()
    // so that it looks like the rendered pixel is a reflection.
    vec3 R = refract(I, normalize(Normal), refractiveRatio);
 
-   FragColor = vec4(texture(uAmbientCubemap, R).rgb, 1.0);
+   FragColor = vec4(texture(uAmbientCubemap, R).rgb, uAlpha);
 }

@@ -14,6 +14,7 @@ open Game
 open Galante
 open System.IO
 open GlTex
+open GlFbo
 open Model
 
 let initialState = 
@@ -51,7 +52,7 @@ let main argv =
          Size = initialRes }
 
    let mutable cubeVao = Unchecked.defaultof<_>
-   let mutable shaderSimple = Unchecked.defaultof<_>
+   let mutable shaderRefractive = Unchecked.defaultof<_>
    let mutable cubeTexture = Unchecked.defaultof<_>
             
    let mutable shaderSkybox = Unchecked.defaultof<_>
@@ -86,7 +87,7 @@ let main argv =
       |> ignore
             
    let onLoad (ctx: GlWindowCtx) input state dispatch =
-      shaderSimple <-
+      shaderRefractive <-
          GlProg.emptyBuilder
          |> GlProg.withName "Refractive"
          |> GlProg.withShaders 
@@ -99,6 +100,7 @@ let main argv =
                "uProjection"
                "uAmbientCubemap"
                "uCameraPosition"
+               "uAlpha"
          ]
          |> GlProg.build ctx
             
@@ -111,7 +113,7 @@ let main argv =
       GlVbo.emptyVboBuilder
       |> GlVbo.withAttrNames ["Positions"; "Normals"]
       |> GlVbo.withAttrDefinitions 
-         Cube.vertexPositionsAndNormals
+         CubeCCW.vertexPositionsAndNormals
       |> GlVbo.build (cubeVao, ctx)
       |> ignore
                                                      
@@ -120,9 +122,11 @@ let main argv =
       dispatch (Camera (ForcePosition (new Vector3(2.12f, 1.16f, -3.46f))))
       dispatch (Camera (ForceTarget (new Vector3(-0.36f, -0.15f, 0.91f))))
 
+      dispatch (Mouse UseCursorRaw)
+
       // Comment this or press F10 to unlock the camera
-      dispatch (Mouse UseCursorNormal)
-      dispatch (Camera Lock)
+      //dispatch (Mouse UseCursorNormal)
+      //dispatch (Camera Lock)
 
       shaderSkybox <-
          GlProg.emptyBuilder
@@ -147,6 +151,7 @@ let main argv =
       |> GlVbo.withAttrNames ["Positions"]
       |> GlVbo.withAttrDefinitions 
          Skybox.vertexPositions
+         //CubeCCW.vertexPositions
       |> GlVbo.build (skyboxVao, ctx)
       |> ignore
 
@@ -155,7 +160,6 @@ let main argv =
 
       //let cubemap = 
       //   GlTex.loadCubemap (Path.Combine("Skyboxes", "storforsen")) ".jpg" ctx
-
       skyboxCubemap <- buildCubemapGlTexture cubemap ctx
 
    let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
@@ -168,6 +172,31 @@ let main argv =
       |> Baseline.updateCameraPosition
       |> ignore
 
+   let renderCube ctx state viewMatrix projectionMatrix alpha =
+      (shaderRefractive, ctx)
+      |> GlProg.setAsCurrent
+      |> GlProg.setUniformM4x4 "uView" viewMatrix
+      |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
+      |> GlProg.setUniformV3 "uCameraPosition" state.Camera.Position
+      |> GlProg.setUniformF "uAlpha" alpha
+      |> ignore
+                     
+      GlVao.bind (cubeVao, ctx) |> ignore
+        
+      (cubeVao, ctx)
+      |> GlTex.setActive GLEnum.Texture0 skyboxCubemap
+      |> ignore
+      
+      let cube_ModelMatrix = 
+         Matrix4x4.Identity *
+         Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
+        
+      (shaderRefractive, ctx)
+      |> GlProg.setUniformM4x4 "uModel" cube_ModelMatrix
+      |> GlProg.setUniformI "uAmbientCubemap" 0
+      |> ignore        
+      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
+
    let onRender ctx state dispatch (DeltaTime deltaTime) =
       ctx.Gl.Enable GLEnum.DepthTest
 
@@ -176,11 +205,16 @@ let main argv =
       // it´s rendered last.
       ctx.Gl.DepthFunc GLEnum.Lequal
 
+      ctx.Gl.Enable GLEnum.Blend
+      ctx.Gl.BlendFunc (
+         BlendingFactor.SrcAlpha, 
+         BlendingFactor.OneMinusSrcAlpha)
+
       uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
       |> ctx.Gl.Clear
         
       // Sets a dark grey background so the cube´s color changes are visible
-      ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
+      ctx.Gl.ClearColor(0.9f, 0.9f, 0.9f, 1.0f)
         
       let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
 
@@ -189,35 +223,8 @@ let main argv =
       let ratio = single(res.Width) / single(res.Height)
       let projectionMatrix = 
          Matrix4x4.CreatePerspectiveFieldOfView(fov, ratio, 0.1f, 100.0f)
-       
-       // CUBES
-      (shaderSimple, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uView" viewMatrix
-      |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
-      |> GlProg.setUniformV3 "uCameraPosition" state.Camera.Position
-      |> ignore
-                     
-      let borderScale = 1.05f
-      GlVao.bind (cubeVao, ctx) |> ignore
-        
-      (cubeVao, ctx)
-      |> GlTex.setActive GLEnum.Texture0 skyboxCubemap
-      |> ignore        
-        
-      let cube_ModelMatrix = 
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
-        
-      (shaderSimple, ctx)
-      |> GlProg.setUniformM4x4 "uModel" cube_ModelMatrix
-      |> GlProg.setUniformI "uAmbientCubemap" 0
-      |> ignore        
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-                
+      
       // SKYBOX
-      // Renders the skybox first, with disabled depth writing so it´s 
-      // always in the background.
       ctx.Gl.DepthMask false
       (shaderSkybox, ctx)
       |> GlProg.setAsCurrent
@@ -237,6 +244,23 @@ let main argv =
       // Re enables the depth writing after the skybox is rendered
       ctx.Gl.DepthMask true
 
+      // The cube will be drawn in 2 passes: A first one rendering only the
+      // back faces, and a second one rendering only the front faces with a
+      // reduced alpha, so that both faces are visible and the cube looks like
+      // it´s made of glass.
+      // **********************************************************************
+      // CUBE back face
+      ctx.Gl.Enable GLEnum.CullFace
+      ctx.Gl.FrontFace GLEnum.Ccw
+      ctx.Gl.CullFace GLEnum.Front
+
+      renderCube ctx state viewMatrix projectionMatrix 1.0f
+
+      // CUBE front face
+      ctx.Gl.CullFace GLEnum.Back
+      renderCube ctx state viewMatrix projectionMatrix 0.5f
+      ctx.Gl.Disable GLEnum.CullFace  
+                
       // Frame completed
       dispatch (FpsCounter(FrameRenderCompleted deltaTime))
       ()
