@@ -60,3 +60,13 @@ let glGenerateMipmap (textureTarget: TextureTarget) ctx =
 let glEnable (enableCap: EnableCap) ctx = 
    ctx.Gl.Enable (enableCap)
    ctx
+
+let glGetUniformBlockIndex shader (uniformBlockName: string) ctx =
+   ctx.Gl.GetUniformBlockIndex (shader.GlProgramHandle, uniformBlockName)
+
+let glUniformBlockBinding shader uniformIndex targetUniformBlockBinding ctx =
+   ctx.Gl.UniformBlockBinding (
+      shader.GlProgramHandle, 
+      uniformIndex, 
+      targetUniformBlockBinding)
+   ctx

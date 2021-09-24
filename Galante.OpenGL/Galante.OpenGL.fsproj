@@ -15,6 +15,7 @@
     <Compile Include="Models\GlShader.fs" />
     <Compile Include="Models\GlProgram.fs" />
     <Compile Include="Models\GlEmptyTexture.fs" />
+    <Compile Include="Models\GlUniformBlock.fs" />
     <Compile Include="Models\GlTexture.fs" />
     <Compile Include="Models\GlTextureSlotsState.fs" />
     <Compile Include="Models\GlVboAttribute.fs" />

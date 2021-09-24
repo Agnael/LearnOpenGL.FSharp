@@ -14,11 +14,12 @@ open Game
 open Galante
 open System.IO
 open GlTex
+open GlFbo
 open Model
 
 let initialState = 
    BaselineState.createDefault(
-      "37_Reflection", 
+      "39_Vertex_Shader_Variables", 
       new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -42,12 +43,7 @@ let main argv =
          Size = initialRes }
 
    let mutable cubeVao = Unchecked.defaultof<_>
-   let mutable shaderSimple = Unchecked.defaultof<_>
-   let mutable cubeTexture = Unchecked.defaultof<_>
-            
-   let mutable shaderSkybox = Unchecked.defaultof<_>
-   let mutable skyboxVao = Unchecked.defaultof<_>
-   let mutable skyboxCubemap = Unchecked.defaultof<_>
+   let mutable shaderDepthBoundSize = Unchecked.defaultof<_>
 
    let onKeyDown ctx state dispatch kb key =
       let initResW = initialState.Window.Resolution.Width
@@ -77,19 +73,17 @@ let main argv =
       |> ignore
             
    let onLoad (ctx: GlWindowCtx) input state dispatch =
-      shaderSimple <-
+      shaderDepthBoundSize <-
          GlProg.emptyBuilder
-         |> GlProg.withName "Reflective"
+         |> GlProg.withName "DepthBoundSize"
          |> GlProg.withShaders 
-               [ ShaderType.VertexShader, @"Reflective.vert"
-               ; ShaderType.FragmentShader, @"Reflective.frag" 
+               [ ShaderType.VertexShader, @"Vertex.vert"
+               ; ShaderType.FragmentShader, @"Fragment.frag" 
                ;]
          |> GlProg.withUniforms [
                "uModel"
                "uView"
                "uProjection"
-               "uAmbientCubemap"
-               "uCameraPosition"
          ]
          |> GlProg.build ctx
             
@@ -102,52 +96,20 @@ let main argv =
       GlVbo.emptyVboBuilder
       |> GlVbo.withAttrNames ["Positions"; "Normals"]
       |> GlVbo.withAttrDefinitions 
-         Cube.vertexPositionsAndNormals
+         CubeCCW.vertexPositionsAndNormals
       |> GlVbo.build (cubeVao, ctx)
       |> ignore
                                                      
       // Hardcoded camera position and target, so it looks just like the
       // LearnOpenGL.com example right away.
-      dispatch (Camera (ForcePosition (new Vector3(2.12f, 1.16f, -3.46f))))
-      dispatch (Camera (ForceTarget (new Vector3(-0.36f, -0.15f, 0.91f))))
+      dispatch (Camera (ForcePosition (new Vector3(1.64f, 0.00f, 1.35f))))
+      dispatch (Camera (ForceTarget (new Vector3(-0.76f, 0.00f, -0.63f))))
+
+      dispatch (Mouse UseCursorRaw)
 
       // Comment this or press F10 to unlock the camera
       //dispatch (Mouse UseCursorNormal)
       //dispatch (Camera Lock)
-
-      shaderSkybox <-
-         GlProg.emptyBuilder
-         |> GlProg.withName "Skybox"
-         |> GlProg.withShaders 
-               [ ShaderType.VertexShader, @"Skybox.vert"
-               ; ShaderType.FragmentShader, @"Skybox.frag" 
-               ;]
-         |> GlProg.withUniforms [
-               "uView"
-               "uProjection"
-               "uSkybox"
-         ]
-         |> GlProg.build ctx
-
-      skyboxVao <-
-         GlVao.create ctx
-         |> GlVao.bind
-         |> fun (vao, _) -> vao
-
-      GlVbo.emptyVboBuilder
-      |> GlVbo.withAttrNames ["Positions"]
-      |> GlVbo.withAttrDefinitions 
-         Skybox.vertexPositions
-      |> GlVbo.build (skyboxVao, ctx)
-      |> ignore
-
-      let cubemap = 
-         GlTex.loadCubemap (Path.Combine("Skyboxes", "water_sky")) ".jpg" ctx
-
-      //let cubemap = 
-      //   GlTex.loadCubemap (Path.Combine("Skyboxes", "storforsen")) ".jpg" ctx
-
-      skyboxCubemap <- buildCubemapGlTexture cubemap ctx
 
    let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
       (ctx, state, dispatch, deltaTime)
@@ -159,6 +121,22 @@ let main argv =
       |> Baseline.updateCameraPosition
       |> ignore
 
+   let renderCube ctx state viewMatrix projectionMatrix =
+      let cube_ModelMatrix = 
+         Matrix4x4.Identity *
+         Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
+
+      (shaderDepthBoundSize, ctx)
+      |> GlProg.setAsCurrent
+      |> GlProg.setUniformM4x4 "uView" viewMatrix
+      |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
+      |> GlProg.setUniformM4x4 "uModel" cube_ModelMatrix
+      |> ignore
+                     
+      GlVao.bind (cubeVao, ctx) |> ignore
+        
+      ctx.Gl.DrawArrays(GLEnum.Points, 0, 36u);
+
    let onRender ctx state dispatch (DeltaTime deltaTime) =
       ctx.Gl.Enable GLEnum.DepthTest
 
@@ -167,8 +145,16 @@ let main argv =
       // it´s rendered last.
       ctx.Gl.DepthFunc GLEnum.Lequal
 
+      ctx.Gl.Enable GLEnum.Blend
+      ctx.Gl.BlendFunc (
+         BlendingFactor.SrcAlpha, 
+         BlendingFactor.OneMinusSrcAlpha)
+
       uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
       |> ctx.Gl.Clear
+
+      // Enables access to the point access GL variable in the vertex shader
+      ctx.Gl.Enable EnableCap.ProgramPointSize
         
       // Sets a dark grey background so the cube´s color changes are visible
       ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
@@ -180,53 +166,10 @@ let main argv =
       let ratio = single(res.Width) / single(res.Height)
       let projectionMatrix = 
          Matrix4x4.CreatePerspectiveFieldOfView(fov, ratio, 0.1f, 100.0f)
-       
-       // CUBES
-      (shaderSimple, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uView" viewMatrix
-      |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
-      |> GlProg.setUniformV3 "uCameraPosition" state.Camera.Position
-      |> ignore
-                     
-      let borderScale = 1.05f
-      GlVao.bind (cubeVao, ctx) |> ignore
-        
-      (cubeVao, ctx)
-      |> GlTex.setActive GLEnum.Texture0 skyboxCubemap
-      |> ignore        
-        
-      let cube_ModelMatrix = 
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
-        
-      (shaderSimple, ctx)
-      |> GlProg.setUniformM4x4 "uModel" cube_ModelMatrix
-      |> GlProg.setUniformI "uAmbientCubemap" 0
-      |> ignore        
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
-                
-      // SKYBOX
-      // Renders the skybox first, with disabled depth writing so it´s 
-      // always in the background.
-      ctx.Gl.DepthMask false
-      (shaderSkybox, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uView" viewMatrix
-      |> GlProg.setUniformM4x4 "uProjection" projectionMatrix
-      |> ignore
-
-      (skyboxVao, ctx)
-      |> GlTex.setActive GLEnum.Texture0 skyboxCubemap
-      |> ignore   
-       
-      (shaderSkybox, ctx)
-      |> GlProg.setUniformI "uSkybox" 0
-      |> ignore        
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)  
-
-      // Re enables the depth writing after the skybox is rendered
-      ctx.Gl.DepthMask true
+      
+      // **********************************************************************
+      // CUBE back face
+      renderCube ctx state viewMatrix projectionMatrix
 
       // Frame completed
       dispatch (FpsCounter(FrameRenderCompleted deltaTime))

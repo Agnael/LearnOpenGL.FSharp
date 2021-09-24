@@ -68,9 +68,11 @@ Also note that the 'Galante' library i wrote here is just a set of helpers i nee
     * [37_Reflection](#37_reflection)
     * [38_Refraction](#38_refraction)
   * **Advanced data** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-Data))
-    * Coming soon.
+    * No visual representation.
   * **Advanced GLSL** ([Original article](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL))
-    * Coming soon.
+    * [39_Vertex_Shader_Variables](#39_vertex_shader_variables)
+    * [40_Fragment_Shader_Variables](#40_fragment_shader_variables)
+    * [41_Uniform_Buffer_Objects](#41_uniform_buffer_objects)
   * **Geometry shader** ([Original article](https://learnopengl.com/Advanced-OpenGL/Geometry-Shader))
     * Coming soon.
   * **Instancing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Instancing))
@@ -260,10 +262,17 @@ Only half of the faces are rendered. For demonstration purposes, the front faces
 <img src="https://user-images.githubusercontent.com/32271030/133935594-4d76d620-3dd7-4c5f-8e19-3173741636f3.gif" width="642" height="392">
 
 ## [Advanced data](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)  
-Coming soon.
+No visual representation.
 
 ## [Advanced GLSL](https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL)
-Coming soon.
+#### 39_Vertex_Shader_Variables
+<img src="https://user-images.githubusercontent.com/32271030/134447875-6204b59d-a4fd-4591-bb29-a762dab07e2f.png" width="642" height="392">
+
+#### 40_Fragment_Shader_Variables
+<img src="https://user-images.githubusercontent.com/32271030/134447878-a78bbaa2-94d6-4372-89a9-23045ad2fde0.gif" width="642" height="392">
+
+#### 41_Uniform_Buffer_Objects
+<img src="https://user-images.githubusercontent.com/32271030/134447882-45a10056-2377-4617-9011-2a4fb4d3fc25.png" width="642" height="392">
 
 ## [Geometry shader](https://learnopengl.com/Advanced-OpenGL/Geometry-Shader)  
 Coming soon.

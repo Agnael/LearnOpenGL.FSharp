@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>_41_Uniform_Buffer_Objects</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Blue.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Green.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Red.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Yellow.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Vertex.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup />
+
+   <ItemGroup>
+      <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
+      <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+      <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <ProjectReference Include="..\Baseline\Baseline.fsproj" />
+      <ProjectReference Include="..\Galante\Galante.fsproj" />
+      <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
+   </ItemGroup>
+</Project>

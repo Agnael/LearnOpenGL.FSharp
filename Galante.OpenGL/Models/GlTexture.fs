@@ -1,4 +1,5 @@
 ﻿namespace Galante.OpenGL
+namespace Galante.OpenGL
 
 open Silk.NET.OpenGL
 

@@ -24,15 +24,6 @@ let initialState =
 
 let initialRes = initialState.Window.Resolution
 
-let grassPositions = 
-   [|
-      new Vector3(-1.5f, 0.0f, -0.48f)
-      new Vector3(1.5f, 0.0f, 0.51f)
-      new Vector3(0.0f, 0.0f, 0.7f)
-      new Vector3(-0.3f, 0.0f, -2.3f)
-      new Vector3(0.5f, 0.0f, -0.6f)
-   |]
-
 let v3toFloatArray (v3: Vector3): single array = 
    [| v3.X; v3.Y; v3.X |]
 
