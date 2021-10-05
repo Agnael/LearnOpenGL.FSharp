@@ -85,13 +85,19 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "36_Skybox", "36_Skybox\36_S
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "37_Reflection", "37_Reflection\37_Reflection.fsproj", "{7927AE4F-D42C-48A2-864D-097AD366F444}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "38_Refraction", "38_Refraction\38_Refraction.fsproj", "{EE315D30-98B7-4BA7-9504-4AEC8E31FAAF}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "38_Refraction", "38_Refraction\38_Refraction.fsproj", "{EE315D30-98B7-4BA7-9504-4AEC8E31FAAF}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "39_Vertex_Shader_Variables", "39_Vertex_Shader_Variables\39_Vertex_Shader_Variables.fsproj", "{71159333-0BE3-4C26-A245-0165B09602F7}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "39_Vertex_Shader_Variables", "39_Vertex_Shader_Variables\39_Vertex_Shader_Variables.fsproj", "{71159333-0BE3-4C26-A245-0165B09602F7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "40_Fragment_Shader_Variables", "40_Fragment_Shader_Variables\40_Fragment_Shader_Variables.fsproj", "{157AF3E7-7931-44A4-8C88-DB61218BBDC5}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "40_Fragment_Shader_Variables", "40_Fragment_Shader_Variables\40_Fragment_Shader_Variables.fsproj", "{157AF3E7-7931-44A4-8C88-DB61218BBDC5}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "41_Uniform_Buffer_Objects", "41_Uniform_Buffer_Objects\41_Uniform_Buffer_Objects.fsproj", "{5DB34D33-760C-4444-B3EC-DA8F711AEC0C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "41_Uniform_Buffer_Objects", "41_Uniform_Buffer_Objects\41_Uniform_Buffer_Objects.fsproj", "{5DB34D33-760C-4444-B3EC-DA8F711AEC0C}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "42_Building_Houses", "42_Building_Houses\42_Building_Houses.fsproj", "{2A21D5E2-87C0-47AD-93BE-8E39AFAD35A0}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "43_Exploding_Objects", "43_Exploding_Objects\43_Exploding_Objects.fsproj", "{8FEE3FC0-04CA-4643-9B02-391E51963640}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "44_Visualizing_Normal_Vectors", "44_Visualizing_Normal_Vectors\44_Visualizing_Normal_Vectors.fsproj", "{D5E09365-37C7-42DA-9FE4-FD22FCECEB5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -279,6 +285,18 @@ Global
 		{5DB34D33-760C-4444-B3EC-DA8F711AEC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DB34D33-760C-4444-B3EC-DA8F711AEC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DB34D33-760C-4444-B3EC-DA8F711AEC0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A21D5E2-87C0-47AD-93BE-8E39AFAD35A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A21D5E2-87C0-47AD-93BE-8E39AFAD35A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A21D5E2-87C0-47AD-93BE-8E39AFAD35A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A21D5E2-87C0-47AD-93BE-8E39AFAD35A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FEE3FC0-04CA-4643-9B02-391E51963640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FEE3FC0-04CA-4643-9B02-391E51963640}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FEE3FC0-04CA-4643-9B02-391E51963640}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FEE3FC0-04CA-4643-9B02-391E51963640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5E09365-37C7-42DA-9FE4-FD22FCECEB5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5E09365-37C7-42DA-9FE4-FD22FCECEB5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5E09365-37C7-42DA-9FE4-FD22FCECEB5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5E09365-37C7-42DA-9FE4-FD22FCECEB5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

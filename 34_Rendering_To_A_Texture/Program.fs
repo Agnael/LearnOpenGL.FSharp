@@ -326,8 +326,8 @@ let main argv =
       |> ignore
 
    // TODO: How did this return value come to exist?
-   let testAddActionListener =
-      emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
+   let addListener =
+      emptyGameBuilder glWindowOptions initialState gameReducer
       |> withOnInputContextLoadedCallback onInputContextLoaded
       |> addOnLoad onLoad
       |> addOnUpdate onUpdate

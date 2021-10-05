@@ -15,6 +15,7 @@ void main()
 {
     TexCoords = aTexCoords;    
     gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
+
     CurrentFragPos = vec3(uModel * vec4(aPos, 1.0));
     Normal = aNormal;
 }

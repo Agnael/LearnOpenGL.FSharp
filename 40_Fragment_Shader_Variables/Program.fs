@@ -157,7 +157,7 @@ let main argv =
         
       ctx.Gl.DrawArrays(GLEnum.Triangles, 0, 36u);
 
-   let onRender ctx state dispatch (DeltaTime deltaTime) =
+   let onRender (ctx: GlWindowCtx) state dispatch (DeltaTime deltaTime) =
       ctx.Gl.Enable GLEnum.DepthTest
 
       // Needs to be Lequal instead of Less, so that the z-depth trick works
@@ -202,26 +202,20 @@ let main argv =
       (ctx, state, dispatch, newSize)
       |> Baseline.handleWindowResize
       |> ignore
+   
+   let onActionIntercepted state action dispatch ctx =
+      Baseline.handleInterceptedAction state action dispatch ctx
 
-   // TODO: How did this return value come to exist?
-   let testAddActionListener =
-      emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
-      |> withOnInputContextLoadedCallback onInputContextLoaded
-      |> addOnLoad onLoad
-      |> addOnUpdate onUpdate
-      |> addOnRender onRender
-      |> addOnKeyDown onKeyDown
-      |> addOnKeyUp onKeyUp
-      |> addOnMouseMove onMouseMove
-      |> addOnMouseWheel onMouseWheel
-      |> addOnWindowResize onWindowResize
-      |> addOnActionListener (fun state action dispatch ctx ->
-         match action with
-         | Asset assetAction ->
-               let assetDispatch a = dispatch (Asset a)
-               BaseAssetSlice.listen state.Asset assetAction assetDispatch ctx
-         | _ -> 
-               ()
-      )
-      |> buildAndRun
+   emptyGameBuilder glWindowOptions initialState gameReducer
+   |> withOnInputContextLoadedCallback onInputContextLoaded
+   |> addOnLoad onLoad
+   |> addOnUpdate onUpdate
+   |> addOnRender onRender
+   |> addOnKeyDown onKeyDown
+   |> addOnKeyUp onKeyUp
+   |> addOnMouseMove onMouseMove
+   |> addOnMouseWheel onMouseWheel
+   |> addOnWindowResize onWindowResize
+   |> addActionInterceptor onActionIntercepted
+   |> buildAndRun
    0

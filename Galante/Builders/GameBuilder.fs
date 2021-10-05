@@ -42,7 +42,6 @@
         { WindowOptions: GlWindowOptions
         ; InitialState: 'gs
         ; Reducer: 'ga -> 'gs -> 'gs
-        ; ActionFilter: 'ga -> 'gs -> ActionDispatcher<'ga> -> IoDispatcher<'ga> -> GlWindowCtx -> 'ga option
         ; OnInputContextLoaded: onInputContextLoadedHandler<'gs,'ga>
         ; OnLoad: onLoadHandler<'gs,'ga> list
         ; OnUpdate: onUpdateHandler<'gs,'ga> list

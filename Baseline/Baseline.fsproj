@@ -10,6 +10,7 @@
     <Compile Include="Figures\Plane.fs" />
     <Compile Include="Figures\Cube.fs" />
     <Compile Include="State\Slices\BaseAssetSlice.fs" />
+    <Compile Include="State\Slices\BaseGlSlice.fs" />
     <Compile Include="State\Slices\BaseCameraSlice.fs" />
     <Compile Include="State\Slices\BaseFpsCounterSlice.fs" />
     <Compile Include="State\Slices\BaseMouseSlice.fs" />

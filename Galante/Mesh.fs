@@ -73,3 +73,25 @@
                 , GLEnum.UnsignedInt
                 , IntPtr.Zero.ToPointer()
                 )
+
+        static member drawWireframe mesh shader ctx =   
+            GlVao.bind (mesh.Vao, ctx)
+            |> ignore
+            
+            ctx.Gl.DrawElements 
+                ( GLEnum.Lines
+                , uint32 mesh.Indices.Length
+                , GLEnum.UnsignedInt
+                , IntPtr.Zero.ToPointer()
+                )
+
+        static member drawTextureless mesh shader ctx =   
+            GlVao.bind (mesh.Vao, ctx)
+            |> ignore
+            
+            ctx.Gl.DrawElements 
+                ( GLEnum.Triangles
+                , uint32 mesh.Indices.Length
+                , GLEnum.UnsignedInt
+                , IntPtr.Zero.ToPointer()
+                )

@@ -313,17 +313,19 @@ let main argv =
       |> Baseline.handleWindowResize
       |> ignore
 
-   // TODO: How did this return value come to exist?
-   let testAddActionListener =
-      emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
-      |> withOnInputContextLoadedCallback onInputContextLoaded
-      |> addOnLoad onLoad
-      |> addOnUpdate onUpdate
-      |> addOnRender onRender
-      |> addOnKeyDown onKeyDown
-      |> addOnKeyUp onKeyUp
-      |> addOnMouseMove onMouseMove
-      |> addOnMouseWheel onMouseWheel
-      |> addOnWindowResize onWindowResize
-      |> buildAndRun
+   let onActionIntercepted state action dispatch ctx =
+      Baseline.handleInterceptedAction state action dispatch ctx
+
+   emptyGameBuilder glWindowOptions initialState gameReducer
+   |> withOnInputContextLoadedCallback onInputContextLoaded
+   |> addOnLoad onLoad
+   |> addOnUpdate onUpdate
+   |> addOnRender onRender
+   |> addOnKeyDown onKeyDown
+   |> addOnKeyUp onKeyUp
+   |> addOnMouseMove onMouseMove
+   |> addOnMouseWheel onMouseWheel
+   |> addOnWindowResize onWindowResize
+   |> addActionInterceptor onActionIntercepted
+   |> buildAndRun
    0

@@ -16,8 +16,8 @@
     <Compile Include="Texture.fs" />
     <Compile Include="Mesh.fs" />
     <Compile Include="Model.fs" />
-    <Compile Include="Game.fs" />
     <Compile Include="GalanteMath.fs" />
+    <Compile Include="Game.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -42,7 +42,7 @@ let main argv =
    // is just fine.
    let glWindowOptions = 
       { GlWindowOptions.Default with
-         IsVsync = false
+         IsVsync = true
          Title = initialState.Window.Title
          Size = initialRes }
 
@@ -54,6 +54,11 @@ let main argv =
    let mutable shaderYellow = Unchecked.defaultof<_>
 
    let mutable matricesUbo = Unchecked.defaultof<_>
+   
+   let matricesUniformBlock = {
+      Name = "Matrices";
+      UniformNames = ["uProjection"; "uView"]
+   }
 
    let onKeyDown ctx state dispatch kb key =
       let initResW = initialState.Window.Resolution.Width
@@ -221,7 +226,7 @@ let main argv =
       |> Baseline.updateCameraPosition
       |> ignore
 
-   let onRender ctx state dispatch (DeltaTime deltaTime) =
+   let onRender (ctx: GlWindowCtx) state dispatch (DeltaTime deltaTime) =
       ctx.Gl.Enable GLEnum.DepthTest
 
       // Needs to be Lequal instead of Less, so that the z-depth trick works
@@ -263,51 +268,24 @@ let main argv =
       ctx.Gl.BindBuffer(BufferTargetARB.UniformBuffer, 0ul)
 
       // **********************************************************************
-      GlVao.bind (cubeVao, ctx) |> ignore
+      let renderCube shader translationVector =
+         GlVao.bind (cubeVao, ctx) |> ignore
+
+         let modelMatrix = 
+            Matrix4x4.Identity *
+            Matrix4x4.CreateTranslation translationVector
+
+         (shader, ctx)
+         |> GlProg.setAsCurrent
+         |> GlProg.setUniformM4x4 "uModel" modelMatrix
+         |> ignore
+         ctx.Gl.DrawArrays(GLEnum.Triangles, 0, 36u);
 
       // RED cube
-      let red_ModelMatrix = 
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(new Vector3(-0.75f, 0.75f, 0.0f))
-
-      (shaderRed, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" red_ModelMatrix
-      |> ignore
-      ctx.Gl.DrawArrays(GLEnum.Triangles, 0, 36u);
-      
-      // GREEN cube
-      let green_ModelMatrix = 
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(new Vector3(0.75f, 0.75f, 0.0f))
-
-      (shaderGreen, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" green_ModelMatrix 
-      |> ignore
-      ctx.Gl.DrawArrays(GLEnum.Triangles, 0, 36u);
-      
-      // BLUE cube
-      let blue_ModelMatrix = 
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(new Vector3(0.75f, -0.75f, 0.0f))
-
-      (shaderBlue, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" blue_ModelMatrix
-      |> ignore
-      ctx.Gl.DrawArrays(GLEnum.Triangles, 0, 36u);
-      
-      // YELLOW cube
-      let yellow_ModelMatrix = 
-         Matrix4x4.Identity *
-         Matrix4x4.CreateTranslation(new Vector3(-0.75f, -0.75f, 0.0f))
-
-      (shaderYellow, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" yellow_ModelMatrix
-      |> ignore
-      ctx.Gl.DrawArrays(GLEnum.Triangles, 0, 36u);
+      renderCube shaderRed (new Vector3(-0.75f, 0.75f, 0.0f))
+      renderCube shaderGreen (new Vector3(0.75f, 0.75f, 0.0f))
+      renderCube shaderBlue (new Vector3(0.75f, -0.75f, 0.0f))
+      renderCube shaderYellow (new Vector3(-0.75f, -0.75f, 0.0f))
       
       // **********************************************************************
       // Frame completed
@@ -321,26 +299,20 @@ let main argv =
       (ctx, state, dispatch, newSize)
       |> Baseline.handleWindowResize
       |> ignore
+      
+   let onActionIntercepted state action dispatch ctx =
+      Baseline.handleInterceptedAction state action dispatch ctx
 
-   // TODO: How did this return value come to exist?
-   let testAddActionListener =
-      emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
-      |> withOnInputContextLoadedCallback onInputContextLoaded
-      |> addOnLoad onLoad
-      |> addOnUpdate onUpdate
-      |> addOnRender onRender
-      |> addOnKeyDown onKeyDown
-      |> addOnKeyUp onKeyUp
-      |> addOnMouseMove onMouseMove
-      |> addOnMouseWheel onMouseWheel
-      |> addOnWindowResize onWindowResize
-      |> addOnActionListener (fun state action dispatch ctx ->
-         match action with
-         | Asset assetAction ->
-               let assetDispatch a = dispatch (Asset a)
-               BaseAssetSlice.listen state.Asset assetAction assetDispatch ctx
-         | _ -> 
-               ()
-      )
-      |> buildAndRun
+   emptyGameBuilder glWindowOptions initialState gameReducer
+   |> withOnInputContextLoadedCallback onInputContextLoaded
+   |> addOnLoad onLoad
+   |> addOnUpdate onUpdate
+   |> addOnRender onRender
+   |> addOnKeyDown onKeyDown
+   |> addOnKeyUp onKeyUp
+   |> addOnMouseMove onMouseMove
+   |> addOnMouseWheel onMouseWheel
+   |> addOnWindowResize onWindowResize
+   |> addActionInterceptor onActionIntercepted
+   |> buildAndRun
    0

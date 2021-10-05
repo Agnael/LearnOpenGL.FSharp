@@ -197,3 +197,10 @@ let handleWindowResize (ctx, state, dispatch, newSize: Vector2) =
    if state.Window.Resolution <> newSize then
       aWindowResolutionUpdate dispatch newSize.Width newSize.Height
    (ctx, state, dispatch, newSize)
+   
+let handleInterceptedAction state action dispatch ctx =
+   match action with
+   | Asset assetAction ->
+      let assetDispatch a = dispatch (Asset a)
+      BaseAssetSlice.listen state.Asset assetAction assetDispatch ctx
+   | _ -> ()

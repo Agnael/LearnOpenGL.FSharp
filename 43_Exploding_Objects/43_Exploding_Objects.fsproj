@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>_43_Exploding_Objects</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Simple3d.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Simple3d.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Geometry.geom">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+   <ItemGroup>
+      <Content Include="..\Resources\Textures\fallback.jpg" Link="Resources\Textures\fallback.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Models\Backpack\ao.jpg" Link="Resources\Models\Backpack\ao.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Models\Backpack\diffuse.jpg" Link="Resources\Models\Backpack\diffuse.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Models\Backpack\normal.png" Link="Resources\Models\Backpack\normal.png">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Models\Backpack\roughness.jpg" Link="Resources\Models\Backpack\roughness.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Models\Backpack\source_attribution.txt" Link="Resources\Models\Backpack\source_attribution.txt">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\Resources\Models\Backpack\specular.jpg" Link="Resources\Models\Backpack\specular.jpg">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+       <None Include="..\Resources\Models\Backpack\backpack.mtl" Link="Resources\Models\Backpack\backpack.mtl">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+       </None>
+       <None Include="..\Resources\Models\Backpack\backpack.obj" Link="Resources\Models\Backpack\backpack.obj">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+       </None>
+   </ItemGroup>
+   
+   <ItemGroup>
+      <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
+      <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+      <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <ProjectReference Include="..\Baseline\Baseline.fsproj" />
+      <ProjectReference Include="..\Galante\Galante.fsproj" />
+      <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
+   </ItemGroup>
+</Project>

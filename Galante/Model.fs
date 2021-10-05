@@ -248,3 +248,11 @@
             |> Array.iter (fun mesh ->
                 Mesh.draw mesh program getTexture ctx
             ) 
+
+        static member drawWireframe mdl program ctx =
+            mdl.Meshes
+            |> Array.iter (fun mesh -> Mesh.drawWireframe mesh program ctx) 
+
+        static member drawTextureless mdl program ctx =
+            mdl.Meshes
+            |> Array.iter (fun mesh -> Mesh.drawTextureless mesh program ctx) 

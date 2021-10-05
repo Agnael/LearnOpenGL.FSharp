@@ -5,6 +5,7 @@
 open Galante.OpenGL
 open Silk.NET.OpenGL
 open Microsoft.FSharp.NativeInterop
+open System
 
 let glActiveTexture (glTextureSlotId: GLEnum) ctx =
    ctx.Gl.ActiveTexture (glTextureSlotId)
@@ -70,3 +71,72 @@ let glUniformBlockBinding shader uniformIndex targetUniformBlockBinding ctx =
       uniformIndex, 
       targetUniformBlockBinding)
    ctx
+
+let glBindBuffer (target: BufferTargetARB) ubo ctx =
+   ctx.Gl.BindBuffer (target, ubo.GlUboHandle)
+   ctx
+
+let glBufferData 
+   (target: BufferTargetARB)
+   size
+   (dataPtr: voidptr)
+   (usageType: BufferUsageARB)
+   ctx =
+      ctx.Gl.BufferData (target, size, dataPtr, usageType)
+      ctx
+
+let glBufferDataEmpty target size usageType ctx =
+   glBufferData target size (IntPtr.Zero.ToPointer()) usageType ctx
+
+let glBindBufferDefault (target: BufferTargetARB) ctx =
+   ctx.Gl.BindBuffer (target, 0ul)
+   ctx
+
+let glBindBufferRange 
+   (target: BufferTargetARB)
+   targetUniformBlockBindingIndex
+   bufferHandle
+   offset
+   size
+   ctx =
+      ctx.Gl.BindBufferRange (
+         target,
+         targetUniformBlockBindingIndex,
+         bufferHandle,
+         offset,
+         size)
+
+let glGetUniformIndices
+   (shader: GlProgram) 
+   (uniformBlock: GlUniformBlockDefinition)
+   ctx =
+      let mutable indices: uint32 array = 
+         Array.zeroCreate uniformBlock.UniformNames.Length
+
+      ctx.Gl.GetUniformIndices(
+         shader.GlProgramHandle, 
+         uint32 uniformBlock.UniformNames.Length,
+         List.toArray uniformBlock.UniformNames,
+         &indices.[0])
+
+      let mutable offsetValues: int array = Array.zeroCreate 1
+
+      ctx.Gl.GetActiveUniforms(
+         shader.GlProgramHandle,
+         1ul,
+         &indices.[0],
+         UniformPName.UniformOffset,
+         &offsetValues.[0])
+
+      let uniformBlockIndexWithinShader = 
+         ctx.Gl.GetUniformBlockIndex(shader.GlProgramHandle, uniformBlock.Name)
+
+      let mutable uniformBlockSize = 0
+
+      ctx.Gl.GetActiveUniformBlock(
+         shader.GlProgramHandle,
+         uniformBlockIndexWithinShader,
+         UniformBlockPName.UniformBlockDataSize,
+         &uniformBlockSize)
+
+      indices

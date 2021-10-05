@@ -150,7 +150,7 @@ let main argv =
       |> Baseline.updateCameraPosition
       |> ignore
 
-   let onRender ctx state dispatch (DeltaTime deltaTime) =
+   let onRender (ctx: GlWindowCtx) state dispatch (DeltaTime deltaTime) =
       ctx.Gl.Enable GLEnum.DepthTest
       ctx.Gl.DepthFunc GLEnum.Less
       ctx.Gl.Enable GLEnum.StencilTest
@@ -301,8 +301,8 @@ let main argv =
       |> ignore
 
    // TODO: How did this return value come to exist?
-   let testAddActionListener =
-      emptyGameBuilder glWindowOptions initialState gameReducer gameActionFilter
+   let addListener =
+      emptyGameBuilder glWindowOptions initialState gameReducer
       |> withOnInputContextLoadedCallback onInputContextLoaded
       |> addOnLoad onLoad
       |> addOnUpdate onUpdate
@@ -312,7 +312,7 @@ let main argv =
       |> addOnMouseMove onMouseMove
       |> addOnMouseWheel onMouseWheel
       |> addOnWindowResize onWindowResize
-      |> addOnActionListener (fun state action dispatch ctx ->
+      |> addActionInterceptor (fun state action dispatch ctx ->
          match action with
          | Asset assetAction ->
                let assetDispatch a = dispatch (Asset a)

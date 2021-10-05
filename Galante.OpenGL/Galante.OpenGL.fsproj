@@ -13,9 +13,10 @@
     <Compile Include="Models\GlProgramUniform.fs" />
     <Compile Include="Models\GlShaderStatus.fs" />
     <Compile Include="Models\GlShader.fs" />
+    <Compile Include="Models\GlUniformBlockDefinition.fs" />
+    <Compile Include="Models\GlUniformBlock.fs" />
     <Compile Include="Models\GlProgram.fs" />
     <Compile Include="Models\GlEmptyTexture.fs" />
-    <Compile Include="Models\GlUniformBlock.fs" />
     <Compile Include="Models\GlTexture.fs" />
     <Compile Include="Models\GlTextureSlotsState.fs" />
     <Compile Include="Models\GlVboAttribute.fs" />
@@ -36,6 +37,7 @@
     <Compile Include="GlWin.fs" />
     <Compile Include="GlRbo.fs" />
     <Compile Include="GlFbo.fs" />
+    <Compile Include="GlUbo.fs" />
   </ItemGroup>
 
   <ItemGroup>
