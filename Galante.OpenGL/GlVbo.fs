@@ -1,15 +1,17 @@
 ﻿module GlVbo
 
+#nowarn "9"
 open Microsoft.FSharp.NativeInterop
 open System
 open System.Numerics
-
-#nowarn "9"
 open Galante.OpenGL
 open Silk.NET.OpenGL
+open Gl
 
-let emptyVboBuilder =
-   { GlVboBuilder.AttrNames = []; AttrDefinitions = [||]; }
+let emptyVboBuilder = {
+   GlVboBuilder.AttrNames = []
+   AttrDefinitions = [||]
+}
 
 let withAttrNames names builder =
    names
@@ -104,3 +106,6 @@ let build (vao, ctx) builder =
    |> ignore
 
    vbo
+
+let vboCreateInstancedAttributeV2Array idx array ctx =
+   glVertexAttribPointer idx ctx

@@ -140,3 +140,18 @@ let glGetUniformIndices
          &uniformBlockSize)
 
       indices
+
+let glVertexAttribDivisor index divisor ctx =
+   ctx.Gl.VertexAttribDivisor(index, divisor)
+   ctx
+
+let glVertexAttribPointer 
+   index 
+   size 
+   (vapType: VertexAttribPointerType) 
+   normalized 
+   stride
+   ptr
+   ctx =
+      ctx.Gl.VertexAttribPointer(index, size, vapType, normalized, stride, ptr)
+      ctx
