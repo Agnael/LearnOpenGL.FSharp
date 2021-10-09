@@ -13,6 +13,12 @@ open Galante.OpenGL
 open Silk.NET.Windowing
 open BaselineState
 open System
+open BaseAssetSlice
+open BaseGlSlice
+open Gl
+open Silk.NET.OpenGL
+open Microsoft.FSharp
+open Microsoft.FSharp.NativeInterop
         
 let private aMovement dispatch cameraAction = 
    dispatch (Camera cameraAction)
@@ -204,3 +210,144 @@ let handleInterceptedAction state action dispatch ctx =
       let assetDispatch a = dispatch (Asset a)
       BaseAssetSlice.listen state.Asset assetAction assetDispatch ctx
    | _ -> ()
+
+/// Binds images as textures on the GL thread so they are available on 
+/// render and don't need to be created on the GPU on each render.
+let glCreateQueuedTextures (ctx: GlWindowCtx, state, dispatch, dt: double) =
+   let createAndDispatchTexture imgPath imgAsset =
+      if imgAsset.GlTexture.IsNone then
+            let glTexture = GlTex.create2d imgAsset.Image ctx
+            dispatch (Asset (BindedImageAsTexture(imgPath, glTexture)))
+
+   state.Asset.ImagesLoaded
+   |> Map.iter createAndDispatchTexture
+
+   (ctx, state, dispatch, dt)
+
+
+            
+let setUboUniformM4
+   (uboDef: GlUniformBlockDefinition)
+   uboUniformName
+   m4
+   state
+   (ctx: GlWindowCtx) = 
+      let sharedUbo = 
+         state.Gl.SharedUbos
+         |> List.find (fun x -> x.Ubo.Definition.Name = uboDef.Name)
+
+      if sharedUbo.BoundShaders.Length > 0 then
+         // Since UBOs will be allways assumed to be using the 
+         // "shared" layout, we can take ANY shader that´s using
+         // it as a valid model to get any necessary value, such as
+         // offests of a uniform within it´s uniform block.
+         let sampleShader = 
+            sharedUbo.BoundShaders.Head
+
+         // Fetches this uniform´s offset within the uniform block,
+         // to insert it without altering existing data in the
+         // buffer.
+         let mutable targetUniformIndex: uint32 array = Array.zeroCreate 1
+         
+         ctx.Gl.GetUniformIndices(
+            sampleShader.Shader.GlProgramHandle, 
+            1ul,
+            [| uboUniformName |],
+            &targetUniformIndex.[0])
+
+         let mutable targetUniformOffset: int array = 
+            Array.zeroCreate 1
+               
+         ctx.Gl.GetActiveUniforms(
+            sampleShader.Shader.GlProgramHandle,
+            1ul,
+            &targetUniformIndex.[0],
+            UniformPName.UniformOffset,
+            &targetUniformOffset.[0])
+
+         // Stores the value
+         ctx.Gl.BindBuffer(
+            BufferTargetARB.UniformBuffer, 
+            sharedUbo.Ubo.GlUboHandle)
+
+         let mutable m4MutableCopy = m4
+         let projectionMatrixNativeInt = 
+            NativePtr.toNativeInt<Matrix4x4> &&m4MutableCopy
+
+         ctx.Gl.BufferSubData(
+            BufferTargetARB.UniformBuffer,
+            nativeint targetUniformOffset.[0],
+            unativeint(sizeof<Matrix4x4>),
+            projectionMatrixNativeInt.ToPointer())
+
+         ctx.Gl.BindBuffer(BufferTargetARB.UniformBuffer, 0ul)
+      ctx
+
+let bindShaderToUbo shader uboDef state dispatch (ctx: GlWindowCtx) =
+   let bindToBindingPoint ubo shader =
+      // Get´s the block´s index within the current shader
+      let uboName = ubo.Definition.Name
+
+      let blockIndexWithinShader = 
+         glGetUniformBlockIndex shader uboName ctx
+
+      // Links the shader´s uniform block to the UBO's binding point
+      ctx
+      |> glUniformBlockBinding 
+         shader
+         blockIndexWithinShader 
+         ubo.UniformBlockBindingIndex 
+      |> ignore
+
+      let sharedUboShaderRef: SharedUboShaderRef = {
+         Shader = shader
+         UniformBlockIndex = blockIndexWithinShader
+      }
+      dispatch (Gl (BindShaderToUbo (uboDef, sharedUboShaderRef)))
+
+   state.Gl.SharedUbos
+   |> List.tryFind (fun x -> x.Ubo.Definition.Name = uboDef.Name)
+   |> function
+      | Some sharedUbo ->
+         bindToBindingPoint sharedUbo.Ubo shader
+      | None ->
+         let sharedUbo = {
+            GlUboHandle = ctx.Gl.GenBuffer()
+            UniformBlockBindingIndex = 
+               uint32 (state.Gl.SharedUbos.Length + 14)
+            Definition = uboDef
+         }
+
+         let asd = glGetUniformIndices shader uboDef ctx
+         
+         let uniformBlockIndexWithinShader = 
+            ctx.Gl.GetUniformBlockIndex(
+               shader.GlProgramHandle,
+               uboDef.Name)
+
+         let mutable uboSize = 0
+
+         ctx.Gl.GetActiveUniformBlock(
+            shader.GlProgramHandle,
+            uniformBlockIndexWithinShader,
+            UniformBlockPName.UniformBlockDataSize,
+            &uboSize)
+
+         ctx
+         |> glBindBuffer BufferTargetARB.UniformBuffer sharedUbo
+         |> glBufferDataEmpty
+               BufferTargetARB.UniformBuffer
+               (unativeint uboSize)
+               BufferUsageARB.StaticDraw
+         |> glBindBufferDefault BufferTargetARB.UniformBuffer
+         |> glBindBufferRange
+               BufferTargetARB.UniformBuffer
+               sharedUbo.UniformBlockBindingIndex
+               sharedUbo.GlUboHandle
+               (nativeint 0)
+               (unativeint uboSize)
+         |> ignore
+
+         dispatch (Gl (AddSharedUbo sharedUbo))
+         bindToBindingPoint sharedUbo shader
+   ctx
