@@ -191,7 +191,9 @@ let main argv =
                   &uboSize)
 
                ctx
-               |> glBindBuffer BufferTargetARB.UniformBuffer sharedUbo
+               |> glBindBuffer
+                     BufferTargetARB.UniformBuffer
+                     sharedUbo.GlUboHandle
                |> glBufferDataEmpty
                      BufferTargetARB.UniformBuffer
                      (unativeint uboSize)

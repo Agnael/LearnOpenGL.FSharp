@@ -1,6 +1,8 @@
 ﻿[<RequireQualifiedAccess>]
 module Baseline
 
+#nowarn "9"
+#nowarn "51"
 open GalanteMath
 open Galante
 open Silk.NET.Input
@@ -334,7 +336,7 @@ let bindShaderToUbo shader uboDef state dispatch (ctx: GlWindowCtx) =
             &uboSize)
 
          ctx
-         |> glBindBuffer BufferTargetARB.UniformBuffer sharedUbo
+         |> glBindBuffer BufferTargetARB.UniformBuffer sharedUbo.GlUboHandle
          |> glBufferDataEmpty
                BufferTargetARB.UniformBuffer
                (unativeint uboSize)

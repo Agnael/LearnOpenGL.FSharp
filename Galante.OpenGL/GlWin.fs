@@ -44,8 +44,14 @@
         let windowContext = 
             { Gl = GL.GetApi(window) 
             ; Window = window
-            ; Logger = new NullLogger<obj>()
-            ; FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory())
+            ; Logger = 
+               match options.Logger with
+               | Some logger -> logger
+               | None -> 
+                  new NullLogger<obj>() 
+                  :> Microsoft.Extensions.Logging.ILogger
+            ; FileProvider = 
+               new PhysicalFileProvider(Directory.GetCurrentDirectory())
             ;}
         
         windowContext

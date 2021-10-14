@@ -163,8 +163,7 @@ let build ctx (b: GlProgramBuilder<'t,_, _,_,_>) =
                   linkingLog 
             { program with LinkingStatus = GlProgramLinkingError linkingLog; }
       else 
-         sprintf "[Gl shader program '%s' LINKED]" program.Name
-         |> ctx.Logger.LogCritical
+         ctx.Logger.LogInformation $"Shader '{program.Name}' LINKED"
         
          { program with
             LinkingStatus = GlProgramLinkingSuccesful;

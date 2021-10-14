@@ -51,18 +51,17 @@ let build (vao, ctx) builder =
       StrideSize = dataStrideSize
       StrideByteSize = uint32 <| dataStrideSize * sizeof<single>
    }
-    
-   ctx.Gl.BindBuffer (BufferTargetARB.ArrayBuffer, vbo.GlVboHandle)
-
+   
    let dataVoidPtr = NativePtr.toVoidPtr dataIntPtr
-   let dataBytesSize = unativeint <| data.Length * sizeof<single>
+   let dataBytesSize = unativeint (data.Length * sizeof<single>)
 
-   ctx.Gl.BufferData 
-      ( BufferTargetARB.ArrayBuffer
-      , dataBytesSize
-      , dataVoidPtr
-      , BufferUsageARB.StaticDraw
-      )
+   ctx
+   |> glBindBuffer BufferTargetARB.ArrayBuffer vbo.GlVboHandle 
+   |> glBufferData 
+         BufferTargetARB.ArrayBuffer 
+         dataBytesSize dataVoidPtr 
+         BufferUsageARB.StaticDraw
+   |> ignore
 
    builder.AttrNames
    |> List.indexed
@@ -106,6 +105,3 @@ let build (vao, ctx) builder =
    |> ignore
 
    vbo
-
-let vboCreateInstancedAttributeV2Array idx array ctx =
-   glVertexAttribPointer idx ctx

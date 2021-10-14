@@ -21,6 +21,8 @@ open Model
 open BaseGlSlice
 open Gl
 open Microsoft.FSharp.NativeInterop
+open Serilog
+open Serilog.Extensions.Logging
 
 let initialState = 
    BaselineState.createDefault(
@@ -36,8 +38,63 @@ let v3arrayToFloatArrayArray (v3array: Vector3 array) =
    v3array
    |> Array.map (fun x -> [| v3toFloatArray x |])
 
+let rockCount = 100000
+let radiusAroundPlanet = 150.0f
+let offset = 25.0f
+
+let random = new System.Random()
+
+let rockModelMatrices: Matrix4x4 array =
+   let createModelMatrix idx =
+      // 1. translation: displace along circle with 'radius' in range [-offset, offset]
+      let angle: single = single  idx / (single rockCount) * 360.0f
+      let getDisplacement (): single = 
+         single (
+            random.Next() % (2 * (int offset) * 100)
+         ) / 
+         100.0f - offset
+
+      let x = (sin angle) * radiusAroundPlanet + getDisplacement()
+      // keep height of field smaller compared to width of x and z
+      let y = getDisplacement() * 0.4f
+      let z = (cos angle) * radiusAroundPlanet + getDisplacement()
+      let translationVec = v3 x y z
+      
+      // 2. scale: scale between 0.05 and 0.25f
+      let scale = single (random.Next() % 20) / 100.0f + 0.05f;
+      
+      // 3. rotation: add random rotation around a (semi)randomly picked 
+      // rotation axis vector
+      let rotationAngle = 
+         single (random.Next() % 360)
+         |> Degrees
+         |> toRadians
+         |> fun (Radians value) -> value
+
+      let centerPoint = translationVec * scale
+
+      Matrix4x4.Identity *
+      Matrix4x4.CreateTranslation translationVec *
+      Matrix4x4.CreateScale scale *
+      Matrix4x4.CreateRotationX (rotationAngle, centerPoint) *
+      Matrix4x4.CreateRotationY (rotationAngle, centerPoint) *
+      Matrix4x4.CreateRotationZ (rotationAngle, centerPoint)
+
+   Array.zeroCreate rockCount
+   |> Array.mapi (fun idx _ -> createModelMatrix idx)
+
 [<EntryPoint>]
 let main argv =
+   let serilogLogger = 
+      (new LoggerConfiguration())
+         .Enrich.FromLogContext()
+         .MinimumLevel.Verbose()
+         .WriteTo.Console()
+         .CreateLogger();
+
+   let microsoftLogger = 
+      (new SerilogLoggerFactory(serilogLogger)).CreateLogger("GlobalCategory");
+
    // No need to get the current state since this is executed
    // before starting the game loop, so using the initial state 
    // is just fine.
@@ -45,14 +102,15 @@ let main argv =
       { GlWindowOptions.Default with
          IsVsync = false
          Title = initialState.Window.Title
+         Logger = Some microsoftLogger
          Size = initialRes }
          
    let mutable fallbackGlTexture = Unchecked.defaultof<_>
-   let mutable mdlBackpack = Unchecked.defaultof<_>
+   let mutable mdlPlanet = Unchecked.defaultof<_>
+   let mutable mdlRock = Unchecked.defaultof<_>
 
-   let mutable regularShader = Unchecked.defaultof<_>
-   let mutable normalDisplayShader = Unchecked.defaultof<_>
-   let mutable wireframeDisplayShader = Unchecked.defaultof<_>
+   let mutable shader = Unchecked.defaultof<_>
+   let mutable shaderInstanced = Unchecked.defaultof<_>
 
    let matricesUboDef: GlUniformBlockDefinition = {
       Name = "Matrices"
@@ -90,7 +148,7 @@ let main argv =
       |> ignore
             
    let onLoad (ctx: GlWindowCtx) input (state: BaselineState) dispatch =
-      regularShader <-
+      shader <-
          GlProg.emptyBuilder
          |> GlProg.withName "3dShader"
          |> GlProg.withShaders [
@@ -105,31 +163,23 @@ let main argv =
          ]
          |> GlProg.build ctx
 
-      normalDisplayShader <-
+      shaderInstanced <-
          GlProg.emptyBuilder
-         |> GlProg.withName "NormalDisplayShader"
+         |> GlProg.withName "3dShaderInstanced"
          |> GlProg.withShaders [
-            ShaderType.VertexShader, "3dNormalDisplay.vert"
-            ShaderType.GeometryShader, "3dNormalDisplay.geom"
-            ShaderType.FragmentShader, "3dNormalDisplay.frag" 
+            ShaderType.VertexShader, "3dInstanced.vert"
+            ShaderType.FragmentShader, "3d.frag" 
          ]
-         |> GlProg.withUniforms ["uModel"]
-         |> GlProg.build ctx
-
-      wireframeDisplayShader <-
-         GlProg.emptyBuilder
-         |> GlProg.withName "WireframeDisplayShader"
-         |> GlProg.withShaders [
-            ShaderType.VertexShader, "3dWireframeDisplay.vert"
-            ShaderType.FragmentShader, "3dWireframeDisplay.frag" 
+         |> GlProg.withUniforms [
+            "uMaterial.diffuseMap"
+            "uMaterial.specularMap"
+            "uMaterial.shininess"
          ]
-         |> GlProg.withUniforms ["uModel"]
          |> GlProg.build ctx
            
       ctx
-      |> bindShaderToUbo regularShader matricesUboDef state dispatch
-      |> bindShaderToUbo normalDisplayShader matricesUboDef state dispatch
-      |> bindShaderToUbo wireframeDisplayShader matricesUboDef state dispatch
+      |> Baseline.bindShaderToUbo shader matricesUboDef state dispatch
+      |> Baseline.bindShaderToUbo shaderInstanced matricesUboDef state dispatch
       |> ignore
                  
       // Comment this or press F10 to unlock the camera
@@ -153,11 +203,92 @@ let main argv =
          |> List.append [modelsDir]
          |> fun fullList -> Path.Combine(List.toArray fullList)
 
-      mdlBackpack <- 
-         Model.loadU (makeMdlPath ["Backpack"; "backpack.obj"]) ctx loadTexture          
+      mdlPlanet <- 
+         Model.loadU (makeMdlPath ["Planet"; "planet.obj"]) ctx loadTexture  
+
+      mdlRock <- 
+         Model.loadU (makeMdlPath ["Rock"; "rock.obj"]) ctx loadTexture       
+
+      // Configure instanced model matrix array for the rock
+      // -------------------------
+      
+      // Set transformation matrices as an instance vertex attribute (with 
+      // divisor 1)
+      // NOTE: we're cheating a little by taking the, now publicly declared, 
+      // VAO of the model's mesh(es) and adding new vertexAttribPointers
+      // normally you'd want to do this in a more organized fashion, but 
+      // for learning purposes this will do.
+      let bindInstancedAttr (instancedVboHandle: uint32) (mesh: Mesh.Mesh) =
+         GlVao.bind (mesh.Vao, ctx)
+         |> ignore
+
+         let mat4Stride = uint32 sizeof<Matrix4x4>
+         let vapType = VertexAttribPointerType.Float
+
+         let row1offset = IntPtr.Zero.ToPointer()
+         let row2offset = 
+            nativeint sizeof<Vector4>
+            |> NativePtr.ofNativeInt<Vector4>
+            |> NativePtr.toVoidPtr
+
+         let row3offset = 
+            nativeint (sizeof<Vector4> * 2)
+            |> NativePtr.ofNativeInt<Vector4>
+            |> NativePtr.toVoidPtr
+
+         let row4offset = 
+            nativeint (sizeof<Vector4> * 3)
+            |> NativePtr.ofNativeInt<Vector4>
+            |> NativePtr.toVoidPtr
+
+         // Set attribute pointers for matrix (4 times vec4)
+         ctx
+         |> glEnableVertexAttribArray 3ul 
+         |> glVertexAttribPointer 3ul 4 vapType false mat4Stride row1offset
+
+         |> glEnableVertexAttribArray 4ul
+         |> glVertexAttribPointer 4ul 4 vapType false mat4Stride row2offset
+
+         |> glEnableVertexAttribArray 5ul
+         |> glVertexAttribPointer 5ul 4 vapType false mat4Stride row3offset
+
+         |> glEnableVertexAttribArray 6ul
+         |> glVertexAttribPointer 6ul 4 vapType false mat4Stride row4offset
+
+         |> glVertexAttribDivisor 3ul 1ul
+         |> glVertexAttribDivisor 4ul 1ul
+         |> glVertexAttribDivisor 5ul 1ul
+         |> glVertexAttribDivisor 6ul 1ul
+         |> glBindVertexArray 0ul
+         |> ignore
          
-      dispatch (Camera (ForcePosition (v3 2.83f 0.69f 0.61f)))
-      dispatch (Camera (ForceTarget (v3 -0.61f -0.17f -0.77f)))
+         ctx.Gl.BindBuffer (BufferTargetARB.ArrayBuffer, instancedVboHandle)
+         
+      let matricesArraySize = 
+         rockModelMatrices.Length * sizeof<Matrix4x4>
+
+      let matricesArraySizeNativeint = 
+         unativeint matricesArraySize
+
+      use rockModelMatricesFixed = fixed rockModelMatrices
+      let instancedRockModelMatricesVbo = glGenBuffer ctx
+         
+      ctx
+      |> glBindBuffer 
+         BufferTargetARB.ArrayBuffer
+         instancedRockModelMatricesVbo
+      |> glBufferData
+            BufferTargetARB.ArrayBuffer
+            (unativeint (rockModelMatrices.Length * sizeof<Matrix4x4>))
+            (NativePtr.toVoidPtr rockModelMatricesFixed)
+            BufferUsageARB.StaticDraw
+      |> ignore
+
+      mdlRock.Meshes
+      |> Array.iter (bindInstancedAttr instancedRockModelMatricesVbo)
+                        
+      dispatch (Camera (ForcePosition (v3 -20.01f 8.27f -10.18f)))
+      dispatch (Camera (ForceTarget (v3 0.90f -0.39f 0.19f)))
 
       dispatch (Camera Lock)
       dispatch (Mouse UseCursorRaw)
@@ -183,10 +314,7 @@ let main argv =
 
       uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
       |> ctx.Gl.Clear
-
-      // Enables access to the point access GL variable in the vertex shader
-      ctx.Gl.Enable EnableCap.ProgramPointSize
-        
+              
       // Sets a dark grey background so the cube´s color changes are visible
       ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
       
@@ -201,8 +329,10 @@ let main argv =
       let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
 
       ctx
-      |> setUboUniformM4 matricesUboDef "uProjection" projectionMatrix state
-      |> setUboUniformM4 matricesUboDef "uView" viewMatrix state
+      |> Baseline.setUboUniformM4 
+            matricesUboDef "uProjection" projectionMatrix state
+      |> Baseline.setUboUniformM4
+            matricesUboDef "uView" viewMatrix state
       |> ignore
         
       // **********************************************************************
@@ -216,24 +346,23 @@ let main argv =
                   | None -> fallbackGlTexture
                | None -> fallbackGlTexture
 
-      (regularShader, ctx)
+      (shader, ctx)
       |> GlProg.setAsCurrent
       |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity
       |> ignore
-      Model.draw mdlBackpack regularShader getTextureHandler ctx
+      Model.draw mdlPlanet shader getTextureHandler ctx
+      
+      (shaderInstanced, ctx)
+      |> GlProg.setAsCurrent
+      |> ignore
+      
+      Model.drawInstanced 
+         mdlRock 
+         shaderInstanced 
+         getTextureHandler 
+         (uint32 rockModelMatrices.Length) 
+         ctx
 
-      (wireframeDisplayShader, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity
-      |> ignore
-      Model.drawWireframe mdlBackpack wireframeDisplayShader ctx
-
-      (normalDisplayShader, ctx)
-      |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity
-      |> ignore
-      Model.drawTextureless mdlBackpack normalDisplayShader ctx
-               
       // **********************************************************************
       // Frame completed
       dispatch (FpsCounter(FrameRenderCompleted deltaTime))

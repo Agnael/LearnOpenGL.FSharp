@@ -249,6 +249,13 @@
                 Mesh.draw mesh program getTexture ctx
             ) 
 
+        static member drawInstanced 
+            mdl program (getTexture: string->GlTexture) instanceCount ctx =
+            mdl.Meshes
+            |> Array.iter (fun mesh ->
+                Mesh.drawInstanced mesh program getTexture instanceCount ctx
+            ) 
+
         static member drawWireframe mdl program ctx =
             mdl.Meshes
             |> Array.iter (fun mesh -> Mesh.drawWireframe mesh program ctx) 

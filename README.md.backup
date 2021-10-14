@@ -78,7 +78,7 @@ Also note that the 'Galante' library i wrote here is just a set of helpers i nee
     * [43_Exploding_Objects](#43_exploding_objects)
     * [44_Visualizing_Normal_Vectors](#44_visualizing_normal_vectors)
   * **Instancing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Instancing))
-    * Coming soon.
+    * [45_Instancing](#45_instancing)
   * **Anti aliasing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Anti-Aliasing))
     * Coming soon.
 * **Advanced lighting**
@@ -287,7 +287,10 @@ No visual representation.
 <img src="https://user-images.githubusercontent.com/32271030/135960123-5f98cbe0-be38-45bc-881a-cc530090af36.png" width="642" height="392">
 
 ## [Instancing](https://learnopengl.com/Advanced-OpenGL/Instancing)  
-Coming soon.
+#### 45_Instancing
+Went from 4 FPS to 80+ FPS when started using the instanced model matrix array.
+
+<img src="https://user-images.githubusercontent.com/32271030/137234727-423c1aed-ba45-43e0-ac96-89ef24cbca6e.png" width="642" height="392">
 
 ## [Anti aliasing](https://learnopengl.com/Advanced-OpenGL/Anti-Aliasing)  
 Coming soon.
