@@ -80,7 +80,7 @@ Also note that the 'Galante' library i wrote here is just a set of helpers i nee
   * **Instancing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Instancing))
     * [45_Instancing](#45_instancing)
   * **Anti aliasing** ([Original article](https://learnopengl.com/Advanced-OpenGL/Anti-Aliasing))
-    * Coming soon.
+    * [46_Antialiasing](#46_antialiasing)
 * **Advanced lighting**
   * **Advanced lighting** ([Original article](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting))
     * Coming soon.
@@ -288,7 +288,7 @@ No visual representation.
 
 ## [Instancing](https://learnopengl.com/Advanced-OpenGL/Instancing)  
 #### 45_Instancing
-Went from 4 FPS to 80+ FPS when started using the instanced model matrix array.
+Rendering 100.000 asteroids went from 4 FPS to 80+ FPS when started using the instanced model matrix array.
 
 <img src="https://user-images.githubusercontent.com/32271030/137234727-423c1aed-ba45-43e0-ac96-89ef24cbca6e.png" width="642" height="392">
 

@@ -8,6 +8,7 @@
 
     type GlWindowOptions = 
         { FileProvider: IFileProvider option
+        ; MainFramebufferSampleCount: uint16
         ; Logger: ILogger option
         ; IsVisible: bool
         ; UseSingleThreadedWindow: bool
@@ -33,6 +34,7 @@
 
         static member Default =
             { FileProvider = None
+            ; MainFramebufferSampleCount = 1us
             ; Logger = None
             ; IsVisible = true
             ; UseSingleThreadedWindow = false
