@@ -27,8 +27,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
-    <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.3.0" />
+    <PackageReference Include="Silk.NET.Windowing" Version="2.3.0" />
     <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
   </ItemGroup>
 

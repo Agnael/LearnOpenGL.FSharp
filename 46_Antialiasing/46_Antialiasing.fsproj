@@ -24,8 +24,8 @@
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
       <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
-      <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
-      <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+      <PackageReference Include="Silk.NET.OpenGL" Version="2.3.0" />
+      <PackageReference Include="Silk.NET.Windowing" Version="2.3.0" />
       <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
    </ItemGroup>
 

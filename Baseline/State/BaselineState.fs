@@ -5,6 +5,7 @@
    open BaseWindowSlice
    open BaseAssetSlice
    open BaseGlSlice
+   open BaseGuiSlice
 
    type BaselineAction =
       | Camera of CameraAction
@@ -13,6 +14,7 @@
       | Window of WindowAction
       | Asset of AssetAction
       | Gl of GlAction
+      | Gui of GuiAction
     
    type BaselineState =
       { Camera: CameraState 
@@ -21,6 +23,7 @@
       ; Window: WindowState
       ; Asset: AssetState
       ; Gl: GlState
+      ; Gui: GuiState
       ;}
       static member createDefault (winTitle, winResolution) =
          { Camera = CameraState.Default 
@@ -29,6 +32,7 @@
          ; Window = WindowState.createDefault (winTitle, winResolution)
          ; Asset = AssetState.Default
          ; Gl = GlState.Default
+         ; Gui = GuiState.Default
          ;}
 
    let gameReducer action prevState =
@@ -54,4 +58,7 @@
          }
       | Gl action -> {
             prevState with Gl = BaseGlSlice.reduce action prevState.Gl
+         }
+      | Gui action -> {
+            prevState with Gui = BaseGuiSlice.reduce action prevState.Gui
          }

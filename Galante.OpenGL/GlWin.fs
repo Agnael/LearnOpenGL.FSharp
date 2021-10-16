@@ -10,6 +10,7 @@
    open Silk.NET.Windowing.Glfw
    open Silk.NET.GLFW
    open Microsoft.Extensions.Logging
+   open Silk.NET.OpenGL.Extensions.ImGui
 
    let create (options: GlWindowOptions): GlWindowCtx =    
       let windowOptions =
@@ -50,7 +51,7 @@
             :> Microsoft.Extensions.Logging.ILogger
 
       let window = Window.Create(windowOptions)
-      
+
       // Applies the antialiasing configs
       let defaultSampleCount = 
          GlWindowOptions.Default.MainFramebufferSampleCount
@@ -68,6 +69,8 @@
                limited to only work for GLFW. The default sampler count will
                be used for whatever windowing system is being used."
 
+      let gl = window.CreateOpenGL()
+
       let windowContext = 
          { Gl = GL.GetApi(window) 
          ; Window = window
@@ -75,5 +78,5 @@
          ; FileProvider = 
             new PhysicalFileProvider(Directory.GetCurrentDirectory())
          ;}
-                 
+
       windowContext

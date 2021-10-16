@@ -1,5 +1,6 @@
 ﻿open Silk.NET.Windowing.Glfw
 open Silk.NET.GLFW
+open Silk.NET.OpenGL.Extensions.ImGui
 
 
 #nowarn "9"
@@ -30,7 +31,7 @@ open Serilog.Extensions.Logging
 
 let initialState = 
    BaselineState.createDefault(
-      "46_Antialiasing", 
+      "47_Blinn_Phong", 
       new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -105,6 +106,10 @@ let main argv =
       |> ignore
             
    let onLoad (ctx: GlWindowCtx) input (state: BaselineState) dispatch =
+      (ctx, input, state, dispatch)
+      |> Baseline.loadImGuiController 
+      |> ignore
+
       shader <-
          GlProg.emptyBuilder
          |> GlProg.withName "3dShader"
@@ -198,6 +203,10 @@ let main argv =
       |> ignore
 
       ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
+
+      (ctx, state, dispatch, deltaTime)
+      |> Baseline.renderGui
+      |> ignore
 
       // **********************************************************************
       // Frame completed

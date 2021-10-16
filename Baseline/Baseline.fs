@@ -21,6 +21,8 @@ open Gl
 open Silk.NET.OpenGL
 open Microsoft.FSharp
 open Microsoft.FSharp.NativeInterop
+open BaseGuiSlice
+open Silk.NET.OpenGL.Extensions.ImGui
         
 let private aMovement dispatch cameraAction = 
    dispatch (Camera cameraAction)
@@ -353,3 +355,17 @@ let bindShaderToUbo shader uboDef state dispatch (ctx: GlWindowCtx) =
          dispatch (Gl (AddSharedUbo sharedUbo))
          bindToBindingPoint sharedUbo shader
    ctx
+
+let loadImGuiController (ctx: GlWindowCtx, input, state, dispatch) =
+   let imGuiController = new ImGuiController(ctx.Gl, ctx.Window, input)
+   dispatch (Gui (ControllerInitialized imGuiController))
+   (ctx, input, state, dispatch)
+
+let renderGui (ctx: GlWindowCtx, state, dispatch, deltaTime: double) =
+   state.Gui.Controller
+   |> function
+   | None -> ()
+   | Some controller -> 
+      controller.Update (single deltaTime)
+      ImGuiNET.ImGui.ShowDemoWindow();
+      controller.Render ()
