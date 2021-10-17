@@ -38,6 +38,9 @@
     type private onWindowResizeHandler<'gs, 'ga> =
         GlWindowCtx -> 'gs -> Dispatch<'ga> -> Vector2 -> unit
 
+    type private onWindowCloseHandler<'gs, 'ga> =
+        GlWindowCtx -> 'gs -> Dispatch<'ga> -> unit
+
     type GameBuilder<'gs, 'ga> =
         { WindowOptions: GlWindowOptions
         ; InitialState: 'gs
@@ -51,5 +54,6 @@
         ; OnMouseMove: onMouseMoveHandler<'gs,'ga> list
         ; OnMouseWheel: onMouseWheelHandler<'gs,'ga> list
         ; OnWindowResize: onWindowResizeHandler<'gs,'ga> list
+        ; OnWindowClose: onWindowCloseHandler<'gs,'ga> list
         ; OnActionListen: ('gs -> 'ga -> ('ga->unit) -> GlWindowCtx -> unit) list
         ;}

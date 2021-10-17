@@ -23,6 +23,7 @@ open Microsoft.FSharp
 open Microsoft.FSharp.NativeInterop
 open BaseGuiSlice
 open Silk.NET.OpenGL.Extensions.ImGui
+open ImGuiNET
         
 let private aMovement dispatch cameraAction = 
    dispatch (Camera cameraAction)
@@ -88,9 +89,6 @@ let detectResolutionChange
    | Key.F5        -> aWindowResolutionUpdate dispatch initialW initialH
    | Key.F6        -> aWindowResolutionUpdate dispatch 1280 720 
    | Key.F7        -> aWindowResolutionUpdate dispatch 1920 1080 
-   | Key.F8        -> 
-      let nullOffset = { CameraOffset.X = 0.0f; Y = 0.0f; }
-      aCamera dispatch (AngularChange nullOffset)
    | _ -> ()
    (ctx, state, dispatch, kb, key)
 
@@ -227,9 +225,7 @@ let glCreateQueuedTextures (ctx: GlWindowCtx, state, dispatch, dt: double) =
    |> Map.iter createAndDispatchTexture
 
    (ctx, state, dispatch, dt)
-
-
-            
+               
 let setUboUniformM4
    (uboDef: GlUniformBlockDefinition)
    uboUniformName
@@ -361,11 +357,122 @@ let loadImGuiController (ctx: GlWindowCtx, input, state, dispatch) =
    dispatch (Gui (ControllerInitialized imGuiController))
    (ctx, input, state, dispatch)
 
+let private configureImGuiStyles () =
+   ImGui.PushStyleVar (ImGuiStyleVar.WindowBorderSize, 0.0f)
+   ImGui.PushStyleColor (ImGuiCol.WindowBg, v4 0.0f 0.0f 0.0f 0.6f)
+
+let specialColor = v4 0.9f 0.7f 0.2f 1.0f
+
+let private renderInfoWindow state =
+   let infoWindowFlags =
+      ImGuiWindowFlags.NoMove |||
+      ImGuiWindowFlags.NoResize |||
+      ImGuiWindowFlags.NoTitleBar
+
+   let infoBeginResult: bool = ImGui.Begin ("Info", infoWindowFlags)
+
+   // FPS indicator
+   ImGui.Text $"FPS: {state.FpsCounter.CurrentFps}"
+   
+   ImGui.Separator ()
+
+   // Camera position
+   ImGui.TextColored (specialColor, "Camera position")
+   ImGui.Text <| v3toString state.Camera.Position
+   ImGui.Separator ()
+
+   // Camera direction
+   ImGui.TextColored (specialColor, "Camera direction")
+   ImGui.Text <| v3toString state.Camera.TargetDirection
+   ImGui.Separator ()
+
+   // Camera angles
+   ImGui.TextColored (specialColor, "Camera angles")
+   ImGui.Text <| sprintf "Pitch: %f" (Degrees.value state.Camera.Pitch)
+   ImGui.Text <| sprintf "Yaw:   %f" (Degrees.value state.Camera.Yaw)
+   ImGui.Separator ()
+
+   // Camera locking indicator
+   if state.Camera.IsLocked then
+      ImGui.TextColored (v4 1.0f 0.5f 0.5f 1.0f, "Locked camera")
+   else
+      ImGui.TextWrapped "Unlocked camera"
+      
+   ImGui.Separator ()
+
+   // Resolution indicator
+   let res = state.Window.Resolution
+   ImGui.Text "Current resolution:"
+   ImGui.Text $"{res.Width}x{res.Height}"
+
+   ImGui.SetWindowPos <| v2 10.0f 10.0f
+
+   ImGui.End ()
+   state
+
+let private renderControlsWindow state =
+   let infoWindowFlags =
+      ImGuiWindowFlags.NoMove |||
+      ImGuiWindowFlags.NoResize |||
+      ImGuiWindowFlags.NoTitleBar
+
+   let infoBeginResult: bool = ImGui.Begin ("Controls", infoWindowFlags)
+
+   ImGui.TextColored (specialColor, "CONTROLS")
+   ImGui.TextColored (specialColor, "- Lock camera")
+   ImGui.Text "[F9]"
+
+   ImGui.TextColored (specialColor, "- Unlock camera")
+   ImGui.Text "[F10]"
+
+   ImGui.TextColored (specialColor, "- Move")
+   ImGui.Text "[W] [A] [S] [D]"
+   ImGui.Text "[SHIFT] [SPACE]"
+
+   ImGui.TextColored (specialColor, "- Look around")
+   ImGui.Text "[MOUSE]"
+   
+   ImGui.TextColored (specialColor, "- Zoom")
+   ImGui.Text "[MOUSE WHEEL]"
+   
+   ImGui.TextColored (specialColor, "- Set window resolution")
+   ImGui.Text "[F5] Reset to initial"
+   ImGui.Text "[F6] Set to 1280x720"
+   ImGui.Text "[F7] Set to 1920x1080"
+   
+   ImGui.TextColored (specialColor, "- Toggle fullscreen")
+   ImGui.Text "[ALT] + [ENTER]"
+
+   ImGui.SetWindowSize <| v2 180.0f 320.0f
+
+   let res = state.Window.Resolution
+   let wPosX = single res.Width - 10.0f - ImGui.GetWindowWidth()
+   ImGui.SetWindowPos <| v2 wPosX 10.0f
+
+   ImGui.End ()
+   state
+
 let renderGui (ctx: GlWindowCtx, state, dispatch, deltaTime: double) =
    state.Gui.Controller
    |> function
    | None -> ()
    | Some controller -> 
       controller.Update (single deltaTime)
-      ImGuiNET.ImGui.ShowDemoWindow();
+      let mutable isInfoActive = true
+
+      configureImGuiStyles ()
+
+      state
+      |> renderInfoWindow
+      |> renderControlsWindow
+      |> ignore
+
+      //ImGui.ShowDemoWindow()
       controller.Render ()
+
+let disposeGui ctx state dispatch =
+   state.Gui.Controller
+   |> function
+   | None -> ()
+   | Some controller ->
+      controller.Dispose ()

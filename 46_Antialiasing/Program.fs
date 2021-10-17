@@ -112,12 +112,7 @@ let main argv =
             ShaderType.VertexShader, "shader.vert"
             ShaderType.FragmentShader, "shader.frag" 
          ]
-         |> GlProg.withUniforms [
-            "uMaterial.diffuseMap"
-            "uMaterial.specularMap"
-            "uMaterial.shininess"
-            "uModel"
-         ]
+         |> GlProg.withUniforms ["uModel"]
          |> GlProg.build ctx
            
       ctx

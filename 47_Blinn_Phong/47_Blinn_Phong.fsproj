@@ -1,37 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-<PropertyGroup>
-   <OutputType>Exe</OutputType>
-   <TargetFramework>netcoreapp3.1</TargetFramework>
-   <RootNamespace>_47_Blinn_Phong</RootNamespace>
-</PropertyGroup>
+   <PropertyGroup>
+      <OutputType>Exe</OutputType>
+      <TargetFramework>netcoreapp3.1</TargetFramework>
+      <RootNamespace>_47_Blinn_Phong</RootNamespace>
+   </PropertyGroup>
 
-<ItemGroup>
-   <None Include="shader.frag">
-   <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </None>
-   <None Include="shader.vert">
-   <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </None>
-   <Compile Include="Program.fs" />
-</ItemGroup>
+   <ItemGroup>
+      <None Include="shader.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Include="shader.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <Compile Include="Program.fs" />
+   </ItemGroup>
 
-<ItemGroup>
-   <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-   <PackageReference Include="Serilog" Version="2.10.0" />
-   <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-   <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
-   <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
-   <PackageReference Include="Silk.NET.OpenGL" Version="2.3.0" />
-   <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.3.0" />
-   <PackageReference Include="Silk.NET.Windowing" Version="2.3.0" />
-   <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
-</ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+      <PackageReference Include="Serilog" Version="2.10.0" />
+      <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+      <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+      <PackageReference Include="Silk.NET.OpenGL" Version="2.3.0" />
+      <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.3.0" />
+      <PackageReference Include="Silk.NET.Windowing" Version="2.3.0" />
+      <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+   </ItemGroup>
 
-<ItemGroup>
-   <ProjectReference Include="..\Baseline\Baseline.fsproj" />
-   <ProjectReference Include="..\Galante\Galante.fsproj" />
-   <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
-</ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Baseline\Baseline.fsproj" />
+      <ProjectReference Include="..\Galante\Galante.fsproj" />
+      <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <Content Include="..\Resources\Textures\wood.png" Link="Resources\Textures\wood.png">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿open Silk.NET.Windowing.Glfw
 open Silk.NET.GLFW
 open Silk.NET.OpenGL.Extensions.ImGui
+open Silk.NET.Input
 
 
 #nowarn "9"
@@ -67,8 +68,12 @@ let main argv =
          Logger = Some microsoftLogger
          Size = initialRes }
          
-   let mutable vaoCube = Unchecked.defaultof<_>
+   let mutable vaoPlane = Unchecked.defaultof<_>
    let mutable shader = Unchecked.defaultof<_>
+
+   let mutable woodTexture = Unchecked.defaultof<_>
+   let mutable useBlinn = true
+   let mutable lightPos = v3 0.0f 0.0f 0.0f
 
    let matricesUboDef: GlUniformBlockDefinition = {
       Name = "Matrices"
@@ -89,6 +94,13 @@ let main argv =
       |> Baseline.detectResolutionChange initResW initResH // F5|F6|F7
       |> Baseline.detectCursorModeChange // F9|F10
       |> ignore
+
+      match key with
+      | Key.Number1 -> useBlinn <- false
+      | Key.Number2 -> useBlinn <- true
+      | Key.Number3 -> lightPos <- lightPos - v3 0.0f 0.1f 0.0f
+      | Key.Number4 -> lightPos <- lightPos + v3 0.0f 0.1f 0.0f
+      | _ -> ()
 
    let onKeyUp ctx state dispatch kb key =         
       (ctx, state, dispatch, kb, key)    
@@ -118,10 +130,11 @@ let main argv =
             ShaderType.FragmentShader, "shader.frag" 
          ]
          |> GlProg.withUniforms [
-            "uMaterial.diffuseMap"
-            "uMaterial.specularMap"
-            "uMaterial.shininess"
             "uModel"
+            "uTexture"
+            "uLightPos"
+            "uViewerPos"
+            "uUseBlinn"
          ]
          |> GlProg.build ctx
            
@@ -133,23 +146,29 @@ let main argv =
       dispatch (Mouse UseCursorNormal)
       //dispatch (Camera Lock)
       
-      vaoCube <-
+      vaoPlane <-
          GlVao.create ctx
          |> GlVao.bind
          |> fun (vao, _) -> vao
 
       GlVbo.emptyVboBuilder
-      |> GlVbo.withAttrNames ["Positions"]
+      |> GlVbo.withAttrNames ["Positions"; "Normals"; "TexCoords"]
       |> GlVbo.withAttrDefinitions 
-         CubeCCW.vertexPositions
-      |> GlVbo.build (vaoCube, ctx)
+            Plane.vertexPositionsAndNormalsAndTextureCoords
+      |> GlVbo.build (vaoPlane, ctx)
       |> ignore
-         
-      dispatch (Camera (ForcePosition (v3 0.41f -0.44f -0.62f)))
-      dispatch (Camera (ForceTarget (v3 0.48f -0.39f 0.78f)))
 
+      let texturesDir = Path.Combine ("Resources", "Textures")
+      let woodImg = 
+         GlTex.loadImage (Path.Combine (texturesDir, "wood.png")) ctx
+
+      woodTexture <- GlTex.create2d woodImg ctx
+        
+      dispatch (Camera (ForcePosition (v3 -7.93f 2.79f 3.97f)))
+      dispatch (Camera (ForceTarget (v3 0.88f -0.48f -0.35f)))
+      
+      dispatch (Mouse UseCursorNormal)
       dispatch (Camera Lock)
-      dispatch (Mouse UseCursorRaw)
       
    let onUpdate (ctx: GlWindowCtx) (state) dispatch (DeltaTime deltaTime) =
       (ctx, state, dispatch, deltaTime)
@@ -194,12 +213,20 @@ let main argv =
       |> ignore
         
       // **********************************************************************
+      (vaoPlane, ctx)
+      |> GlTex.setActive GLEnum.Texture0 woodTexture
+      |> ignore
+
       (shader, ctx)
       |> GlProg.setAsCurrent
       |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity
+      |> GlProg.setUniformV3 "uLightPos" lightPos
+      |> GlProg.setUniformV3 "uViewerPos" state.Camera.Position
+      |> GlProg.setUniformB "uUseBlinn" useBlinn
+      |> GlProg.setUniformI "uTexture" 0
       |> ignore
 
-      GlVao.bind (vaoCube, ctx)
+      GlVao.bind (vaoPlane, ctx)
       |> ignore
 
       ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
@@ -221,6 +248,11 @@ let main argv =
       |> Baseline.handleWindowResize
       |> ignore
 
+   let onWindowClose ctx state dispatch =
+      (ctx, state, dispatch)
+      |> Baseline.disposeGui
+      |> ignore
+
    let onActionIntercepted state action dispatch ctx =
       Baseline.handleInterceptedAction state action dispatch ctx
 
@@ -240,6 +272,7 @@ let main argv =
    |> addOnMouseMove onMouseMove
    |> addOnMouseWheel onMouseWheel
    |> addOnWindowResize onWindowResize
+   |> addOnWindowClose onWindowClose
    |> addActionInterceptor onActionIntercepted
    |> buildAndRun
    0
