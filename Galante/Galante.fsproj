@@ -1,43 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-  </PropertyGroup>
+<PropertyGroup>
+   <TargetFramework>netstandard2.1</TargetFramework>
+</PropertyGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Remove="Options\**" />
-  </ItemGroup>
+<ItemGroup>
+   <EmbeddedResource Remove="Options\**" />
+</ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="FontManagerTest.fs" />
-    <Compile Include="State\StoreFactory.fs" />
-    <Compile Include="Builders\GameBuilder.fs" />
-    <Compile Include="Vertex.fs" />
-    <Compile Include="Texture.fs" />
-    <Compile Include="Mesh.fs" />
-    <Compile Include="Model.fs" />
-    <Compile Include="GalanteMath.fs" />
-    <Compile Include="Game.fs" />
-  </ItemGroup>
+<ItemGroup>
+   <Compile Include="FontManagerTest.fs" />
+   <Compile Include="State\StoreFactory.fs" />
+   <Compile Include="Builders\GameBuilder.fs" />
+   <Compile Include="Vertex.fs" />
+   <Compile Include="Texture.fs" />
+   <Compile Include="Mesh.fs" />
+   <Compile Include="Model.fs" />
+   <Compile Include="GalanteMath.fs" />
+   <Compile Include="Game.fs" />
+</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AssimpNet" Version="4.1.0" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="3.1.12" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.12" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.12" />
-    <PackageReference Include="Silk.NET.Input" Version="2.1.0" />
-    <PackageReference Include="Silk.NET.Input.Common" Version="2.1.0" />
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
-    <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
-    <PackageReference Include="Silk.NET.Windowing.Common" Version="2.1.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
-    <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
-    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
-  </ItemGroup>
+<ItemGroup>
+   <PackageReference Include="AssimpNet" Version="4.1.0" />
+   <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="3.1.12" />
+   <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.12" />
+   <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
+   <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.12" />
+   <PackageReference Include="Silk.NET.Input" Version="2.3.0" />
+   <PackageReference Include="Silk.NET.Input.Common" Version="2.3.0" />
+   <PackageReference Include="Silk.NET.OpenGL" Version="2.3.0" />
+   <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.3.0" />
+   <PackageReference Include="Silk.NET.Windowing" Version="2.3.0" />
+   <PackageReference Include="Silk.NET.Windowing.Common" Version="2.3.0" />
+   <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+   <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
+   <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
+</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
-  </ItemGroup>
+<ItemGroup>
+   <ProjectReference Include="..\Galante.OpenGL\Galante.OpenGL.fsproj" />
+</ItemGroup>
 
 </Project>

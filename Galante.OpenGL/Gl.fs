@@ -203,10 +203,10 @@ let glVertexAttribDivisor index divisor ctx =
    GlErrorManager.LogIfError ctx
 
 let glVertexAttribPointer 
-   index 
-   size 
+   (index: uint32) 
+   (size: int)
    (vapType: VertexAttribPointerType) 
-   normalized 
+   (normalized: bool)
    strideBytesSize
    offsetByteSizePtr
    ctx =

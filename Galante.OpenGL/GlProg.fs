@@ -63,6 +63,9 @@ let setUniformI name (value: int) (program, ctx) =
    |> List.find (fun x -> x.UniformName = name)
    |> fun uniform -> ctx.Gl.Uniform1(uniform.GlUniformHandle, value)
    (program, ctx)
+        
+let setUniformB name (value: bool) (program, ctx) =    
+   setUniformI name (System.Convert.ToInt32 value) (program, ctx)
 
 let setUniformV3 name (value: Vector3) (program, ctx) =
    program.Uniforms

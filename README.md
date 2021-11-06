@@ -83,7 +83,7 @@ Also note that the 'Galante' library i wrote here is just a set of helpers i nee
     * [46_Antialiasing](#46_antialiasing)
 * **Advanced lighting**
   * **Advanced lighting** ([Original article](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting))
-    * Coming soon.
+    * [47_Blinn_Phong](#47_blinn_phong)
   * **Gamma correction** ([Original article](https://learnopengl.com/Advanced-Lighting/Gamma-Correction))
     * Coming soon.
   * **Shadow mapping** ([Original article](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping))
@@ -298,7 +298,8 @@ Rendering 100.000 asteroids went from 4 FPS to 80+ FPS when started using the in
 
 # Advanced lighting
 ## [Advanced lighting](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting)  
-Coming soon.
+#### 47_Blinn_Phong
+<img src="https://user-images.githubusercontent.com/32271030/140617390-80a1ea43-57cd-4844-8c42-289a7efa481c.png" width="642" height="392">
 
 ## [Gamma Correction](https://learnopengl.com/Advanced-Lighting/Gamma-Correction)  
 Coming soon.

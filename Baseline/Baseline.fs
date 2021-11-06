@@ -21,6 +21,10 @@ open Gl
 open Silk.NET.OpenGL
 open Microsoft.FSharp
 open Microsoft.FSharp.NativeInterop
+open BaseGuiSlice
+open Silk.NET.OpenGL.Extensions.ImGui
+open ImGuiNET
+open Gui
         
 let private aMovement dispatch cameraAction = 
    dispatch (Camera cameraAction)
@@ -35,6 +39,8 @@ let private aMouse dispatch mouseAction =
    dispatch (Mouse mouseAction)
 
 let private aCamera dispatch cameraAction = dispatch (Camera cameraAction)
+
+let private aGui dispatch guiAction = dispatch (Gui guiAction)
 
 // Input handlers
 let detectFullScreenSwitch 
@@ -86,9 +92,6 @@ let detectResolutionChange
    | Key.F5        -> aWindowResolutionUpdate dispatch initialW initialH
    | Key.F6        -> aWindowResolutionUpdate dispatch 1280 720 
    | Key.F7        -> aWindowResolutionUpdate dispatch 1920 1080 
-   | Key.F8        -> 
-      let nullOffset = { CameraOffset.X = 0.0f; Y = 0.0f; }
-      aCamera dispatch (AngularChange nullOffset)
    | _ -> ()
    (ctx, state, dispatch, kb, key)
 
@@ -101,6 +104,22 @@ let detectCursorModeChange
    | Key.F10 -> 
       aMouse dispatch UseCursorRaw
       aCamera dispatch Unlock
+   | _ -> ()
+   (ctx, state, dispatch, kb, key)
+
+let detectShowFullInfo
+   (ctx: GlWindowCtx, state, dispatch, kb: IKeyboard, key) =
+   match key with
+   | Key.F1 -> 
+      aGui dispatch ShowFullInfo
+   | _ -> ()
+   (ctx, state, dispatch, kb, key)
+
+let detectHideFullInfo
+   (ctx: GlWindowCtx, state, dispatch, kb: IKeyboard, key) =
+   match key with
+   | Key.F1 -> 
+      aGui dispatch HideFullInfo
    | _ -> ()
    (ctx, state, dispatch, kb, key)
 
@@ -164,6 +183,10 @@ let v3toString (v3: Vector3) =
       (Math.Round(float v3.Y, 2)) 
       (Math.Round(float v3.Z, 2))
 
+let degToString (Degrees value) = value.ToString()
+
+let resolutionToString (res: Size) = $"{res.Width}x{res.Height}" 
+
 let updateWindowTitle (ctx: GlWindowCtx, state: BaselineState, dispatch, dt) =
    ctx.Window.Title <-
       sprintf 
@@ -225,9 +248,7 @@ let glCreateQueuedTextures (ctx: GlWindowCtx, state, dispatch, dt: double) =
    |> Map.iter createAndDispatchTexture
 
    (ctx, state, dispatch, dt)
-
-
-            
+               
 let setUboUniformM4
    (uboDef: GlUniformBlockDefinition)
    uboUniformName
@@ -353,3 +374,141 @@ let bindShaderToUbo shader uboDef state dispatch (ctx: GlWindowCtx) =
          dispatch (Gl (AddSharedUbo sharedUbo))
          bindToBindingPoint sharedUbo shader
    ctx
+
+let loadImGuiController (ctx: GlWindowCtx, input, state, dispatch) =
+   let imGuiController = new ImGuiController(ctx.Gl, ctx.Window, input)
+   dispatch (Gui (ControllerInitialized imGuiController))
+   (ctx, input, state, dispatch)
+
+let loadBaseGuiElements (ctx: GlWindowCtx, input, state, dispatch) =
+   let dispatchGui guiAction = dispatch (Gui guiAction)
+
+   let addRegularTextGenerated getter =
+      dispatchGui (AddTextLine (RegularTextGenerated getter))
+
+   let addColoredTextGenerated getter =
+      dispatchGui (AddTextLine (ColoredTextGenerated getter))
+
+   let addStateIndicatorSection title indicators =
+      dispatchGui (
+         AddStateIndicatorSection (
+            { Title = title; Indicators = indicators }
+         )
+      )
+
+   let addControlInstruction explanation controls =
+      dispatchGui (
+         AddControlInstruction (
+            { Explanation = explanation; Controls = controls }
+         )
+      )
+
+   let makeIndicator name getValue =
+      { Name = name; GetValue = getValue }
+
+   addRegularTextGenerated
+   <| fun s -> 
+      sprintf "FPS: %d" s.FpsCounter.CurrentFps
+   
+   //addColoredTextGenerated
+   //<| fun s -> 
+   //   if s.Camera.IsLocked then
+   //      ("Locked camera", v4 1.0f 0.5f 0.5f 1.0f)
+   //   else
+   //      ("Unlocked camera", v4 0.2f 1.0f 0.2f 1.0f)
+
+   addStateIndicatorSection 
+      "Current resolution" 
+      [makeIndicator "" (fun s -> resolutionToString s.Window.Resolution)]
+
+   addStateIndicatorSection 
+      "Camera position" 
+      [makeIndicator "" (fun s -> v3toString s.Camera.Position)]
+
+   addStateIndicatorSection 
+      "Camera direction" 
+      [makeIndicator "" (fun s -> v3toString s.Camera.TargetDirection)]
+
+   addStateIndicatorSection 
+      "Camera angles" 
+      [ 
+         makeIndicator "Pitch" (fun s -> degToString s.Camera.Pitch)
+         makeIndicator "Yaw" (fun s -> degToString s.Camera.Yaw)
+      ]
+      
+   addControlInstruction "to look around" [Single <| MouseMove]
+   addControlInstruction "to zoom in/out" [Single <| MouseWheelMove]
+   addControlInstruction "to move" [
+      Single <| KeyboardKey Key.W
+      Single <| KeyboardKey Key.A
+      Single <| KeyboardKey Key.S
+      Single <| KeyboardKey Key.D
+      Single <| KeyboardKey Key.Space
+      Single <| KeyboardKey Key.ShiftLeft
+   ]
+   
+   addControlInstruction 
+      "Set initial resolution" 
+      [Single <| KeyboardKey Key.F5]
+
+   addControlInstruction "Set 1280x720" [Single <| KeyboardKey Key.F6]
+   addControlInstruction "Set 1920x1080" [Single <| KeyboardKey Key.F7]
+
+   addControlInstruction 
+      "Toggle fullscreen" 
+      [Multiple [KeyboardKey Key.AltLeft; KeyboardKey Key.Enter]]
+         
+let specialColor = v4 0.9f 0.7f 0.2f 1.0f
+let fontScale = 1.f
+
+let controlsToString controls =
+   controls
+   |> List.rev
+   |> List.map (fun combination ->
+      match combination with
+      | Single control ->
+         match control with
+         | KeyboardKey keyboardKey -> $"[{keyboardKey.ToString()}]"
+         | MouseKey mouseKey -> $"[{mouseKey.ToString()}]"
+         | MouseMove -> "[MOUSE MOVE]"
+         | MouseWheelMove -> "[MOUSE WHEEL]"
+      | Multiple controls -> ""
+   )
+   |> String.concat " "
+
+let renderGui (ctx: GlWindowCtx, state, dispatch, deltaTime: double) =
+   state.Gui.Controller
+   |> function
+   | None -> ()
+   | Some controller -> 
+      controller.Update <| single deltaTime
+
+      guiConfigureStyles ()
+
+      let renderConstantWidgets =
+         guiRenderLockedState
+         >> guiRenderCameraPosition
+         >> guiRenderCameraDirection
+         >> guiRenderInstructionsToShowMore
+         >> guiRenderStickyInfo
+
+      if state.Gui.ShowFullInfo then
+         state
+         |> renderConstantWidgets
+         |> guiRenderExtendedInfo
+         |> ignore
+      else
+         state
+         |> renderConstantWidgets
+         |> ignore
+
+
+      //ImGui.ShowDemoWindow()
+      controller.Render ()
+
+let disposeGui ctx state dispatch =
+   state.Gui.Controller
+   |> function
+   | None -> ()
+   | Some controller ->
+      controller.Dispose ()

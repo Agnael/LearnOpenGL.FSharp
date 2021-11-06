@@ -23,6 +23,7 @@
       ; OnMouseMove = []
       ; OnMouseWheel = []
       ; OnWindowResize = []
+      ; OnWindowClose = []
       ; OnActionListen = []
       ;}
 
@@ -61,6 +62,9 @@
    let addOnWindowResize h (b: GameBuilder<'gs, 'ga>) =
       { b with OnWindowResize = h::b.OnWindowResize }
 
+   let addOnWindowClose h (b: GameBuilder<'gs, 'ga>) =
+      { b with OnWindowClose = h::b.OnWindowClose }
+
    let private registerOnUpdateHandlers 
       handlers (window: IWindow, ctx, getState, dispatch) =
       let register h =
@@ -79,6 +83,17 @@
                let sizeV = new Vector2(single size.X, single size.Y)
                h ctx (getState()) dispatch sizeV
          window.add_Resize (new Action<_>(mapped))
+
+      List.iter register handlers
+      (window, ctx, getState, dispatch)
+            
+   let private registerOnWindowCloseHandlers
+      handlers (window: IWindow, ctx, getState, dispatch) =
+      let register h = 
+         let mapped () =
+            h ctx (getState()) dispatch
+
+         window.add_Closing (new Action(mapped))
 
       List.iter register handlers
       (window, ctx, getState, dispatch)
@@ -183,6 +198,7 @@
       |> registerOnUpdateHandlers b.OnUpdate
       |> registerOnRenderHandlers b.OnRender
       |> registerOnWindowResizeHandlers b.OnWindowResize
+      |> registerOnWindowCloseHandlers b.OnWindowClose
       |> ignore
 
       b.OnActionListen

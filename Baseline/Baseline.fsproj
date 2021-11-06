@@ -14,14 +14,16 @@
     <Compile Include="State\Slices\BaseCameraSlice.fs" />
     <Compile Include="State\Slices\BaseFpsCounterSlice.fs" />
     <Compile Include="State\Slices\BaseMouseSlice.fs" />
+    <Compile Include="State\Slices\BaseGuiSlice.fs" />
     <Compile Include="State\Slices\BaseWindowSlice.fs" />
     <Compile Include="State\BaselineState.fs" />
+    <Compile Include="Gui.fs" />
     <Compile Include="Baseline.fs" />
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.1.0" />
-    <PackageReference Include="Silk.NET.Windowing" Version="2.1.0" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.3.0" />
+    <PackageReference Include="Silk.NET.Windowing" Version="2.3.0" />
     <PackageReference Include="SodiumFRP.FSharp" Version="5.0.5" />
   </ItemGroup>
 

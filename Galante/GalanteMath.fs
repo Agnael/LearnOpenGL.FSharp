@@ -15,6 +15,7 @@
 
    let inline v2 x y = new Vector2(x, y)
    let inline v3 x y z = new Vector3(x, y, z)
+   let inline v4 x y z w = new Vector4(x, y, z, w)
 
    let normalizeCross (v1, v2) = 
       Vector3.Cross(v1, v2) 
