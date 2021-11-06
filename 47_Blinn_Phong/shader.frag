@@ -13,33 +13,39 @@ uniform bool uUseBlinn;
 
 void main()
 {
-    vec3 color = texture(uTexture, TexCoords).rgb;
+   vec3 color = texture(uTexture, TexCoords).rgb;
 
-    // ambient
-    vec3 ambient = 0.05 * color;
+   // ambient
+   vec3 ambient = 0.05 * color;
 
-    // diffuse
-    vec3 lightDir = normalize(uLightPos - FragPos);
-    vec3 normal = normalize(Normal);
-    float diff = max(dot(lightDir, normal), 0.0);
-    vec3 diffuse = diff * color;
+   // diffuse
+   vec3 lightDir = normalize(uLightPos - FragPos);
+   vec3 normal = normalize(Normal);
+   float diff = max(dot(lightDir, normal), 0.0);
+   vec3 diffuse = diff * color;
 
-    // specular
-    vec3 viewDir = normalize(uViewerPos - FragPos);
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = 0.0;
+   // specular
+   vec3 viewDir = normalize(uViewerPos - FragPos);
+   vec3 reflectDir = reflect(-lightDir, normal);
 
-    if(uUseBlinn)
-    {
-        vec3 halfwayDir = normalize(lightDir + viewDir);  
-        spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
-    }
-    else
-    {
-        vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
-    }
+   float spec = 0.0;
 
-    vec3 specular = vec3(0.3) * spec; // assuming bright white light color
-    FragColor = vec4(ambient + diffuse + specular, 1.0);
+   if(uUseBlinn)
+   {
+      vec3 halfwayDir = normalize(lightDir + viewDir);  
+      spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+   }
+   else
+   {
+      // Use Phong
+      vec3 reflectDir = reflect(-lightDir, normal);
+      spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+   }
+   
+   if (diff == 0.0) {
+      spec = 0.0;
+   }
+
+   vec3 specular = vec3(0.3) * spec; // assuming bright white light color
+   FragColor = vec4(ambient + diffuse + specular, 1.0);
 }

@@ -26,6 +26,7 @@ open GlFbo
 open Model
 open BaseGlSlice
 open Gl
+open BaseGuiSlice
 open Microsoft.FSharp.NativeInterop
 open Serilog
 open Serilog.Extensions.Logging
@@ -43,6 +44,11 @@ let v3toFloatArray (v3: Vector3): single array =
 let v3arrayToFloatArrayArray (v3array: Vector3 array) =
    v3array
    |> Array.map (fun x -> [| v3toFloatArray x |])
+   
+type LightSourceMovementState =
+   | StandingStill
+   | MovingDown
+   | MovingUp
 
 [<EntryPoint>]
 let main argv =
@@ -54,8 +60,8 @@ let main argv =
          .CreateLogger();
 
    let microsoftLogger = 
-      (new SerilogLoggerFactory(serilogLogger)).CreateLogger("GlobalCategory");
-
+      (new SerilogLoggerFactory(serilogLogger)).CreateLogger("GlobalCategory")
+         
    // No need to get the current state since this is executed
    // before starting the game loop, so using the initial state 
    // is just fine.
@@ -63,17 +69,22 @@ let main argv =
       { GlWindowOptions.Default with
          // The antialiasing sample count is being set here!!!
          MainFramebufferSampleCount = 16us
-         IsVsync = false
+         IsVsync = true
          Title = initialState.Window.Title
          Logger = Some microsoftLogger
          Size = initialRes }
          
    let mutable vaoPlane = Unchecked.defaultof<_>
-   let mutable shader = Unchecked.defaultof<_>
+   let mutable vaoCube = Unchecked.defaultof<_>
+
+   let mutable shaderPlane = Unchecked.defaultof<_>
+   let mutable shaderCube = Unchecked.defaultof<_>
 
    let mutable woodTexture = Unchecked.defaultof<_>
    let mutable useBlinn = true
+
    let mutable lightPos = v3 0.0f 0.0f 0.0f
+   let mutable lightMovementState = StandingStill
 
    let matricesUboDef: GlUniformBlockDefinition = {
       Name = "Matrices"
@@ -93,19 +104,30 @@ let main argv =
       |> Baseline.detectCameraMovementStart // W|A|S|D|Left_Shift|Space
       |> Baseline.detectResolutionChange initResW initResH // F5|F6|F7
       |> Baseline.detectCursorModeChange // F9|F10
+      |> Baseline.detectShowFullInfo // F1
       |> ignore
 
       match key with
       | Key.Number1 -> useBlinn <- false
       | Key.Number2 -> useBlinn <- true
-      | Key.Number3 -> lightPos <- lightPos - v3 0.0f 0.1f 0.0f
-      | Key.Number4 -> lightPos <- lightPos + v3 0.0f 0.1f 0.0f
+      | Key.Number3 -> lightMovementState <- MovingDown
+      | Key.Number4 -> lightMovementState <- MovingUp
       | _ -> ()
 
    let onKeyUp ctx state dispatch kb key =         
       (ctx, state, dispatch, kb, key)    
       |> Baseline.detectCameraMovementStop
+      |> Baseline.detectHideFullInfo // F1
       |> ignore
+
+      match key with
+      | Key.Number3 -> 
+         if lightMovementState = MovingDown then
+            lightMovementState <- StandingStill
+      | Key.Number4 -> 
+         if lightMovementState = MovingUp then
+            lightMovementState <- StandingStill
+      | _ -> ()
 
    let onMouseMove ctx state dispatch newPos = 
       (ctx, state, dispatch, newPos)
@@ -120,11 +142,37 @@ let main argv =
    let onLoad (ctx: GlWindowCtx) input (state: BaselineState) dispatch =
       (ctx, input, state, dispatch)
       |> Baseline.loadImGuiController 
+      |> Baseline.loadBaseGuiElements
       |> ignore
 
-      shader <-
+      // Add extra controls, specific to this exercise
+      let dispatchGui guiAction = dispatch (Gui guiAction)
+      let addAlwaysVisibleControlInstruction explanation controls =
+         dispatchGui (
+            AddAlwaysVisibleControlInstruction (
+               { Explanation = explanation; Controls = controls }
+            )
+         )
+
+      addAlwaysVisibleControlInstruction 
+         "Use Phong"
+         [Single <| KeyboardKey Key.Number1]
+
+      addAlwaysVisibleControlInstruction 
+         "Use Blinn-Phong"
+         [Single <| KeyboardKey Key.Number2]
+
+      addAlwaysVisibleControlInstruction 
+         "Move light down"
+         [Single <| KeyboardKey Key.Number3]
+
+      addAlwaysVisibleControlInstruction 
+         "Move light up"
+         [Single <| KeyboardKey Key.Number4]
+
+      shaderPlane <-
          GlProg.emptyBuilder
-         |> GlProg.withName "3dShader"
+         |> GlProg.withName "ShaderPlane"
          |> GlProg.withShaders [
             ShaderType.VertexShader, "shader.vert"
             ShaderType.FragmentShader, "shader.frag" 
@@ -137,9 +185,20 @@ let main argv =
             "uUseBlinn"
          ]
          |> GlProg.build ctx
+
+      shaderCube <-
+         GlProg.emptyBuilder
+         |> GlProg.withName "ShaderCube"
+         |> GlProg.withShaders [
+            ShaderType.VertexShader, "shader.vert"
+            ShaderType.FragmentShader, "LightSource.frag" 
+         ]
+         |> GlProg.withUniforms ["uModel"]
+         |> GlProg.build ctx
            
       ctx
-      |> Baseline.bindShaderToUbo shader matricesUboDef state dispatch
+      |> Baseline.bindShaderToUbo shaderPlane matricesUboDef state dispatch
+      |> Baseline.bindShaderToUbo shaderCube matricesUboDef state dispatch
       |> ignore
                  
       // Comment this or press F10 to unlock the camera
@@ -164,8 +223,20 @@ let main argv =
 
       woodTexture <- GlTex.create2d woodImg ctx
         
-      dispatch (Camera (ForcePosition (v3 -7.93f 2.79f 3.97f)))
-      dispatch (Camera (ForceTarget (v3 0.88f -0.48f -0.35f)))
+      vaoCube <-
+         GlVao.create ctx
+         |> GlVao.bind
+         |> fun (vao, _) -> vao
+
+      GlVbo.emptyVboBuilder
+      |> GlVbo.withAttrNames ["Positions"; "Normals"; "TexCoords"]
+      |> GlVbo.withAttrDefinitions 
+            Cube.vertexPositionsAndNormalsAndTextureCoords
+      |> GlVbo.build (vaoCube, ctx)
+      |> ignore
+
+      dispatch (Camera (ForcePosition (v3 -4.14f 2.27f 4.10f)))
+      dispatch (Camera (ForceTarget (v3 0.41f -0.38f -0.83f)))
       
       dispatch (Mouse UseCursorNormal)
       dispatch (Camera Lock)
@@ -180,6 +251,11 @@ let main argv =
       |> Baseline.updateCameraPosition
       |> Baseline.glCreateQueuedTextures
       |> ignore
+
+      match lightMovementState with
+      | StandingStill -> ()
+      | MovingDown -> lightPos <- lightPos - v3 0.0f 0.05f 0.0f
+      | MovingUp -> lightPos <- lightPos + v3 0.0f 0.05f 0.0f
 
    let onRender (ctx: GlWindowCtx) state dispatch (DeltaTime deltaTime) =
       ctx.Gl.Enable GLEnum.DepthTest
@@ -217,9 +293,12 @@ let main argv =
       |> GlTex.setActive GLEnum.Texture0 woodTexture
       |> ignore
 
-      (shader, ctx)
+      let planeModelMatrix = 
+         Matrix4x4.Identity * (Matrix4x4.CreateTranslation (v3 0.0f 0.5f 0.0f))
+
+      (shaderPlane, ctx)
       |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" Matrix4x4.Identity
+      |> GlProg.setUniformM4x4 "uModel" planeModelMatrix
       |> GlProg.setUniformV3 "uLightPos" lightPos
       |> GlProg.setUniformV3 "uViewerPos" state.Camera.Position
       |> GlProg.setUniformB "uUseBlinn" useBlinn
@@ -229,8 +308,25 @@ let main argv =
       GlVao.bind (vaoPlane, ctx)
       |> ignore
 
+      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 6u)
+
+      // Render light source cube
+      let lightSourceModelMatrix = 
+         Matrix4x4.Identity * 
+         Matrix4x4.CreateTranslation (Vector3.Divide (lightPos, 0.2f)) * 
+         Matrix4x4.CreateScale 0.2f
+
+      (shaderCube, ctx)
+      |> GlProg.setAsCurrent
+      |> GlProg.setUniformM4x4 "uModel" lightSourceModelMatrix
+      |> ignore
+
+      GlVao.bind (vaoCube, ctx)
+      |> ignore
+      
       ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
 
+      // ImGui
       (ctx, state, dispatch, deltaTime)
       |> Baseline.renderGui
       |> ignore

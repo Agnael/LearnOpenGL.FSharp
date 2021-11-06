@@ -17,6 +17,7 @@
     <Compile Include="State\Slices\BaseGuiSlice.fs" />
     <Compile Include="State\Slices\BaseWindowSlice.fs" />
     <Compile Include="State\BaselineState.fs" />
+    <Compile Include="Gui.fs" />
     <Compile Include="Baseline.fs" />
   </ItemGroup>
   

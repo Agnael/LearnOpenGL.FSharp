@@ -7,6 +7,9 @@
    </PropertyGroup>
 
    <ItemGroup>
+      <None Include="LightSource.frag">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Include="shader.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

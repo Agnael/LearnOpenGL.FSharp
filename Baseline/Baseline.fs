@@ -24,6 +24,7 @@ open Microsoft.FSharp.NativeInterop
 open BaseGuiSlice
 open Silk.NET.OpenGL.Extensions.ImGui
 open ImGuiNET
+open Gui
         
 let private aMovement dispatch cameraAction = 
    dispatch (Camera cameraAction)
@@ -38,6 +39,8 @@ let private aMouse dispatch mouseAction =
    dispatch (Mouse mouseAction)
 
 let private aCamera dispatch cameraAction = dispatch (Camera cameraAction)
+
+let private aGui dispatch guiAction = dispatch (Gui guiAction)
 
 // Input handlers
 let detectFullScreenSwitch 
@@ -104,6 +107,22 @@ let detectCursorModeChange
    | _ -> ()
    (ctx, state, dispatch, kb, key)
 
+let detectShowFullInfo
+   (ctx: GlWindowCtx, state, dispatch, kb: IKeyboard, key) =
+   match key with
+   | Key.F1 -> 
+      aGui dispatch ShowFullInfo
+   | _ -> ()
+   (ctx, state, dispatch, kb, key)
+
+let detectHideFullInfo
+   (ctx: GlWindowCtx, state, dispatch, kb: IKeyboard, key) =
+   match key with
+   | Key.F1 -> 
+      aGui dispatch HideFullInfo
+   | _ -> ()
+   (ctx, state, dispatch, kb, key)
+
 let handleCameraAngularChange (ctx, state, dispatch, newMousePos: Vector2)  = 
    aMouse dispatch (NewPosition newMousePos)
 
@@ -163,6 +182,10 @@ let v3toString (v3: Vector3) =
       (Math.Round(float v3.X, 2))
       (Math.Round(float v3.Y, 2)) 
       (Math.Round(float v3.Z, 2))
+
+let degToString (Degrees value) = value.ToString()
+
+let resolutionToString (res: Size) = $"{res.Width}x{res.Height}" 
 
 let updateWindowTitle (ctx: GlWindowCtx, state: BaselineState, dispatch, dt) =
    ctx.Window.Title <-
@@ -357,115 +380,128 @@ let loadImGuiController (ctx: GlWindowCtx, input, state, dispatch) =
    dispatch (Gui (ControllerInitialized imGuiController))
    (ctx, input, state, dispatch)
 
-let private configureImGuiStyles () =
-   ImGui.PushStyleVar (ImGuiStyleVar.WindowBorderSize, 0.0f)
-   ImGui.PushStyleColor (ImGuiCol.WindowBg, v4 0.0f 0.0f 0.0f 0.6f)
+let loadBaseGuiElements (ctx: GlWindowCtx, input, state, dispatch) =
+   let dispatchGui guiAction = dispatch (Gui guiAction)
 
-let specialColor = v4 0.9f 0.7f 0.2f 1.0f
+   let addRegularTextGenerated getter =
+      dispatchGui (AddTextLine (RegularTextGenerated getter))
 
-let private renderInfoWindow state =
-   let infoWindowFlags =
-      ImGuiWindowFlags.NoMove |||
-      ImGuiWindowFlags.NoResize |||
-      ImGuiWindowFlags.NoTitleBar
+   let addColoredTextGenerated getter =
+      dispatchGui (AddTextLine (ColoredTextGenerated getter))
 
-   let infoBeginResult: bool = ImGui.Begin ("Info", infoWindowFlags)
+   let addStateIndicatorSection title indicators =
+      dispatchGui (
+         AddStateIndicatorSection (
+            { Title = title; Indicators = indicators }
+         )
+      )
 
-   // FPS indicator
-   ImGui.Text $"FPS: {state.FpsCounter.CurrentFps}"
+   let addControlInstruction explanation controls =
+      dispatchGui (
+         AddControlInstruction (
+            { Explanation = explanation; Controls = controls }
+         )
+      )
+
+   let makeIndicator name getValue =
+      { Name = name; GetValue = getValue }
+
+   addRegularTextGenerated
+   <| fun s -> 
+      sprintf "FPS: %d" s.FpsCounter.CurrentFps
    
-   ImGui.Separator ()
+   //addColoredTextGenerated
+   //<| fun s -> 
+   //   if s.Camera.IsLocked then
+   //      ("Locked camera", v4 1.0f 0.5f 0.5f 1.0f)
+   //   else
+   //      ("Unlocked camera", v4 0.2f 1.0f 0.2f 1.0f)
 
-   // Camera position
-   ImGui.TextColored (specialColor, "Camera position")
-   ImGui.Text <| v3toString state.Camera.Position
-   ImGui.Separator ()
+   addStateIndicatorSection 
+      "Current resolution" 
+      [makeIndicator "" (fun s -> resolutionToString s.Window.Resolution)]
 
-   // Camera direction
-   ImGui.TextColored (specialColor, "Camera direction")
-   ImGui.Text <| v3toString state.Camera.TargetDirection
-   ImGui.Separator ()
+   addStateIndicatorSection 
+      "Camera position" 
+      [makeIndicator "" (fun s -> v3toString s.Camera.Position)]
 
-   // Camera angles
-   ImGui.TextColored (specialColor, "Camera angles")
-   ImGui.Text <| sprintf "Pitch: %f" (Degrees.value state.Camera.Pitch)
-   ImGui.Text <| sprintf "Yaw:   %f" (Degrees.value state.Camera.Yaw)
-   ImGui.Separator ()
+   addStateIndicatorSection 
+      "Camera direction" 
+      [makeIndicator "" (fun s -> v3toString s.Camera.TargetDirection)]
 
-   // Camera locking indicator
-   if state.Camera.IsLocked then
-      ImGui.TextColored (v4 1.0f 0.5f 0.5f 1.0f, "Locked camera")
-   else
-      ImGui.TextWrapped "Unlocked camera"
+   addStateIndicatorSection 
+      "Camera angles" 
+      [ 
+         makeIndicator "Pitch" (fun s -> degToString s.Camera.Pitch)
+         makeIndicator "Yaw" (fun s -> degToString s.Camera.Yaw)
+      ]
       
-   ImGui.Separator ()
-
-   // Resolution indicator
-   let res = state.Window.Resolution
-   ImGui.Text "Current resolution:"
-   ImGui.Text $"{res.Width}x{res.Height}"
-
-   ImGui.SetWindowPos <| v2 10.0f 10.0f
-
-   ImGui.End ()
-   state
-
-let private renderControlsWindow state =
-   let infoWindowFlags =
-      ImGuiWindowFlags.NoMove |||
-      ImGuiWindowFlags.NoResize |||
-      ImGuiWindowFlags.NoTitleBar
-
-   let infoBeginResult: bool = ImGui.Begin ("Controls", infoWindowFlags)
-
-   ImGui.TextColored (specialColor, "CONTROLS")
-   ImGui.TextColored (specialColor, "- Lock camera")
-   ImGui.Text "[F9]"
-
-   ImGui.TextColored (specialColor, "- Unlock camera")
-   ImGui.Text "[F10]"
-
-   ImGui.TextColored (specialColor, "- Move")
-   ImGui.Text "[W] [A] [S] [D]"
-   ImGui.Text "[SHIFT] [SPACE]"
-
-   ImGui.TextColored (specialColor, "- Look around")
-   ImGui.Text "[MOUSE]"
+   addControlInstruction "to look around" [Single <| MouseMove]
+   addControlInstruction "to zoom in/out" [Single <| MouseWheelMove]
+   addControlInstruction "to move" [
+      Single <| KeyboardKey Key.W
+      Single <| KeyboardKey Key.A
+      Single <| KeyboardKey Key.S
+      Single <| KeyboardKey Key.D
+      Single <| KeyboardKey Key.Space
+      Single <| KeyboardKey Key.ShiftLeft
+   ]
    
-   ImGui.TextColored (specialColor, "- Zoom")
-   ImGui.Text "[MOUSE WHEEL]"
-   
-   ImGui.TextColored (specialColor, "- Set window resolution")
-   ImGui.Text "[F5] Reset to initial"
-   ImGui.Text "[F6] Set to 1280x720"
-   ImGui.Text "[F7] Set to 1920x1080"
-   
-   ImGui.TextColored (specialColor, "- Toggle fullscreen")
-   ImGui.Text "[ALT] + [ENTER]"
+   addControlInstruction 
+      "Set initial resolution" 
+      [Single <| KeyboardKey Key.F5]
 
-   ImGui.SetWindowSize <| v2 180.0f 320.0f
+   addControlInstruction "Set 1280x720" [Single <| KeyboardKey Key.F6]
+   addControlInstruction "Set 1920x1080" [Single <| KeyboardKey Key.F7]
 
-   let res = state.Window.Resolution
-   let wPosX = single res.Width - 10.0f - ImGui.GetWindowWidth()
-   ImGui.SetWindowPos <| v2 wPosX 10.0f
+   addControlInstruction 
+      "Toggle fullscreen" 
+      [Multiple [KeyboardKey Key.AltLeft; KeyboardKey Key.Enter]]
+         
+let specialColor = v4 0.9f 0.7f 0.2f 1.0f
+let fontScale = 1.f
 
-   ImGui.End ()
-   state
+let controlsToString controls =
+   controls
+   |> List.rev
+   |> List.map (fun combination ->
+      match combination with
+      | Single control ->
+         match control with
+         | KeyboardKey keyboardKey -> $"[{keyboardKey.ToString()}]"
+         | MouseKey mouseKey -> $"[{mouseKey.ToString()}]"
+         | MouseMove -> "[MOUSE MOVE]"
+         | MouseWheelMove -> "[MOUSE WHEEL]"
+      | Multiple controls -> ""
+   )
+   |> String.concat " "
 
 let renderGui (ctx: GlWindowCtx, state, dispatch, deltaTime: double) =
    state.Gui.Controller
    |> function
    | None -> ()
    | Some controller -> 
-      controller.Update (single deltaTime)
-      let mutable isInfoActive = true
+      controller.Update <| single deltaTime
 
-      configureImGuiStyles ()
+      guiConfigureStyles ()
 
-      state
-      |> renderInfoWindow
-      |> renderControlsWindow
-      |> ignore
+      let renderConstantWidgets =
+         guiRenderLockedState
+         >> guiRenderCameraPosition
+         >> guiRenderCameraDirection
+         >> guiRenderInstructionsToShowMore
+         >> guiRenderStickyInfo
+
+      if state.Gui.ShowFullInfo then
+         state
+         |> renderConstantWidgets
+         |> guiRenderExtendedInfo
+         |> ignore
+      else
+         state
+         |> renderConstantWidgets
+         |> ignore
+
 
       //ImGui.ShowDemoWindow()
       controller.Render ()
