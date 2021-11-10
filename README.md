@@ -301,7 +301,7 @@ Rendering 100.000 asteroids went from 4 FPS to 80+ FPS when started using the in
 # Advanced lighting
 ## [Advanced lighting](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting)  
 #### 47_Blinn_Phong
-<img src="https://user-images.githubusercontent.com/32271030/141029498-fccb0637-3034-4663-9da6-d9f652378293.gif" width="642" height="392">
+<img src="https://user-images.githubusercontent.com/32271030/141052650-d8f504ae-84d2-48fd-9a0b-7fe80c8fcb02.gif" width="642" height="392">
 
 ## [Gamma Correction](https://learnopengl.com/Advanced-Lighting/Gamma-Correction)  
 #### 48_Gamma_Correction
