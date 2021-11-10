@@ -73,7 +73,7 @@ let withFormat
    }
 
 let withInternalFormat
-   v
+   (v: int)
    (b:  GlTextureBuilder<'tt,'f,unit,'wmS,'wmT,'fmMin,'fmMag,'img>)
    : GlTextureBuilder<_,_,_,_,_,_,_,_> = {
       TextureTarget = b.TextureTarget
@@ -161,7 +161,7 @@ let buildGlTexture
    (b: GlTextureBuilder<
       TextureTarget,
       PixelFormat,
-      PixelFormat,
+      int,
       GLEnum,
       GLEnum,
       GLEnum,
@@ -270,7 +270,7 @@ let buildCubemapGlTexture (cubemapImg: CubeMapImage) ctx: GlTexture =
       Width = width
       Height = height
       Format = PixelFormat.Rgba
-      InternalFormat = PixelFormat.Rgb
+      InternalFormat = LanguagePrimitives.EnumToValue PixelFormat.Rgb
       WrapModeS = GLEnum.ClampToEdge
       WrapModeT = GLEnum.ClampToEdge
       TextureFilterModeMin = GLEnum.Linear
@@ -421,11 +421,11 @@ let loadImageF filePath (ctx: GlWindowCtx) =
 
    img
       
-let texCreateDefault textureTarget image ctx =
+let texCreateDefault textureTarget internalFormat image ctx =
    emptyGlTexture
    |> withTextureTarget textureTarget
    |> withFormat PixelFormat.Rgba
-   |> withInternalFormat PixelFormat.Rgb
+   |> withInternalFormat internalFormat
    |> withWrapModeS GLEnum.Repeat
    |> withWrapModeT GLEnum.Repeat
    |> withTextureMinFilter GLEnum.LinearMipmapLinear
@@ -434,13 +434,24 @@ let texCreateDefault textureTarget image ctx =
    |> buildGlTexture ctx
 
 let create2d img ctx = 
-   texCreateDefault TextureTarget.Texture2D img ctx
+   texCreateDefault 
+      TextureTarget.Texture2D 
+      (LanguagePrimitives.EnumToValue PixelFormat.Rgb)
+      img 
+      ctx
+   
+let create2dSrgb img ctx = 
+   texCreateDefault 
+      TextureTarget.Texture2D 
+      (LanguagePrimitives.EnumToValue GLEnum.Srgb)
+      img 
+      ctx
 
 let create2dTransparent image ctx =
    emptyGlTexture
    |> withTextureTarget TextureTarget.Texture2D
    |> withFormat PixelFormat.Rgba
-   |> withInternalFormat PixelFormat.Rgba
+   |> withInternalFormat (LanguagePrimitives.EnumToValue PixelFormat.Rgba)
    |> withWrapModeS GLEnum.ClampToEdge
    |> withWrapModeT GLEnum.ClampToEdge
    |> withTextureMinFilter GLEnum.LinearMipmapLinear
@@ -489,121 +500,3 @@ let texCreateEmpty2d width height ctx =
       linearEnumAsValueNativePtr)
 
    texture
-   
-//let createCubeMap (imgs: CubeMapImage) (ctx: GlWindowCtx) =    
-//   // Fixed configs
-//   let mainTextureTarget = TextureTarget.TextureCubeMap
-//   let format = GLEnum.Rgba
-//   let wrapModeS = GLEnum.ClampToEdge
-//   let wrapModeT = GLEnum.ClampToEdge
-//   let wrapModeR = GLEnum.ClampToEdge
-//   let filterModeMin = GLEnum.Linear
-//   let filterModeMag = GLEnum.Linear
-
-//   let getPixelRowSpan (img: Image<Rgba32>) = img.GetPixelRowSpan(0)
-
-//   let imgPtr = &&MemoryMarshal.GetReference(getPixelRowSpan imgs.Front)
-//   let imgVoidPtr = NativePtr.toVoidPtr imgPtr
-
-//   let  mainTexture =
-//      { GlTexture.GlTexHandle = ctx.Gl.GenTexture ()
-//      ; TextureTarget = mainTextureTarget
-//      ; Width = 
-//         imgs.Left.Width +
-//         imgs.Front.Width +
-//         imgs.Right.Width +
-//         imgs.Back.Width
-//      ; Height = 
-//         imgs.Top.Width +
-//         imgs.Front.Width +
-//         imgs.Bottom.Width
-//      ; Format = format
-//      ; InternalFormat = LanguagePrimitives.EnumToValue format
-//      ; WrapModeS = wrapModeS
-//      ; WrapModeT = wrapModeT
-//      ; TextureFilterModeMin = filterModeMin
-//      ; TextureFilterModeMag = filterModeMag
-//      ;}
-    
-//   ctx.Gl.BindTexture (mainTextureTarget,  mainTexture.GlTexHandle)
-
-
-
-//   // Wrap mode for S
-//   let mutable textureWrapS = LanguagePrimitives.EnumToValue wrapModeS
-//   let textureWrapSIntPtr = NativePtr.toNativeInt<int> &&textureWrapS
-
-//   let textureWrapSNativePtr: nativeptr<int> = 
-//      NativePtr.ofNativeInt textureWrapSIntPtr
-
-//   ctx.Gl.TexParameterI (
-//      GLEnum.Texture2D, 
-//      GLEnum.TextureWrapS, 
-//      textureWrapSNativePtr)
-    
-//   // Wrap mode for T
-//   let mutable textureWrapT = wrapModeT |> LanguagePrimitives.EnumToValue
-//   let textureWrapTIntPtr = NativePtr.toNativeInt<int> &&textureWrapT
-
-//   let textureWrapTNativePtr: nativeptr<int> = 
-//      NativePtr.ofNativeInt textureWrapTIntPtr
-
-//   ctx.Gl.TexParameterI (
-//      GLEnum.Texture2D, 
-//      GLEnum.TextureWrapT, 
-//      textureWrapTNativePtr)
-       
-//   // Fixed R wrapping mode: Texture coordinates that are exactly 
-//   // between two faces may not hit an exact face (due to some hardware
-//   // limitations) so by using GL_CLAMP_TO_EDGE OpenGL always returns 
-//   // their edge values whenever we sample between faces.
-//   let mutable textureWrapR = 
-//      LanguagePrimitives.EnumToValue GLEnum.ClampToEdge
-
-//   let textureWrapRIntPtr = 
-//      NativePtr.toNativeInt<int> &&textureWrapR
-
-//   let textureWrapRNativePtr: nativeptr<int> = 
-//      NativePtr.ofNativeInt textureWrapRIntPtr
-
-//   ctx.Gl.TexParameterI (
-//      GLEnum.Texture2D, 
-//      GLEnum.TextureWrapR, 
-//      textureWrapRNativePtr)
-
-//   // Texture filtering modes
-//   let mutable textureFilterParams = 
-//      LanguagePrimitives.EnumToValue GLEnum.Linear
-
-//   let textureFilterParamsIntPtr = 
-//      NativePtr.toNativeInt<int> &&textureFilterParams
-
-//   let textureFilterNativePtr: nativeptr<int> = 
-//      NativePtr.ofNativeInt textureFilterParamsIntPtr
-
-//   ctx.Gl.TexParameterI (
-//      GLEnum.Texture2D, 
-//      GLEnum.TextureMinFilter, 
-//      textureFilterNativePtr)
-
-//   ctx.Gl.TexParameterI (
-//      GLEnum.Texture2D, 
-//      GLEnum.TextureMagFilter, 
-//      textureFilterNativePtr)
-       
-//   ctx.Gl.TexImage2D 
-//      (  mainTexture.TextureTargetGl
-//      , 0
-//      ,  mainTexture.InternalFormat
-//      , uint32  mainTexture.Width
-//      , uint32  mainTexture.Height
-//      , 0
-//      ,  mainTexture.Format
-//      , GLEnum.UnsignedByte
-//      , imgVoidPtr)
-
-//   let glError = ctx.Gl.GetError()
-//   ctx.Gl.GenerateMipmap  mainTexture.TextureTarget
-//   let isEnabled = ctx.Gl.IsEnabled (GLEnum.Texture2D)
-//   ctx.Gl.Enable (GLEnum.Texture2D)
-//    mainTexture

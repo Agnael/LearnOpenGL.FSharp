@@ -214,7 +214,7 @@ let guiRenderStickyInfo state =
    state.Gui.AlwaysVisibleControlInstructions
    |> List.rev
    |> List.iter (fun instruction ->
-      ImGui.SetWindowSize <| v2 0.0f 0.0f
+      ImGui.SetWindowSize <| v2 windowSize_LockedState.X 0.0f
 
       let fullInfoSetterControlStr = 
          instruction.Controls

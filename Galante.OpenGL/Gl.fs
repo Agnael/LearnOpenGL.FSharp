@@ -64,7 +64,7 @@ let glTexParameterI2d = glTexParameterI TextureTarget.Texture2D
 let glTexImage2d 
    (textureTarget: TextureTarget)
    (lvl: int )
-   (internalFormat: PixelFormat)
+   (internalFormat: int)
    (w: int )
    (h: int)
    (border: int)
@@ -75,7 +75,7 @@ let glTexImage2d
    ctx.Gl.TexImage2D 
       (textureTarget
       , lvl
-      , LanguagePrimitives.EnumToValue internalFormat
+      , internalFormat
       , uint32 w
       , uint32 h
       , border
@@ -225,3 +225,7 @@ let glEnableVertexAttribArray attrIdx ctx =
    GlErrorManager.LogIfError ctx
 
 let glBindVertexArray handle ctx = ctx.Gl.BindVertexArray handle
+
+let glDeleteTexture (texture: GlTexture) ctx =
+   ctx.Gl.DeleteTexture texture.GlTexHandle
+   ctx

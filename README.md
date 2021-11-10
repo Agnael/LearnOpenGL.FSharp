@@ -6,6 +6,8 @@ This repo can be useful if you are following the excelent tutorials on your own 
 
 Also note that the 'Galante' library i wrote here is just a set of helpers i needed along the way and will need a complete refactor once i have a better understanding about OpenGl, but that´s not likely to happen within this repo.
 
+From exercise 47 and onward, DearImGui is used to display an informative overlay, but this seems to be working only in my PC for some reason. I don't know what's going on (might be driver related) but I'll try to get it to work properly.
+
 # Table of contents
 * **Getting started**
   * **Hello window** ([Original article](https://learnopengl.com/Getting-started/Hello-Window))
@@ -85,7 +87,7 @@ Also note that the 'Galante' library i wrote here is just a set of helpers i nee
   * **Advanced lighting** ([Original article](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting))
     * [47_Blinn_Phong](#47_blinn_phong)
   * **Gamma correction** ([Original article](https://learnopengl.com/Advanced-Lighting/Gamma-Correction))
-    * Coming soon.
+    * [48_Gamma_Correction](#48_gamma_correction)
   * **Shadow mapping** ([Original article](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping))
     * Coming soon.
   * **Point shadows** ([Original article](https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows))
@@ -299,10 +301,11 @@ Rendering 100.000 asteroids went from 4 FPS to 80+ FPS when started using the in
 # Advanced lighting
 ## [Advanced lighting](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting)  
 #### 47_Blinn_Phong
-<img src="https://user-images.githubusercontent.com/32271030/140617390-80a1ea43-57cd-4844-8c42-289a7efa481c.png" width="642" height="392">
+<img src="https://user-images.githubusercontent.com/32271030/141029498-fccb0637-3034-4663-9da6-d9f652378293.gif" width="642" height="392">
 
 ## [Gamma Correction](https://learnopengl.com/Advanced-Lighting/Gamma-Correction)  
-Coming soon.
+#### 48_Gamma_Correction
+<img src="https://user-images.githubusercontent.com/32271030/141051923-dbcdffcc-0362-449c-aba1-9dd986b26a27.gif" width="642" height="392">
 
 ## [Shadow mapping](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping)  
 Coming soon.

@@ -10,7 +10,7 @@ type GlTexture = {
    Height: int
    TextureTarget: TextureTarget
    Format: PixelFormat
-   InternalFormat: PixelFormat
+   InternalFormat: int
    WrapModeS: GLEnum
    WrapModeT: GLEnum
    TextureFilterModeMin: GLEnum
