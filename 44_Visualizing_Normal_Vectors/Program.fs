@@ -208,15 +208,11 @@ let main argv =
 
       let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
 
-      ctx
-      |> Baseline.setUboUniformM4 
-            matricesUboDef "uProjection" projectionMatrix state
-      |> Baseline.setUboUniformM4 
-            matricesUboDef "uView" viewMatrix state
-      |> ignore
+      let setUboUniformM4 =  Baseline.setUboUniformM4 state ctx
+      setUboUniformM4 matricesUboDef "uProjection" projectionMatrix
+      setUboUniformM4 matricesUboDef "uView" viewMatrix
         
       // **********************************************************************
-            
       let getTextureHandler imgPath =
          state.Asset.ImagesLoaded.TryFind imgPath
          |> function

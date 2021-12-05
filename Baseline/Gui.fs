@@ -205,28 +205,32 @@ let guiRenderInstructionsToShowMore state =
    state
 
 let guiRenderStickyInfo state =
-   let isStickyInfoWidgetCreated = 
-      ImGui.Begin ("StickyInfo", defaultWindowFlags)
+   let instructions = state.Gui.AlwaysVisibleControlInstructions
 
-   v2 margin (windowSize_LockedState.Y + margin2)
-   |> ImGui.SetWindowPos 
+   if instructions.Length > 0 then
+      let isStickyInfoWidgetCreated = 
+         ImGui.Begin ("StickyInfo", defaultWindowFlags)
+
+      v2 margin (windowSize_LockedState.Y + margin2)
+      |> ImGui.SetWindowPos 
    
-   state.Gui.AlwaysVisibleControlInstructions
-   |> List.rev
-   |> List.iter (fun instruction ->
-      ImGui.SetWindowSize <| v2 windowSize_LockedState.X 0.0f
+      state.Gui.AlwaysVisibleControlInstructions
+      |> List.rev
+      |> List.iter (fun instruction ->
+         ImGui.SetWindowSize <| v2 windowSize_LockedState.X 0.0f
 
-      let fullInfoSetterControlStr = 
-         instruction.Controls
-         |> controlCombinationsToString
+         let fullInfoSetterControlStr = 
+            instruction.Controls
+            |> controlCombinationsToString
       
-      ImGui.TextColored (specialColor, fullInfoSetterControlStr)
-      ImGui.TextWrapped instruction.Explanation
+         ImGui.TextColored (specialColor, fullInfoSetterControlStr)
+         ImGui.TextWrapped instruction.Explanation
 
-      ImGui.Separator()
-   )
+         ImGui.Separator()
+      )
       
-   ImGui.End()
+      ImGui.End()
+
    state
 
 let guiRenderExtendedInfo state =

@@ -205,6 +205,220 @@ let buildGlTexture
    |> ignore
    texture
 
+
+
+// Texture builder ============================================================
+// Version of the already existing version of the GlTextureBuilder, but that
+// does not require an image to be provided. I know it´s gross, stop staring at
+// me.
+type GlImagelessTextureBuilder<'tt,'f,'inF,'wmS,'wmT,'fmMin,'fmMag, 'w, 'h> = 
+   internal {
+      TextureTarget: 'tt
+      Format: 'f
+      InternalFormat: 'inF
+      WrapModeS: 'wmS
+      WrapModeT: 'wmT
+      FilterModeMin: 'fmMin
+      FilterModeMag: 'fmMag
+      Width: 'w
+      Height: 'h
+   }
+
+let emptyImagelessGlTexture = {
+   TextureTarget = ()
+   Format = ()
+   InternalFormat = ()
+   WrapModeS = ()
+   WrapModeT = ()
+   FilterModeMin = ()
+   FilterModeMag = ()
+   Width = ()
+   Height = ()
+}
+
+let imagelessWithTextureTarget 
+   v
+   (b:  GlImagelessTextureBuilder<unit,'f,'inF,'wmS,'wmT,'fmMin,'fmMag,'w,'h>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = v
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      FilterModeMin = b.FilterModeMin
+      FilterModeMag = b.FilterModeMag
+      Width = b.Width
+      Height = b.Height
+   }
+
+let imagelessWithFormat
+   v
+   (b:  GlImagelessTextureBuilder<'tt,unit,'inF,'wmS,'wmT,'fmMin,'fmMag,'w,'h>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = b.TextureTarget
+      Format = v
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      FilterModeMin = b.FilterModeMin
+      FilterModeMag = b.FilterModeMag
+      Width = b.Width
+      Height = b.Height
+   }
+
+let imagelessWithInternalFormat
+   (v: int)
+   (b:  GlImagelessTextureBuilder<'tt,'f,unit,'wmS,'wmT,'fmMin,'fmMag,'w,'h>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = b.TextureTarget
+      Format = b.Format
+      InternalFormat = v
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      FilterModeMin = b.FilterModeMin
+      FilterModeMag = b.FilterModeMag
+      Width = b.Width
+      Height = b.Height
+   }
+
+let imagelessWithWrapModeS
+   v
+   (b:  GlImagelessTextureBuilder<'tt,'f,'inF,unit,'wmT,'fmMin,'fmMag,'w,'h>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = b.TextureTarget
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = v
+      WrapModeT = b.WrapModeT
+      FilterModeMin = b.FilterModeMin
+      FilterModeMag = b.FilterModeMag
+      Width = b.Width
+      Height = b.Height
+   }
+
+let imagelessWithWrapModeT
+   v
+   (b:  GlImagelessTextureBuilder<'tt,'f,'inF,'wmS,unit,'fmMin,'fmMag,'w,'h>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = b.TextureTarget
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = v
+      FilterModeMin = b.FilterModeMin
+      FilterModeMag = b.FilterModeMag
+      Width = b.Width
+      Height = b.Height
+   }
+
+let imagelessWithTextureMinFilter
+   v
+   (b:  GlImagelessTextureBuilder<'tt,'f,'inF,'wmS,'wmT,unit,'fmMag,'w,'h>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = b.TextureTarget
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      FilterModeMin = v
+      FilterModeMag = b.FilterModeMag
+      Width = b.Width
+      Height = b.Height
+   }
+
+let imagelessWithTextureMagFilter
+   v
+   (b:  GlImagelessTextureBuilder<'tt,'f,'inF,'wmS,'wmT,'fmMin,unit,'w,'h>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = b.TextureTarget
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      FilterModeMin = b.FilterModeMin
+      FilterModeMag = v
+      Width = b.Width
+      Height = b.Height
+   }
+
+let imagelessWithWidth
+   v
+   (b:  GlImagelessTextureBuilder<'tt,'f,'inF,'wmS,'wmT,'fmMin,'fmMag,unit,'h>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = b.TextureTarget
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      FilterModeMin = b.FilterModeMin
+      FilterModeMag = b.FilterModeMag
+      Width = v
+      Height = b.Height
+   }
+
+let imagelessWithHeight
+   v
+   (b:  GlImagelessTextureBuilder<'tt,'f,'inF,'wmS,'wmT,'fmMin,'fmMag,'w,unit>)
+   : GlImagelessTextureBuilder<_,_,_,_,_,_,_,_,_> = {
+      TextureTarget = b.TextureTarget
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      FilterModeMin = b.FilterModeMin
+      FilterModeMag = b.FilterModeMag
+      Width = b.Width
+      Height = v
+   }
+
+let buildImagelessGlTexture 
+   ctx 
+   (b: GlImagelessTextureBuilder<
+      TextureTarget,
+      PixelFormat,
+      int,
+      GLEnum,
+      GLEnum,
+      GLEnum,
+      GLEnum,
+      int,
+      int
+   >): GlTexture = 
+   let texture = {
+      GlTexHandle = ctx.Gl.GenTexture ()
+      TextureTarget = b.TextureTarget
+      Width = b.Width
+      Height = b.Height
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      TextureFilterModeMin = b.FilterModeMin
+      TextureFilterModeMag = b.FilterModeMag
+   }
+   
+   ctx
+   |> glBindTexture b.TextureTarget texture.GlTexHandle 
+   |> glTexParameterI2d TextureParameterName.TextureWrapS b.WrapModeS
+   |> glTexParameterI2d TextureParameterName.TextureWrapT b.WrapModeT
+   |> glTexParameterI2d TextureParameterName.TextureMinFilter b.FilterModeMin
+   |> glTexParameterI2d TextureParameterName.TextureMagFilter b.FilterModeMag
+   |> glTexImage2d
+         texture.TextureTarget
+         0
+         texture.InternalFormat
+         texture.Width
+         texture.Height
+         0
+         texture.Format
+         // Note this pixel type. This function is not ONLY creating an 
+         // imageless texture, so this API design sucks and should be reworked.
+         PixelType.Float
+         (IntPtr.Zero.ToPointer())
+   |> glGenerateMipmap texture.TextureTarget
+   |> glEnable EnableCap.Texture2D
+   |> ignore
+   texture
 // ----------------------------------------------------------------------------
 
 let buildCubemapGlTexture (cubemapImg: CubeMapImage) ctx: GlTexture =

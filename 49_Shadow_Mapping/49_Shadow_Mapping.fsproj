@@ -3,10 +3,22 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>_48_Gamma_Correction</RootNamespace>
+    <RootNamespace>_49_Shadow_Mapping</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="debugQuad.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="debugQuad.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="simpleDepthShader.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="simpleDepthShader.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="shader.frag">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

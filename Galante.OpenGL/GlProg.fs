@@ -94,7 +94,20 @@ let setUniformV4 name (x: single, y, z, w) (program: GlProgram, ctx) =
    |> List.find (fun x -> x.UniformName = name)
    |> fun uniform -> ctx.Gl.Uniform4 (uniform.GlUniformHandle, x, y, z, w)
    (program, ctx)
-               
+           
+let setUniform<'a> name (v: 'a) (shader: GlProgram, ctx) =
+   let deps = (shader, ctx)
+
+   match box v with
+   | :? single as casted -> setUniformF name casted deps
+   | :? int as casted -> setUniformI name casted deps
+   | :? bool as casted -> setUniformB name casted deps
+   | :? Vector3 as casted -> setUniformV3 name casted deps
+   | :? Vector4 as casted -> 
+         setUniformV4 name (casted.X, casted.Y, casted.Z, casted.W) deps
+   | :? Matrix4x4 as casted -> setUniformM4x4 name casted deps
+   | _ -> invalidOp "There is no uniform setter defined for this value type"
+
 let emptyBuilder = {
    Name = ()
    ShaderDefinitions = ()
