@@ -16,6 +16,8 @@ uniform sampler2D uShadowMap;
 
 float GetShadow(vec4 fragPosLightSpace, vec3 lightDir, vec3 normalizedNormal)
 {
+   vec2 texelSize = 1.0 / textureSize(uShadowMap, 0);
+
    // The first thing to do to check whether a fragment is in shadow, is 
    // transform the light-space fragment position in clip-space to normalized 
    // device coordinates. When we output a clip-space vertex position to 
@@ -29,7 +31,8 @@ float GetShadow(vec4 fragPosLightSpace, vec3 lightDir, vec3 normalizedNormal)
    // vertex remains untouched so this step is actually quite meaningless.
    // However, it is necessary when using perspective projection so keeping
    // this line ensures it works with both projection matrices.
-   vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+   vec3 projCoords = vec3(0.0);
+   projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 
    // Because the depth from the depth map is in the range [0,1] and we also
    // want to use projCoords to sample from the depth map, we transform the
@@ -55,13 +58,12 @@ float GetShadow(vec4 fragPosLightSpace, vec3 lightDir, vec3 normalizedNormal)
    // A more solid approach would be to change the amount of bias based on the
    // surface angle towards the light: something we can solve with the dot 
    // product.
-   vec2 texelSize = 1.0 / textureSize(uShadowMap, 0);
-   float bias = 
-      max(0.005 * (1.0 - dot(normalizedNormal, lightDir)), 0.0025) * texelSize.y;
+   // Slope scaled depth bias (https://gamedev.stackexchange.com/a/66999)
+   float minDepthBias = 0.0025;
+   float lightDotNormal = dot(normalizedNormal, lightDir);
+   float bias = 0.002 * sqrt(1 - pow(lightDotNormal, 2)) / lightDotNormal;
+   bias = max(bias, minDepthBias);
 
-   // The actual comparison is then simply a check whether currentDepth is
-   // higher than closestDepth and if so, the fragment is in shadow.
-//    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
    // PCF
    float shadow = 0.0;
    for(int x = -1; x <= 1; ++x)
@@ -70,9 +72,11 @@ float GetShadow(vec4 fragPosLightSpace, vec3 lightDir, vec3 normalizedNormal)
       {
          vec2 currShadowMapTexelPos = projCoords.xy + vec2(x, y) * texelSize;
          float pcfDepth = texture(uShadowMap, currShadowMapTexelPos).r; 
-
+         
+         // The actual comparison is then simply a check whether currentDepth
+         // is higher than closestDepth and if so, the fragment is in shadow.
          float currShadowValue = currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
-         shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+         shadow += currShadowValue;
       }    
    }
    shadow /= 9.0;
@@ -96,23 +100,28 @@ void main()
    vec3 normal = normalize(Normal);
    vec3 lightColor = vec3(1.0);
 
-   // ambient
+   // Ambient
    vec3 ambient = 0.15 * lightColor;
 
-   // diffuse
+   // Diffuse
    vec3 lightDir = normalize(uLightPosition - FragPos);
    float diff = max(dot(lightDir, normal), 0.0);
    vec3 diffuse = diff * lightColor;
 
-   // specular
+   // Specular
    vec3 viewDir = normalize(uViewerPos - FragPos);
    float spec = 0.0;
    vec3 halfwayDir = normalize(lightDir + viewDir);  
    spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
    vec3 specular = spec * lightColor;    
 
-   // calculate shadow
+   // Calculates shadow
    float shadow = GetShadow(FragPosLightSpace, lightDir, normal);
+
+   // No shadow if this is the back face of a model (relative to the 
+   // directional light source)
+   shadow = dot(uLightPosition, normal) <= 0.0 ? 0.0 : shadow;
+
    vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular)) * color; 
 
    if(uGamma != 1.0)

@@ -275,7 +275,7 @@ let main argv =
       Matrix4x4.CreateRotationZ rotation.Z *
       Matrix4x4.CreateTranslation pos 
 
-   let renderScene shader ctx enableCulling =
+   let renderScene shader ctx =
       let planeModelMatrix =
          Matrix4x4.Identity * 
          (Matrix4x4.CreateTranslation <| v3 0.0f 0.0f 0.0f)
@@ -286,22 +286,12 @@ let main argv =
       |> ignore
 
       GlVao.bind (vaoPlane, ctx) |> ignore
-
       glDrawArrays ctx PrimitiveType.Triangles 0 6u
-      
-      if enableCulling then
-         glEnable EnableCap.CullFace ctx |> ignore
-         ctx.Gl.FrontFace GLEnum.Ccw  
-         glCullFace ctx CullFaceMode.Front
 
       let renderCube = renderCube shader ctx
       renderCube <| makeCubeTransform (v3i 0 0 0) 0.50f (v3 0.0f 1.5f 0.0f)
       renderCube <| makeCubeTransform (v3i 0 0 0) 1.00f (v3 2.0f 0.0f 1.0f)
       renderCube <| makeCubeTransform (v3i 1 0 1) 0.25f (v3 -1.0f 0.0f 2.0f)
-      
-      if enableCulling then
-         glDisable ctx EnableCap.CullFace
-         glCullFace ctx CullFaceMode.Back
 
    let onRender (ctx: GlWindowCtx) state dispatch (DeltaTime deltaTime) =
       let res = state.Window.Resolution
@@ -310,7 +300,6 @@ let main argv =
       let glClear = glClear ctx
       let glEnable flag = glEnable flag ctx |> ignore
       let glClearColor = glClearColor ctx
-      let glCullFace = glCullFace ctx
       
       // - Sets matrices UBO for all shaders
       let fov = Radians.value <| toRadians(state.Camera.Fov)
@@ -342,7 +331,8 @@ let main argv =
       let lightViewMatrix = createLookAt lightPosition (v3i 0 0 0) (v3i 0 1 0)
 
       // I have NO idea why this multiplication MUST be done in the
-      // inverse order, it doesn´t work otherwise.
+      // inverse order (relative to how it´s done in the shader),
+      // but it doesn´t work otherwise.
       let lightSpaceMatrix = lightViewMatrix * lightProjectionMatrix
       
       (simpleDepthShader, ctx)
@@ -351,7 +341,7 @@ let main argv =
             "uLightSpaceMatrix" lightSpaceMatrix
       |> ignore
 
-      renderScene simpleDepthShader ctx true
+      renderScene simpleDepthShader ctx
 
       // **********************************************************************
       // 2. Renders the normal scene, but using the generated shadow map
@@ -383,7 +373,7 @@ let main argv =
       |> GlProg.setUniform "uLightSpace" lightSpaceMatrix
       |> ignore
 
-      renderScene shader ctx false
+      renderScene shader ctx
       
       // **********************************************************************
       // 3? Renders the debug quad, which would show the rendered shadow map.

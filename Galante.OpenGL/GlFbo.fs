@@ -69,8 +69,8 @@ let fboAttachEmptyDepthTexture2d (width: int) (height: int) (fbo, ctx) =
          (LanguagePrimitives.EnumToValue GLEnum.DepthComponent)
       |> imagelessWithWrapModeS GLEnum.ClampToBorder
       |> imagelessWithWrapModeT GLEnum.ClampToBorder
-      |> imagelessWithTextureMinFilter GLEnum.Linear
-      |> imagelessWithTextureMagFilter GLEnum.Linear
+      |> imagelessWithTextureMinFilter GLEnum.Nearest
+      |> imagelessWithTextureMagFilter GLEnum.Nearest
       |> imagelessWithWidth width
       |> imagelessWithHeight height
       |> buildImagelessGlTexture ctx
