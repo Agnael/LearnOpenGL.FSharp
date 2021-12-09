@@ -14,8 +14,16 @@
       static member value (Degrees d) = d
 
    let inline v2 x y = new Vector2(x, y)
+   let inline v2i (x: int) (y:int) (z: int) = 
+      new Vector2(single x, single y)
+
    let inline v3 x y z = new Vector3(x, y, z)
+   let inline v3i (x: int) (y:int) (z: int) = 
+      new Vector3(single x, single y, single z)
+
    let inline v4 x y z w = new Vector4(x, y, z, w)
+   let inline v4i (x: int) (y:int) (z: int) (w: int) = 
+      new Vector4(single x, single y, single z, single 2)
 
    let normalizeCross (v1, v2) = 
       Vector3.Cross(v1, v2) 
@@ -88,3 +96,18 @@
       |> fun (Degrees v) -> if v > 89.9f then 89.9f else v
       |> fun v -> if MathF.Sign target.Y < 0 then -v else v
       |> Degrees.make
+
+   let createPerspectiveFov fovRadians screenRatio nearPlaneDist farPlaneDist =
+      Matrix4x4.CreatePerspectiveFieldOfView(
+         fovRadians, 
+         screenRatio, 
+         nearPlaneDist, 
+         farPlaneDist)
+
+   let createOrthographic w h nearPlaneDist farPlaneDist =
+      Matrix4x4.CreateOrthographic (w, h, nearPlaneDist, farPlaneDist)
+
+   let createLookAt camPos camTarget camUpDir =
+      Matrix4x4.CreateLookAt (camPos, camTarget, camUpDir)
+
+   let createTranslationM4 targetPos = Matrix4x4.CreateTranslation targetPos

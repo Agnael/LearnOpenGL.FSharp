@@ -256,14 +256,11 @@ let main argv =
          Matrix4x4.CreatePerspectiveFieldOfView(fov, ratio, 0.1f, 100.0f)
 
       let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
+              
+      let setUboUniformM4 =  Baseline.setUboUniformM4 state ctx
+      setUboUniformM4 matricesUboDef "uProjection" projectionMatrix
+      setUboUniformM4 matricesUboDef "uView" viewMatrix
 
-      ctx
-      |> Baseline.setUboUniformM4 
-            matricesUboDef "uProjection" projectionMatrix state
-      |> Baseline.setUboUniformM4
-            matricesUboDef "uView" viewMatrix state
-      |> ignore
-        
       // **********************************************************************
       (vaoPlane, ctx)
       |> GlTex.setActive GLEnum.Texture0 woodTexture

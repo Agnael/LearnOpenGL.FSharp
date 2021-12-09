@@ -250,11 +250,11 @@ let glCreateQueuedTextures (ctx: GlWindowCtx, state, dispatch, dt: double) =
    (ctx, state, dispatch, dt)
                
 let setUboUniformM4
+   state
+   (ctx: GlWindowCtx)
    (uboDef: GlUniformBlockDefinition)
    uboUniformName
-   m4
-   state
-   (ctx: GlWindowCtx) = 
+   m4 = 
       let sharedUbo = 
          state.Gl.SharedUbos
          |> List.find (fun x -> x.Ubo.Definition.Name = uboDef.Name)
@@ -304,7 +304,6 @@ let setUboUniformM4
             projectionMatrixNativeInt.ToPointer())
 
          ctx.Gl.BindBuffer(BufferTargetARB.UniformBuffer, 0ul)
-      ctx
 
 let bindShaderToUbo shader uboDef state dispatch (ctx: GlWindowCtx) =
    let bindToBindingPoint ubo shader =

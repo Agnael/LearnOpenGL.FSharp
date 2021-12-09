@@ -2,6 +2,8 @@
 
 open System.Runtime.InteropServices
 open System.Runtime.CompilerServices
+open System.Drawing
+open System.Numerics
 
 #nowarn "9"
 #nowarn "51"
@@ -57,6 +59,17 @@ let glTexParameterI
       ctx.Gl.TexParameterI (target, paramName, valueNativePtr)
       GlErrorManager.LogIfError ctx
       
+let glTexParameterBorderColor
+   ctx 
+   (target: TextureTarget) 
+   (paramName: TextureParameterName) 
+   (color: Vector4) = 
+      let mutable value = color
+      let valueIntPtr = NativePtr.toNativeInt<Vector4> &&value
+      let valueNativePtr: nativeptr<single> = NativePtr.ofNativeInt valueIntPtr
+
+      ctx.Gl.TexParameter (target, paramName, valueNativePtr)
+
 let glTexParameterIcubeMap = glTexParameterI TextureTarget.TextureCubeMap
 let glTexParameterI2d = glTexParameterI TextureTarget.Texture2D
 
@@ -97,8 +110,11 @@ let glGenerateMipmap (textureTarget: TextureTarget) ctx =
    ctx.Gl.GenerateMipmap textureTarget
    GlErrorManager.LogIfError ctx
 
-let glEnable (enableCap: EnableCap) ctx = 
-   ctx.Gl.Enable (enableCap)
+let glGenTexture ctx = ctx.Gl.GenTexture ()
+
+let glEnable (flag: EnableCap) ctx = 
+   ctx.Gl.Enable (flag)
+
    GlErrorManager.LogIfError ctx
 
 let glGetUniformBlockIndex shader (uniformBlockName: string) ctx =
@@ -229,3 +245,50 @@ let glBindVertexArray handle ctx = ctx.Gl.BindVertexArray handle
 let glDeleteTexture (texture: GlTexture) ctx =
    ctx.Gl.DeleteTexture texture.GlTexHandle
    ctx
+
+let glFramebufferTexture2d 
+   (fbTarget: FramebufferTarget)
+   (attachment: FramebufferAttachment)
+   (texTarget: TextureTarget)
+   (texHandle: uint32)
+   (lvl: int) 
+   ctx =
+   ctx.Gl.FramebufferTexture2D (
+      fbTarget, 
+      attachment, 
+      texTarget, 
+      texHandle, 
+      lvl)
+   ctx
+
+let glDrawBuffer (drawBufferMode: DrawBufferMode) ctx =
+   ctx.Gl.DrawBuffer drawBufferMode
+   ctx
+
+let glReadBuffer (readBufferMode: ReadBufferMode) ctx =
+   ctx.Gl.ReadBuffer readBufferMode
+   ctx
+
+let glBindFramebuffer (target: FramebufferTarget) handle ctx =
+   ctx.Gl.BindFramebuffer (target, handle)
+   ctx
+
+let glViewport x y (w: int) (h: int) ctx = 
+   ctx.Gl.Viewport (x, y, uint32 w, uint32 h)
+
+let glClear ctx (glEnumValue: GLEnum) =
+   ctx.Gl.Clear (uint32 glEnumValue)
+
+let glClearColor ctx x y z a = ctx.Gl.ClearColor (x, y, z, a)
+
+let glDrawArrays ctx (primitiveType: PrimitiveType) first count =
+   ctx.Gl.DrawArrays (primitiveType, first, count)
+
+let glDepthFunc ctx (func: DepthFunction) =
+   ctx.Gl.DepthFunc func
+
+let glCullFace ctx (mode: CullFaceMode) =
+   ctx.Gl.CullFace mode
+
+let glDisable ctx (flag: EnableCap) =
+   ctx.Gl.Disable flag

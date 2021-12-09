@@ -26,6 +26,7 @@ open GlFbo
 open Model
 open BaseGlSlice
 open Gl
+open Quad
 open BaseGuiSlice
 open Microsoft.FSharp.NativeInterop
 open Serilog
@@ -33,7 +34,7 @@ open Serilog.Extensions.Logging
 
 let initialState = 
    BaselineState.createDefault(
-      "47_Blinn_Phong", 
+      "49_Shadow_Mapping", 
       new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
@@ -45,11 +46,6 @@ let v3arrayToFloatArrayArray (v3array: Vector3 array) =
    v3array
    |> Array.map (fun x -> [| v3toFloatArray x |])
    
-type LightSourceMovementState =
-   | StandingStill
-   | MovingDown
-   | MovingUp
-
 [<EntryPoint>]
 let main argv =
    let serilogLogger = 
@@ -74,18 +70,27 @@ let main argv =
          Logger = Some microsoftLogger
          Size = initialRes }
          
+   let lightPosition = v3 -2.0f 3.0f -1.0f
+   let camNearPlane = 0.1f
+   let camFarPlane = 100.0f
+
+   let shadowMapWidth = 1024
+   let shadowMapHeight = 1024
+   let shadowNearPlane = 1.0f
+   let shadowFarPlane = 7.5f
+
+   let mutable gamma = 2.2f
    let mutable vaoPlane = Unchecked.defaultof<_>
    let mutable vaoCube = Unchecked.defaultof<_>
+   let mutable vaoQuad = Unchecked.defaultof<_>
+   let mutable shader = Unchecked.defaultof<_>
+   let mutable simpleDepthShader = Unchecked.defaultof<_>
+   let mutable debugQuadShader = Unchecked.defaultof<_>
 
-   let mutable shaderPlane = Unchecked.defaultof<_>
-   let mutable shaderCube = Unchecked.defaultof<_>
-
+   let mutable shadowMapFbo = Unchecked.defaultof<_>
+   let mutable woodImg = Unchecked.defaultof<_>
    let mutable woodTexture = Unchecked.defaultof<_>
-   let mutable useBlinn = true
-
-   let mutable lightPos = v3 0.0f 0.0f 0.0f
-   let mutable lightMovementState = StandingStill
-
+   
    let matricesUboDef: GlUniformBlockDefinition = {
       Name = "Matrices"
       UniformNames = [
@@ -107,27 +112,11 @@ let main argv =
       |> Baseline.detectShowFullInfo // F1
       |> ignore
 
-      match key with
-      | Key.Number1 -> useBlinn <- false
-      | Key.Number2 -> useBlinn <- true
-      | Key.Number3 -> lightMovementState <- MovingDown
-      | Key.Number4 -> lightMovementState <- MovingUp
-      | _ -> ()
-
    let onKeyUp ctx state dispatch kb key =         
       (ctx, state, dispatch, kb, key)    
       |> Baseline.detectCameraMovementStop
       |> Baseline.detectHideFullInfo // F1
       |> ignore
-
-      match key with
-      | Key.Number3 -> 
-         if lightMovementState = MovingDown then
-            lightMovementState <- StandingStill
-      | Key.Number4 -> 
-         if lightMovementState = MovingUp then
-            lightMovementState <- StandingStill
-      | _ -> ()
 
    let onMouseMove ctx state dispatch newPos = 
       (ctx, state, dispatch, newPos)
@@ -140,11 +129,14 @@ let main argv =
       |> ignore
             
    let onLoad (ctx: GlWindowCtx) input (state: BaselineState) dispatch =
+
       (ctx, input, state, dispatch)
       |> Baseline.loadImGuiController 
       |> Baseline.loadBaseGuiElements
       |> ignore
 
+      let res = state.Window.Resolution
+      
       // Add extra controls, specific to this exercise
       let dispatchGui guiAction = dispatch (Gui guiAction)
       let addAlwaysVisibleControlInstruction explanation controls =
@@ -154,51 +146,55 @@ let main argv =
             )
          )
 
-      addAlwaysVisibleControlInstruction 
-         "Use Phong"
-         [Single <| KeyboardKey Key.Number1]
-
-      addAlwaysVisibleControlInstruction 
-         "Use Blinn-Phong"
-         [Single <| KeyboardKey Key.Number2]
-
-      addAlwaysVisibleControlInstruction 
-         "Move light down"
-         [Single <| KeyboardKey Key.Number3]
-
-      addAlwaysVisibleControlInstruction 
-         "Move light up"
-         [Single <| KeyboardKey Key.Number4]
-
-      shaderPlane <-
+      shader <-
          GlProg.emptyBuilder
-         |> GlProg.withName "ShaderPlane"
+         |> GlProg.withName "Shader"
          |> GlProg.withShaders [
             ShaderType.VertexShader, "shader.vert"
             ShaderType.FragmentShader, "shader.frag" 
          ]
          |> GlProg.withUniforms [
             "uModel"
+            "uLightPosition"
+            "uGamma"
             "uTexture"
-            "uLightPos"
+            "uShadowMap"
             "uViewerPos"
-            "uUseBlinn"
+            "uLightSpace"
+         ]
+         |> GlProg.build ctx
+       
+      simpleDepthShader <-
+         GlProg.emptyBuilder
+         |> GlProg.withName "SimpleDepthShader"
+         |> GlProg.withShaders [
+            ShaderType.VertexShader, "simpleDepthShader.vert"
+            ShaderType.FragmentShader, "simpleDepthShader.frag" 
+         ]
+         |> GlProg.withUniforms [
+            "uModel"
+            "uLightSpaceMatrix"
          ]
          |> GlProg.build ctx
 
-      shaderCube <-
+      debugQuadShader <-
          GlProg.emptyBuilder
-         |> GlProg.withName "ShaderCube"
+         |> GlProg.withName "debugQuad"
          |> GlProg.withShaders [
-            ShaderType.VertexShader, "shader.vert"
-            ShaderType.FragmentShader, "LightSource.frag" 
+            ShaderType.VertexShader, "debugQuad.vert"
+            ShaderType.FragmentShader, "debugQuad.frag" 
          ]
-         |> GlProg.withUniforms ["uModel"]
+         |> GlProg.withUniforms [
+            "uNearPlane"
+            "uFarPlane"
+            "uShadowMap"
+         ]
          |> GlProg.build ctx
-           
+
       ctx
-      |> Baseline.bindShaderToUbo shaderPlane matricesUboDef state dispatch
-      |> Baseline.bindShaderToUbo shaderCube matricesUboDef state dispatch
+      |> Baseline.bindShaderToUbo shader matricesUboDef state dispatch
+      |> Baseline.bindShaderToUbo 
+            simpleDepthShader matricesUboDef state dispatch
       |> ignore
                  
       // Comment this or press F10 to unlock the camera
@@ -216,13 +212,7 @@ let main argv =
             Plane.vertexPositionsAndNormalsAndTextureCoords
       |> GlVbo.build (vaoPlane, ctx)
       |> ignore
-
-      let texturesDir = Path.Combine ("Resources", "Textures")
-      let woodImg = 
-         GlTex.loadImage (Path.Combine (texturesDir, "wood.png")) ctx
-
-      woodTexture <- GlTex.create2d woodImg ctx
-        
+      
       vaoCube <-
          GlVao.create ctx
          |> GlVao.bind
@@ -231,12 +221,32 @@ let main argv =
       GlVbo.emptyVboBuilder
       |> GlVbo.withAttrNames ["Positions"; "Normals"; "TexCoords"]
       |> GlVbo.withAttrDefinitions 
-            Cube.vertexPositionsAndNormalsAndTextureCoords
+            CubeCCW.vertexPositionsAndNormalsAndTextureCoords
       |> GlVbo.build (vaoCube, ctx)
       |> ignore
 
-      dispatch (Camera (ForcePosition (v3 -4.14f 2.27f 4.10f)))
-      dispatch (Camera (ForceTarget (v3 0.41f -0.38f -0.83f)))
+      vaoQuad <-
+         GlVao.create ctx
+         |> GlVao.bind
+         |> fun (vao, _) -> vao
+
+      GlVbo.emptyVboBuilder
+      |> GlVbo.withAttrNames ["Positions"; "TexCoords"]
+      |> GlVbo.withAttrDefinitions Quad.vertexPositionsAndTextureCoords
+      |> GlVbo.build (vaoQuad, ctx)
+      |> ignore
+
+      shadowMapFbo <- 
+         fboCreateWithDepthTextureOnly shadowMapWidth shadowMapHeight ctx
+         |> fun (fbo, _) -> fbo
+
+      let texturesDir = Path.Combine ("Resources", "Textures")
+      woodImg <- GlTex.loadImage (Path.Combine (texturesDir, "wood.png")) ctx
+
+      woodTexture <- GlTex.create2dSrgb woodImg ctx
+
+      dispatch (Camera (ForcePosition (v3 -1.33f 1.42f 4.36f)))
+      dispatch (Camera (ForceTarget (v3 0.61f -0.23f -0.76f)))
       
       dispatch (Mouse UseCursorNormal)
       dispatch (Camera Lock)
@@ -252,81 +262,143 @@ let main argv =
       |> Baseline.glCreateQueuedTextures
       |> ignore
 
-      match lightMovementState with
-      | StandingStill -> ()
-      | MovingDown -> lightPos <- lightPos - v3 0.0f 0.05f 0.0f
-      | MovingUp -> lightPos <- lightPos + v3 0.0f 0.05f 0.0f
+   let renderCube shader ctx modelMatrix =
+      GlVao.bind (vaoCube, ctx) |> ignore   
+      GlProg.setUniform "uModel" modelMatrix (shader, ctx) |> ignore
+      glDrawArrays ctx PrimitiveType.Triangles 0 36u
+
+   let makeCubeTransform (rotation: Vector3) (scale: single) (pos: Vector3) =
+      Matrix4x4.Identity *
+      Matrix4x4.CreateScale scale *
+      Matrix4x4.CreateRotationX rotation.X *
+      Matrix4x4.CreateRotationY rotation.Y *
+      Matrix4x4.CreateRotationZ rotation.Z *
+      Matrix4x4.CreateTranslation pos 
+
+   let renderScene shader ctx =
+      let planeModelMatrix =
+         Matrix4x4.Identity * 
+         (Matrix4x4.CreateTranslation <| v3 0.0f 0.0f 0.0f)
+
+      (shader, ctx)
+      |> GlProg.setAsCurrent
+      |> GlProg.setUniformM4x4 "uModel" planeModelMatrix
+      |> ignore
+
+      GlVao.bind (vaoPlane, ctx) |> ignore
+      glDrawArrays ctx PrimitiveType.Triangles 0 6u
+
+      let renderCube = renderCube shader ctx
+      renderCube <| makeCubeTransform (v3i 0 0 0) 0.50f (v3 0.0f 1.5f 0.0f)
+      renderCube <| makeCubeTransform (v3i 0 0 0) 1.00f (v3 2.0f 0.0f 1.0f)
+      renderCube <| makeCubeTransform (v3i 1 0 1) 0.25f (v3 -1.0f 0.0f 2.0f)
 
    let onRender (ctx: GlWindowCtx) state dispatch (DeltaTime deltaTime) =
-      ctx.Gl.Enable GLEnum.DepthTest
-
-      // Needs to be Lequal instead of Less, so that the z-depth trick works
-      // for the skybox, and it gets drawn behind everything even though
-      // it´s rendered last.
-      ctx.Gl.DepthFunc GLEnum.Less
-
-      uint32 (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
-      |> ctx.Gl.Clear
-              
-      // Sets a dark grey background so the cube´s color changes are visible
-      ctx.Gl.ClearColor(0.1f, 0.1f, 0.1f, 1.0f)
-      
-      // **********************************************************************
-      // Sets matrices UBO for all shaders
       let res = state.Window.Resolution
+
+      let glViewport = glViewport 0 0
+      let glClear = glClear ctx
+      let glEnable flag = glEnable flag ctx |> ignore
+      let glClearColor = glClearColor ctx
+      
+      // - Sets matrices UBO for all shaders
       let fov = Radians.value <| toRadians(state.Camera.Fov)
       let ratio = single(res.Width) / single(res.Height)
       let projectionMatrix = 
-         Matrix4x4.CreatePerspectiveFieldOfView(fov, ratio, 0.1f, 100.0f)
+         createPerspectiveFov fov ratio camNearPlane camFarPlane
 
       let viewMatrix = BaseCameraSlice.createViewMatrix state.Camera
-
+      
       let setUboUniformM4 =  Baseline.setUboUniformM4 state ctx
       setUboUniformM4 matricesUboDef "uProjection" projectionMatrix
       setUboUniformM4 matricesUboDef "uView" viewMatrix
-        
+
+      fboBindDefault ctx |> ignore
+      glEnable EnableCap.DepthTest
+      glClear (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
+      glClearColor 0.1f 0.1f 0.1f 1.0f
+      
       // **********************************************************************
+      // 1. Renders the scene into the depth texture, with the light's POV.
+      fboBind (shadowMapFbo, ctx) |> ignore
+      glEnable EnableCap.DepthTest
+      glClear GLEnum.DepthBufferBit
+      glViewport shadowMapWidth shadowMapHeight ctx
+            
+      let lightProjectionMatrix = 
+         createOrthographic 10.0f 10.0f shadowNearPlane shadowFarPlane
+
+      let lightViewMatrix = createLookAt lightPosition (v3i 0 0 0) (v3i 0 1 0)
+
+      // I have NO idea why this multiplication MUST be done in the
+      // inverse order (relative to how it´s done in the shader),
+      // but it doesn´t work otherwise.
+      let lightSpaceMatrix = lightViewMatrix * lightProjectionMatrix
+      
+      (simpleDepthShader, ctx)
+      |> GlProg.setAsCurrent
+      |> GlProg.setUniformM4x4 
+            "uLightSpaceMatrix" lightSpaceMatrix
+      |> ignore
+
+      renderScene simpleDepthShader ctx
+
+      // **********************************************************************
+      // 2. Renders the normal scene, but using the generated shadow map
+      // - Resets viewport, flags and framebuffer
+      fboBindDefault ctx |> ignore
+      glViewport res.Width res.Height ctx
+      glClear (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
+        
+      // - Renders the scene again using the shadow map
+      let shadowMapTexture =
+         match shadowMapFbo.DepthTexture with
+         | None -> failwith "Shadow map not in FBO."
+         | Some handle -> handle
+
+      // The plane vao has nothing to do with this. It´s just necessary to
+      // satisfy this poorly designed function.
       (vaoPlane, ctx)
-      |> GlTex.setActive GLEnum.Texture0 woodTexture
+      |> GlTex.setActive GLEnum.Texture0 shadowMapTexture
+      |> GlTex.setActive GLEnum.Texture1 woodTexture
       |> ignore
 
-      let planeModelMatrix = 
-         Matrix4x4.Identity * (Matrix4x4.CreateTranslation (v3 0.0f 0.5f 0.0f))
-
-      (shaderPlane, ctx)
+      (shader, ctx)
       |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" planeModelMatrix
-      |> GlProg.setUniformV3 "uLightPos" lightPos
-      |> GlProg.setUniformV3 "uViewerPos" state.Camera.Position
-      |> GlProg.setUniformB "uUseBlinn" useBlinn
-      |> GlProg.setUniformI "uTexture" 0
+      |> GlProg.setUniform "uViewerPos" state.Camera.Position
+      |> GlProg.setUniform "uLightPosition" lightPosition
+      |> GlProg.setUniform "uGamma" gamma
+      |> GlProg.setUniform "uShadowMap" 0
+      |> GlProg.setUniform "uTexture" 1
+      |> GlProg.setUniform "uLightSpace" lightSpaceMatrix
       |> ignore
 
-      GlVao.bind (vaoPlane, ctx)
+      renderScene shader ctx
+      
+      // **********************************************************************
+      // 3? Renders the debug quad, which would show the rendered shadow map.
+      glViewport 128 128 ctx
+      
+      glBindTexture TextureTarget.Texture2D shadowMapTexture.GlTexHandle ctx
       |> ignore
 
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 6u)
+      (vaoQuad, ctx)
+      |> GlTex.setActive GLEnum.Texture0 shadowMapTexture
+      |> ignore
 
-      // Render light source cube
-      let lightSourceModelMatrix = 
-         Matrix4x4.Identity * 
-         Matrix4x4.CreateTranslation (Vector3.Divide (lightPos, 0.2f)) * 
-         Matrix4x4.CreateScale 0.2f
-
-      (shaderCube, ctx)
+      (debugQuadShader, ctx)
       |> GlProg.setAsCurrent
-      |> GlProg.setUniformM4x4 "uModel" lightSourceModelMatrix
-      |> ignore
-
-      GlVao.bind (vaoCube, ctx)
+      |> GlProg.setUniform "uNearPlane" shadowNearPlane
+      |> GlProg.setUniform "uFarPlane" shadowFarPlane
+      |> GlProg.setUniform "uShadowMap" 0
       |> ignore
       
-      ctx.Gl.DrawArrays (GLEnum.Triangles, 0, 36u)
+      GlVao.bind (vaoQuad, ctx) |> ignore
+      glDrawArrays ctx PrimitiveType.TriangleStrip 0 4u
 
       // ImGui
-      (ctx, state, dispatch, deltaTime)
-      |> Baseline.renderGui
-      |> ignore
+      glViewport res.Width res.Height ctx
+      Baseline.renderGui (ctx, state, dispatch, deltaTime) |> ignore
 
       // **********************************************************************
       // Frame completed

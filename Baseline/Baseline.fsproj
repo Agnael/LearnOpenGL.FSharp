@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Figures\CubeCounterClockwiseWinding.fs" />
+    <Compile Include="Figures\Quad.fs" />
     <Compile Include="Figures\Skybox.fs" />
     <Compile Include="Figures\Plane.fs" />
     <Compile Include="Figures\Cube.fs" />

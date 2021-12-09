@@ -3,6 +3,9 @@
 open Galante.OpenGL
 open Silk.NET.OpenGL
 open GlTex
+open Gl
+open System
+open System.Numerics
 
 let fboCreate ctx = 
    ctx.Gl.GenFramebuffer ()
@@ -10,6 +13,7 @@ let fboCreate ctx =
       GlFrameBufferObject.GlFboHandle = handle
       ColorAttachment = None
       DepthStencilAttachment = None
+      DepthTexture = None
    }
    |> fun fbo -> (fbo, ctx)
 
@@ -52,9 +56,48 @@ let fboAttachRenderBuffer width height (fbo, ctx) =
       GLEnum.DepthStencilAttachment, 
       RenderbufferTarget.Renderbuffer,
       rbo.GlRboHandle)
-      
+     
    let updatedFbo = { fbo with DepthStencilAttachment = Some rbo }
+   (updatedFbo, ctx)
+   
+let fboAttachEmptyDepthTexture2d (width: int) (height: int) (fbo, ctx) =
+   let texture =
+      emptyImagelessGlTexture
+      |> imagelessWithTextureTarget TextureTarget.Texture2D
+      |> imagelessWithFormat PixelFormat.DepthComponent
+      |> imagelessWithInternalFormat 
+         (LanguagePrimitives.EnumToValue GLEnum.DepthComponent)
+      |> imagelessWithWrapModeS GLEnum.ClampToBorder
+      |> imagelessWithWrapModeT GLEnum.ClampToBorder
+      |> imagelessWithTextureMinFilter GLEnum.Nearest
+      |> imagelessWithTextureMagFilter GLEnum.Nearest
+      |> imagelessWithWidth width
+      |> imagelessWithHeight height
+      |> buildImagelessGlTexture ctx
 
+   glBindTexture TextureTarget.Texture2D texture.GlTexHandle ctx |> ignore
+   glTexParameterBorderColor 
+      ctx 
+      TextureTarget.Texture2D 
+      TextureParameterName.TextureBorderColor
+      (new Vector4 (1.0f, 1.0f, 1.0f, 1.0f))
+
+   (fbo, ctx)
+   |> fboBind
+   |> fun (_, ctx) -> 
+      glFramebufferTexture2d
+         FramebufferTarget.Framebuffer
+         FramebufferAttachment.DepthAttachment
+         texture.TextureTarget
+         texture.GlTexHandle
+         0
+         ctx
+   |> glDrawBuffer DrawBufferMode.None
+   |> glReadBuffer ReadBufferMode.None
+   |> fboBindDefault
+   |> ignore
+   
+   let updatedFbo = { fbo with DepthTexture = Some texture }
    (updatedFbo, ctx)
 
 let fboDestroy fbo ctx =
@@ -65,4 +108,10 @@ let fboCreateStandard w h ctx =
    |> fboBind
    |> fboAttachEmptyColorTexture2d w h
    |> fboAttachRenderBuffer w h
+   |> fboValidateStatus
+
+let fboCreateWithDepthTextureOnly w h ctx =
+   fboCreate ctx
+   |> fboBind
+   |> fboAttachEmptyDepthTexture2d w h
    |> fboValidateStatus
