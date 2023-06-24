@@ -178,12 +178,7 @@ let main argv =
             "uLightPosition"
             "uFarPlane"
             "uUseReverseNormals"
-            "uLightSpaceMatrix_right"
-            "uLightSpaceMatrix_left"
-            "uLightSpaceMatrix_top"
-            "uLightSpaceMatrix_bottom"
-            "uLightSpaceMatrix_near"
-            "uLightSpaceMatrix_far"
+            "uLightSpaceMatrices[6]"
          ]
          |> GlProg.build ctx
 
@@ -196,8 +191,6 @@ let main argv =
          ]
          |> GlProg.withUniforms [
             "uModel"
-            "uView"
-            "uProjection"
          ]
          |> GlProg.build ctx
 
@@ -356,17 +349,33 @@ let main argv =
       let lightSpaceMatrix_bottom = lightViewMatrix_bottom  * lightProjectionMatrix
       let lightSpaceMatrix_near = lightViewMatrix_near * lightProjectionMatrix
       let lightSpaceMatrix_far = lightViewMatrix_far  * lightProjectionMatrix
+
+      let makeLightSpaceMatrix camTargetOffset camUpDir =
+         ((createLookAt lightPos (lightPos + camTargetOffset) camUpDir)) * lightProjectionMatrix
+
+      //let lightSpaceMatrices = [
+      //   makeLightSpaceMatrix (v3i  1  0  0) (v3i 0 -1  0)   // Right
+      //   makeLightSpaceMatrix (v3i -1  0  0) (v3i 0 -1  0)   // Left
+      //   makeLightSpaceMatrix (v3i  0  1  0) (v3i 0  0  1)   // Top
+      //   makeLightSpaceMatrix (v3i  0 -1  0) (v3i 0  0 -1)   // Bottom
+      //   makeLightSpaceMatrix (v3i  0  0  1) (v3i 0 -1  0)   // Near
+      //   makeLightSpaceMatrix (v3i  0  0 -1) (v3i 0 -1  0)   // Far
+      //]
+
+      let lightSpaceMatrices = [
+         lightSpaceMatrix_right
+         lightSpaceMatrix_left
+         lightSpaceMatrix_top
+         lightSpaceMatrix_bottom
+         lightSpaceMatrix_near
+         lightSpaceMatrix_far
+      ]
       
       (cubemapDepthShader, ctx)
       |> GlProg.setAsCurrent
+      |> GlProg.setUniforms "uLightSpaceMatrices" lightSpaceMatrices
       |> GlProg.setUniformV3 "uLightPosition" lightPos
       |> GlProg.setUniformF "uFarPlane" shadowFarPlane
-      |> GlProg.setUniformM4x4 "uLightSpaceMatrix_right" lightSpaceMatrix_right
-      |> GlProg.setUniformM4x4 "uLightSpaceMatrix_left" lightSpaceMatrix_left
-      |> GlProg.setUniformM4x4 "uLightSpaceMatrix_top" lightSpaceMatrix_top
-      |> GlProg.setUniformM4x4 "uLightSpaceMatrix_bottom" lightSpaceMatrix_bottom
-      |> GlProg.setUniformM4x4 "uLightSpaceMatrix_near" lightSpaceMatrix_near
-      |> GlProg.setUniformM4x4 "uLightSpaceMatrix_far" lightSpaceMatrix_far
       |> ignore
 
       renderScene cubemapDepthShader ctx

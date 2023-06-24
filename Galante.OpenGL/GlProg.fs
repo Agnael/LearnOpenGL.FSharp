@@ -8,6 +8,7 @@ open System.IO
 open Microsoft.Extensions.Logging
 open System.Numerics
 open Microsoft.FSharp.NativeInterop
+open System.Text.RegularExpressions
 
 let rec private loadProgramShaders pending added (ctx: GlWindowCtx) =
    match pending with
@@ -108,6 +109,17 @@ let setUniform<'a> name (v: 'a) (shader: GlProgram, ctx) =
    | :? Matrix4x4 as casted -> setUniformM4x4 name casted deps
    | _ -> invalidOp "There is no uniform setter defined for this value type"
 
+let setUniforms<'a> uniformArrayName (values: 'a list) (shader: GlProgram, ctx) =
+   values
+   |> List.mapi (
+      fun idx value -> 
+         setUniform $"{uniformArrayName}[{idx}]" value (shader, ctx))
+         |> ignore
+   |> ignore
+
+   (shader, ctx)
+
+
 let emptyBuilder = {
    Name = ()
    ShaderDefinitions = ()
@@ -133,11 +145,31 @@ let withName (n: string) (b: GlProgramBuilder<'t,unit,_,_,_>)
       UniformBlocks = b.UniformBlocks
    }
 
-let withUniforms (u: string list) (b: GlProgramBuilder<'t,_,_,unit,_>)
-   : GlProgramBuilder<'t,_,_,_,_> = {
+let uniformArrayNameRegex = new Regex("^(\w+)\[(\d+)\]$")
+
+let withUniforms (uniforms: string list) (b: GlProgramBuilder<'t,_,_,unit,_>)
+   : GlProgramBuilder<'t,_,_,_,_> = 
+   
+   let finalUniforms =
+      uniforms
+      |> List.map (
+         fun (uniformName) ->
+            let regexMatch = uniformArrayNameRegex.Match(uniformName)
+            
+            if regexMatch.Success then
+               let uniformArrayNameBase = regexMatch.Groups.[1].Value
+               let uniformArrayCount = int regexMatch.Groups.[2].Value
+
+               [0..(uniformArrayCount - 1)]
+               |> List.map (fun idx -> $"{uniformArrayNameBase}[{idx}]")
+            else [uniformName]
+      )
+      |> List.collect id
+   
+   {
       Name = b.Name
       ShaderDefinitions = b.ShaderDefinitions
-      UniformNames = u
+      UniformNames = finalUniforms
       UniformBlocks = b.UniformBlocks
    }
 
