@@ -19,6 +19,7 @@ let rec private loadProgramShaders pending added (ctx: GlWindowCtx) =
             if shader.GlStatus <> GlShaderCompiled
             then invalidOp "Can't add a non-compiled shader."
             else shader
+
       |> fun shader ->
             loadProgramShaders t <| shader::added <| ctx
            
@@ -103,8 +104,7 @@ let setUniform<'a> name (v: 'a) (shader: GlProgram, ctx) =
    | :? int as casted -> setUniformI name casted deps
    | :? bool as casted -> setUniformB name casted deps
    | :? Vector3 as casted -> setUniformV3 name casted deps
-   | :? Vector4 as casted -> 
-         setUniformV4 name (casted.X, casted.Y, casted.Z, casted.W) deps
+   | :? Vector4 as casted -> setUniformV4 name (casted.X, casted.Y, casted.Z, casted.W) deps
    | :? Matrix4x4 as casted -> setUniformM4x4 name casted deps
    | _ -> invalidOp "There is no uniform setter defined for this value type"
 

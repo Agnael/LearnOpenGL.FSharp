@@ -246,6 +246,19 @@ let glDeleteTexture (texture: GlTexture) ctx =
    ctx.Gl.DeleteTexture texture.GlTexHandle
    ctx
 
+let glFramebufferTexture
+   (fbTarget: FramebufferTarget)
+   (attachment: FramebufferAttachment)
+   (texHandle: uint32)
+   (lvl: int) 
+   ctx =
+   ctx.Gl.FramebufferTexture (
+      fbTarget, 
+      attachment, 
+      texHandle, 
+      lvl)
+   ctx
+
 let glFramebufferTexture2d 
    (fbTarget: FramebufferTarget)
    (attachment: FramebufferAttachment)

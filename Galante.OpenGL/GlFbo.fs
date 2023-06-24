@@ -99,6 +99,45 @@ let fboAttachEmptyDepthTexture2d (width: int) (height: int) (fbo, ctx) =
    
    let updatedFbo = { fbo with DepthTexture = Some texture }
    (updatedFbo, ctx)
+   
+let fboAttachEmptyDepthCubemap (width: int) (height: int) (fbo, ctx) =
+   let cubemapTex =
+      emptyImagelessGlTexture
+      |> imagelessWithTextureTarget TextureTarget.TextureCubeMap
+      |> imagelessWithFormat PixelFormat.DepthComponent
+      |> imagelessWithInternalFormat (LanguagePrimitives.EnumToValue GLEnum.DepthComponent)
+      |> imagelessWithWrapModeS GLEnum.ClampToEdge
+      |> imagelessWithWrapModeT GLEnum.ClampToEdge
+      |> imagelessWithTextureMinFilter GLEnum.Nearest
+      |> imagelessWithTextureMagFilter GLEnum.Nearest
+      |> imagelessWithWidth width
+      |> imagelessWithHeight height
+      |> buildImagelessGlTextureCubemap ctx
+
+   glBindTexture TextureTarget.TextureCubeMap cubemapTex.GlTexHandle ctx |> ignore
+
+   //glTexParameterBorderColor 
+   //   ctx 
+   //   TextureTarget.Texture2D 
+   //   TextureParameterName.TextureBorderColor
+   //   (new Vector4 (1.0f, 1.0f, 1.0f, 1.0f))
+
+   (fbo, ctx)
+   |> fboBind
+   |> fun (_, ctx) -> 
+      glFramebufferTexture
+         FramebufferTarget.Framebuffer
+         FramebufferAttachment.DepthAttachment
+         cubemapTex.GlTexHandle
+         0
+         ctx
+   |> glDrawBuffer DrawBufferMode.None
+   |> glReadBuffer ReadBufferMode.None
+   |> fboBindDefault
+   |> ignore
+   
+   let updatedFbo = { fbo with DepthTexture = Some cubemapTex }
+   (updatedFbo, ctx)
 
 let fboDestroy fbo ctx =
    ctx.Gl.DeleteFramebuffer fbo.GlFboHandle
@@ -114,4 +153,10 @@ let fboCreateWithDepthTextureOnly w h ctx =
    fboCreate ctx
    |> fboBind
    |> fboAttachEmptyDepthTexture2d w h
+   |> fboValidateStatus
+
+let fboCreateWithDepthTextureOnlyCubemap w h ctx =
+   fboCreate ctx
+   |> fboBind
+   |> fboAttachEmptyDepthCubemap w h
    |> fboValidateStatus

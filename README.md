@@ -89,7 +89,7 @@ From exercise 47 and onward, DearImGui is used to display an informative overlay
   * **Gamma correction** ([Original article](https://learnopengl.com/Advanced-Lighting/Gamma-Correction))
     * [48_Gamma_Correction](#48_gamma_correction)
   * **Shadow mapping** ([Original article](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping))
-    * [49_Shadow_Mapping](#49_shadow_mapping)
+    * Coming soon.
   * **Point shadows** ([Original article](https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows))
     * Coming soon.
   * **Normal mapping** ([Original article](https://learnopengl.com/Advanced-Lighting/Normal-Mapping))
@@ -308,8 +308,7 @@ Rendering 100.000 asteroids went from 4 FPS to 80+ FPS when started using the in
 <img src="https://user-images.githubusercontent.com/32271030/141051923-dbcdffcc-0362-449c-aba1-9dd986b26a27.gif" width="642" height="392">
 
 ## [Shadow mapping](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping)  
-#### 49_Shadow_Mapping
-<img src="https://user-images.githubusercontent.com/32271030/145318854-d95446fb-5419-4a0b-a9ca-4e57ddfc4482.gif" width="642" height="392">
+Coming soon.
 
 ## [Point shadows](https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows)  
 Coming soon.

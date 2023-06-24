@@ -419,6 +419,68 @@ let buildImagelessGlTexture
    |> glEnable EnableCap.Texture2D
    |> ignore
    texture
+
+// Dumb function copypasted from "buildImagelessGlTexture"
+// It only exists so that creating a cubemap depth texture is not that difficult, but
+// it's horrifying from an API standpoint.
+// Note that the TextureFormat parameter is ignored.
+let buildImagelessGlTextureCubemap
+   ctx 
+   (b: GlImagelessTextureBuilder<
+      TextureTarget,
+      PixelFormat,
+      int,
+      GLEnum,
+      GLEnum,
+      GLEnum,
+      GLEnum,
+      int,
+      int
+   >): GlTexture = 
+   let texture = {
+      GlTexHandle = ctx.Gl.GenTexture ()
+      TextureTarget = b.TextureTarget
+      Width = b.Width
+      Height = b.Height
+      Format = b.Format
+      InternalFormat = b.InternalFormat
+      WrapModeS = b.WrapModeS
+      WrapModeT = b.WrapModeT
+      TextureFilterModeMin = b.FilterModeMin
+      TextureFilterModeMag = b.FilterModeMag
+   }
+   
+   ctx
+   |> glBindTexture TextureTarget.TextureCubeMap texture.GlTexHandle 
+   |> glTexParameterIcubeMap TextureParameterName.TextureWrapS b.WrapModeS
+   |> glTexParameterIcubeMap TextureParameterName.TextureWrapT b.WrapModeT
+   // Note that this specific wrap config is donw for cubemaps only
+   |> glTexParameterIcubeMap TextureParameterName.TextureWrapR GLEnum.ClampToEdge
+   |> glTexParameterIcubeMap TextureParameterName.TextureMinFilter b.FilterModeMin
+   |> glTexParameterIcubeMap TextureParameterName.TextureMagFilter b.FilterModeMag
+   |> fun ctx ->
+      let generateTextureImage targetOffset =
+         glTexImage2d
+            (enum<TextureTarget> ((int TextureTarget.TextureCubeMapPositiveX) + targetOffset))
+            0
+            texture.InternalFormat
+            texture.Width
+            texture.Height
+            0
+            texture.Format
+            // Note this pixel type. This function is not ONLY creating an 
+            // imageless texture, so this API design sucks and should be reworked.
+            PixelType.Float
+            (IntPtr.Zero.ToPointer())
+            ctx
+
+      // Executes it once per face
+      [0..5]
+      |> List.map (fun i -> generateTextureImage i)
+      |> ignore
+
+   texture
+
 // ----------------------------------------------------------------------------
 
 let buildCubemapGlTexture (cubemapImg: CubeMapImage) ctx: GlTexture =
@@ -579,6 +641,13 @@ let setActive (glTextureSlotId: GLEnum) texture (vao, ctx) =
    |> snd
    |> glActiveTexture glTextureSlotId
    |> glBindTexture TextureTarget.Texture2D texture.GlTexHandle
+   |> fun ctx -> (vao, ctx)
+   
+let setActiveCubemap (glTextureSlotId: GLEnum) texture (vao, ctx) =    
+   GlVao.bind (vao, ctx) 
+   |> snd
+   |> glActiveTexture glTextureSlotId
+   |> glBindTexture TextureTarget.TextureCubeMap texture.GlTexHandle
    |> fun ctx -> (vao, ctx)
 
 let setActiveEmptyTexture (slot: GLEnum) (tex: GlEmptyTexture) (vao, ctx) =    
