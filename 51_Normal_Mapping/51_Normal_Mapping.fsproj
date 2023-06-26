@@ -3,29 +3,29 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>_50_Point_Shadows</RootNamespace>
+    <RootNamespace>_51_Normal_Mapping</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="lightSource.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="lightSource.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="shader.frag">
+    <None Include="cubemapDepthShader.frag">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-    <None Include="shader.vert">
+    <None Include="cubemapDepthShader.geom">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
     <None Include="cubemapDepthShader.vert">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-    <None Include="cubemapDepthShader.geom">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="cubemapDepthShader.frag">
+    <None Include="lightSource.frag">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+    <None Include="lightSource.vert">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+    <None Include="shader.frag">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+    <None Include="shader.vert">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
     <Compile Include="Program.fs" />
@@ -50,8 +50,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\Resources\Textures\container.jpg" Link="Resources\Textures\container.jpg">
+		<Content Include="..\Resources\Textures\brickwall.jpg" Link="Resources\Textures\brickwall.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Resources\Textures\brickwall_normal.jpg" Link="Resources\Textures\brickwall_normal.jpg">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
+
+	<ItemGroup />
 </Project>

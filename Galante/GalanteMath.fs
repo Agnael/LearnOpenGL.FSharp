@@ -2,6 +2,7 @@
    open System
    open Galante.OpenGL
    open System.Numerics
+   open System.Runtime.CompilerServices
 
    type Radians = 
       | Radians of float32
@@ -24,6 +25,18 @@
    let inline v4 x y z w = new Vector4(x, y, z, w)
    let inline v4i (x: int) (y:int) (z: int) (w: int) = 
       new Vector4(single x, single y, single z, single 2)
+
+   let inline v2FromArray(arr: float32 array) = 
+      if not(arr.Length = 2) then
+         failwith "A float32 array of 2 elements is needed to convert it to a Vector2"
+
+      v2 arr.[0] arr.[1]
+
+   let inline v3FromArray(arr: float32 array) = 
+      if not(arr.Length = 3) then
+         failwith "A float32 array of 3 elements is needed to convert it to a Vector3"
+
+      v3 arr.[0] arr.[1] arr.[2]
 
    let normalizeCross (v1, v2) = 
       Vector3.Cross(v1, v2) 

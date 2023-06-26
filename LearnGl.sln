@@ -109,7 +109,9 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "48_Gamma_Correction", "48_G
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "49_Shadow_Mapping", "49_Shadow_Mapping\49_Shadow_Mapping.fsproj", "{CA46B3B2-9405-4A27-9374-C64A080BA083}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "50_Point_Shadows", "50_Point_Shadows\50_Point_Shadows.fsproj", "{8BB86397-4BCE-431E-9C4D-84AAD90D1788}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "50_Point_Shadows", "50_Point_Shadows\50_Point_Shadows.fsproj", "{8BB86397-4BCE-431E-9C4D-84AAD90D1788}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "51_Normal_Mapping", "51_Normal_Mapping\51_Normal_Mapping.fsproj", "{C1EB1C27-C869-4BAB-A262-B7C6092A9EFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -333,6 +335,10 @@ Global
 		{8BB86397-4BCE-431E-9C4D-84AAD90D1788}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BB86397-4BCE-431E-9C4D-84AAD90D1788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BB86397-4BCE-431E-9C4D-84AAD90D1788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1EB1C27-C869-4BAB-A262-B7C6092A9EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1EB1C27-C869-4BAB-A262-B7C6092A9EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1EB1C27-C869-4BAB-A262-B7C6092A9EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1EB1C27-C869-4BAB-A262-B7C6092A9EFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,6 +2,7 @@
 module CubeCCW
    open System.Numerics
    open Vertex
+   open GalanteMath
 
    // Remember: to specify vertices in a counter-clockwise winding order you need to visualize the triangle
    // as if you're in front of the triangle and from that point of view, is where you set their order.
@@ -175,6 +176,91 @@ module CubeCCW
       |> Array.indexed
       |> Array.map (fun (idx, position) ->
          [| position; normals.[idx]; textureCoords.[idx] |]
+      )
+   
+   // Very inefficient but i'd rather have the repetition to help understand the process
+   let calcTriangeTangent pos1 pos2 pos3 uv1 uv2 uv3 =
+      // 3D space 
+      let edge1: Vector3 = pos2 - pos1
+      let edge2: Vector3 = pos3 - pos1
+
+      // Texture space
+      let deltaUv1: Vector2 = uv2 - uv1
+      let deltaUv2: Vector2 = uv3 - uv1
+
+      // Formulaic mumbo jumbo I don't really get but is needed to get the tangents and bitangents
+      let f = 1.0f / (deltaUv1.X * deltaUv2.Y - deltaUv2.X * deltaUv1.Y)
+
+      // Tangent
+      let tanX = f * (deltaUv2.Y * edge1.X - deltaUv1.Y * edge2.X)
+      let tanY = f * (deltaUv2.Y * edge1.Y - deltaUv1.Y * edge2.Y)
+      let tanZ = f * (deltaUv2.Y * edge1.Z - deltaUv1.Y * edge2.Z)
+
+      let tangent: Vector3 = v3 tanX tanY tanZ
+      tangent
+
+   // Bitangent
+   let calcTriangeBitangent pos1 pos2 pos3 uv1 uv2 uv3 =
+      // 3D space 
+      let edge1: Vector3 = pos2 - pos1
+      let edge2: Vector3 = pos3 - pos1
+
+      // Texture space
+      let deltaUv1: Vector2 = uv2 - uv1
+      let deltaUv2: Vector2 = uv3 - uv1
+
+      // Formulaic mumbo jumbo I don't really get but is needed to get the tangents and bitangents
+      let f = 1.0f / (deltaUv1.X * deltaUv2.Y - deltaUv2.X * deltaUv1.Y)
+
+      // Bitangent
+      let bitanX = f * (-deltaUv2.X * edge1.X + deltaUv1.X * edge2.X)
+      let bitanY = f * (-deltaUv2.X * edge1.Y + deltaUv1.X * edge2.Y)
+      let bitanZ = f * (-deltaUv2.X * edge1.Z + deltaUv1.X * edge2.Z)
+
+      let bitangent: Vector3 = v3 bitanX bitanY bitanZ
+      bitangent
+
+   let vertexPositionsAndNormalsAndTextureCoordsAndTangents =         
+      // Calculates a tangent per triangle but then saves an array entry per position
+      let tangents =
+         [| 0..3..(positions.Length - 2) |]
+         |> Array.map (
+            fun i ->
+               let pos1 = v3FromArray positions.[i]
+               let pos2 = v3FromArray positions.[i+1]
+               let pos3 = v3FromArray positions.[i+2]
+               let uv1 = v2FromArray textureCoords.[i]
+               let uv2 = v2FromArray textureCoords.[i+1]
+               let uv3 = v2FromArray textureCoords.[i+2]
+
+               let triangleTangent = calcTriangeTangent pos1 pos2 pos3 uv1 uv2 uv3
+               let tangentAsArray = [| triangleTangent.X; triangleTangent.Y; triangleTangent.Z |]
+               [| tangentAsArray; tangentAsArray; tangentAsArray |]
+         )
+         |> Array.collect id
+
+      // Calculates a bitangent per triangle but then saves an array entry per position
+      let bitangents =
+         [| 0..3..(positions.Length - 2) |]
+         |> Array.map (
+            fun i ->
+               let pos1 = v3FromArray positions.[i]
+               let pos2 = v3FromArray positions.[i+1]
+               let pos3 = v3FromArray positions.[i+2]
+               let uv1 = v2FromArray textureCoords.[i]
+               let uv2 = v2FromArray textureCoords.[i+1]
+               let uv3 = v2FromArray textureCoords.[i+2]
+
+               let triangleBitangent = calcTriangeBitangent pos1 pos2 pos3 uv1 uv2 uv3
+               let bitangentAsArray = [| triangleBitangent.X; triangleBitangent.Y; triangleBitangent.Z |]
+               [| bitangentAsArray; bitangentAsArray; bitangentAsArray |]
+         )
+         |> Array.collect id
+
+      positions
+      |> Array.indexed
+      |> Array.map (fun (idx, position) ->
+         [| position; normals.[idx]; textureCoords.[idx]; tangents.[idx]; bitangents.[idx] |]
       )
 
    type CubeTransformation = 
