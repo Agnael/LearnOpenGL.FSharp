@@ -81,9 +81,11 @@ let main argv =
    let mutable vaoPlane = Unchecked.defaultof<_>
    let mutable vaoCube = Unchecked.defaultof<_>
    let mutable vaoQuad = Unchecked.defaultof<_>
+
    let mutable shader = Unchecked.defaultof<_>
    let mutable cubemapDepthShader = Unchecked.defaultof<_>
    let mutable lightSourceShader = Unchecked.defaultof<_>
+   let mutable modelShader = Unchecked.defaultof<_>
    
    let mutable shadowCubemapFbo = Unchecked.defaultof<_>
 
@@ -94,6 +96,9 @@ let main argv =
    let mutable brickwallNormalsTexture = Unchecked.defaultof<_>
 
    let mutable useNormalMapping = true
+   
+   let mutable fallbackGlTexture = Unchecked.defaultof<_>
+   let mutable mdlCyborg = Unchecked.defaultof<_>
    
    let matricesUboDef: GlUniformBlockDefinition = {
       Name = "Matrices"
@@ -137,7 +142,6 @@ let main argv =
       |> ignore
             
    let onLoad (ctx: GlWindowCtx) input (state: BaselineState) dispatch =
-
       (ctx, input, state, dispatch)
       |> Baseline.loadImGuiController 
       |> Baseline.loadBaseGuiElements
@@ -155,8 +159,14 @@ let main argv =
          )
 
       addAlwaysVisibleControlInstruction 
-         "Press 'E' to toggle normal mapping"
+         "Toggle normal mapping"
          [Single <| KeyboardKey Key.E]
+         
+      let fallbackImagePath = Path.Combine("Resources", "Textures", "fallback.jpg")
+
+      fallbackGlTexture <-
+         GlTex.loadImage fallbackImagePath ctx
+         |> fun img -> GlTex.create2d img ctx
 
       shader <-
          GlProg.emptyBuilder
@@ -194,6 +204,8 @@ let main argv =
             "uFarPlane"
             "uUseReverseNormals"
             "uLightSpaceMatrices[6]"
+            "uTexture"
+            "uNormalMap"
          ]
          |> GlProg.build ctx
 
@@ -209,6 +221,35 @@ let main argv =
          ]
          |> GlProg.build ctx
 
+      modelShader <-
+         GlProg.emptyBuilder
+         |> GlProg.withName "Simple3D"
+         |> GlProg.withShaders 
+               [ ShaderType.VertexShader, "model.vert"
+               ; ShaderType.FragmentShader, "model.frag" 
+               ;]
+         |> GlProg.withUniforms [
+               "uModel"
+               "uView"
+               "uProjection"
+               "uMaterial.diffuseMap"
+               "uMaterial.specularMap"
+               "uMaterial.shininess"
+               "uViewerPos"
+               "uPointLight.position"
+               "uPointLight.constantComponent"
+               "uPointLight.linearComponent"
+               "uPointLight.quadraticComponent"
+               "uPointLight.ambientColor"
+               "uPointLight.diffuseColor"
+               "uPointLight.specularColor"
+               "uDirectionalLight.direction"
+               "uDirectionalLight.ambientColor"
+               "uDirectionalLight.diffuseColor"
+               "uDirectionalLight.specularColor"
+         ]
+         |> GlProg.build ctx
+
       ctx
       |> Baseline.bindShaderToUbo shader matricesUboDef state dispatch
       |> Baseline.bindShaderToUbo cubemapDepthShader matricesUboDef state dispatch
@@ -218,6 +259,17 @@ let main argv =
       // Comment this or press F10 to unlock the camera
       dispatch (Mouse UseCursorNormal)
       //dispatch (Camera Lock)
+
+      let modelsDir = Path.Combine("Resources", "Models")
+      let loadTexture path = dispatch (Asset (LoadImageStart path))
+
+      let makeMdlPath pathParts = 
+         pathParts
+         |> List.append [modelsDir]
+         |> fun fullList -> Path.Combine(List.toArray fullList)
+
+      mdlCyborg <- 
+         Model.loadWithTangentsBitangentsF (makeMdlPath ["Cyborg"; "cyborg.obj"]) ctx loadTexture
       
       vaoPlane <-
          GlVao.create ctx
@@ -238,8 +290,7 @@ let main argv =
 
       GlVbo.emptyVboBuilder
       |> GlVbo.withAttrNames ["Positions"; "Normals"; "TexCoords"; "Tangents"; "Bitangents"]
-      //|> GlVbo.withAttrNames ["Positions"; "Normals"; "TexCoords"]
-      |> GlVbo.withAttrDefinitions CubeCCW.vertexPositionsAndNormalsAndTextureCoordsAndTangents
+      |> GlVbo.withAttrDefinitions CubeCCW.vertexPositionsAndNormalsAndTextureCoordsAndTangentsBitangents
       |> GlVbo.build (vaoCube, ctx)
       |> ignore
 
@@ -265,8 +316,8 @@ let main argv =
       brickwallTexture <- GlTex.create2d brickwallImg ctx
       brickwallNormalsTexture <- GlTex.create2d brickwallNormalsImg ctx
 
-      dispatch (Camera (ForcePosition (v3 -0.68f 1.51f 2.39f)))
-      dispatch (Camera (ForceTarget (v3 -0.31f -0.43f -0.83f)))
+      dispatch (Camera (ForcePosition (v3 -0.4f -0.32f 1.61f)))
+      dispatch (Camera (ForceTarget (v3 -0.59f 0.16f -0.79f)))
       
       dispatch (Mouse UseCursorNormal)
       dispatch (Camera Lock)
@@ -287,6 +338,40 @@ let main argv =
       GlProg.setUniform "uModel" modelMatrix (shader, ctx) |> ignore
       glDrawArrays ctx PrimitiveType.Triangles 0 36u
 
+   let renderCyborg state shader ctx = 
+      glCullFace ctx CullFaceMode.Front
+
+      let getTextureHandler imgPath =
+         state.Asset.ImagesLoaded.TryFind imgPath
+         |> function
+               | Some asset -> 
+                  match asset.GlTexture with
+                  | Some assetGlTexture -> assetGlTexture
+                  | None -> fallbackGlTexture
+               | None -> fallbackGlTexture
+
+      let cyborgMdlModelMatrix =
+         Matrix4x4.Identity *
+         Matrix4x4.CreateScale (0.7f) *
+         Matrix4x4.CreateRotationY (1.67f) *
+         Matrix4x4.CreateTranslation(-1.00f, -2.5f, 1.00f)
+
+      (shader, ctx)
+      |> GlProg.setUniformM4x4 "uModel" cyborgMdlModelMatrix
+      |> ignore
+
+      Model.drawWithUniformNames
+         mdlCyborg 
+         shader
+         (Some "uTexture")
+         None
+         (Some "uNormalMap")
+         None
+         getTextureHandler 
+         ctx
+
+      glCullFace ctx CullFaceMode.Back
+
    let makeCubeTransform (rotation: Vector3) (scale: single) (pos: Vector3) =
       Matrix4x4.Identity *
       Matrix4x4.CreateScale scale *
@@ -295,7 +380,7 @@ let main argv =
       Matrix4x4.CreateRotationZ rotation.Z *
       Matrix4x4.CreateTranslation pos 
 
-   let renderScene shader ctx =      
+   let renderScene state shader ctx =      
       let renderCube = renderCube shader ctx
 
       // Room cube
@@ -313,6 +398,8 @@ let main argv =
       renderCube <| makeCubeTransform (v3i 0 0 0) 0.5f (v3 -3.0f -1.0f 0.0f)
       renderCube <| makeCubeTransform (v3i 0 0 0) 0.5f (v3 -1.5f 1.0f 1.5f)
       renderCube <| makeCubeTransform (v3i 1 0 1) 0.75f (v3 -1.5f 2.0f -3.0f)
+      
+      renderCyborg state shader ctx
 
    let onRender (ctx: GlWindowCtx) state dispatch (DeltaTime deltaTime) =
       let res = state.Window.Resolution
@@ -348,46 +435,21 @@ let main argv =
       let shadowScreenRatio: float32 = float32(shadowMapWidth / shadowMapHeight)
       let lightFovRadians = Radians.value(toRadians (Degrees.make 90.0f))
 
-      let lightProjectionMatrix = createPerspectiveFov lightFovRadians shadowScreenRatio shadowNearPlane shadowFarPlane
-
-      let lightViewMatrix_right = createLookAt lightPos (lightPos + (v3i 1 0 0)) (v3i 0 -1 0)
-      let lightViewMatrix_left = createLookAt lightPos (lightPos + (v3i -1 0 0)) (v3i 0 -1 0)
-      let lightViewMatrix_top = createLookAt lightPos (lightPos + (v3i 0 1 0)) (v3i 0 0 1)
-      let lightViewMatrix_bottom = createLookAt lightPos (lightPos + (v3i 0 -1 0)) (v3i 0 0 -1)
-      let lightViewMatrix_near = createLookAt lightPos (lightPos + (v3i 0 0 1)) (v3i 0 -1 0)
-      let lightViewMatrix_far = createLookAt lightPos (lightPos + (v3i 0 0 -1)) (v3i 0 -1 0)
-
-      // I have NO idea why this multiplication MUST be done in the
-      // inverse order (relative to how it´s done in the shader),
-      // but it doesn´t work otherwise.
-      let lightSpaceMatrix_right = lightViewMatrix_right * lightProjectionMatrix
-      let lightSpaceMatrix_left = lightViewMatrix_left * lightProjectionMatrix
-      let lightSpaceMatrix_top = lightViewMatrix_top  * lightProjectionMatrix
-      let lightSpaceMatrix_bottom = lightViewMatrix_bottom  * lightProjectionMatrix
-      let lightSpaceMatrix_near = lightViewMatrix_near * lightProjectionMatrix
-      let lightSpaceMatrix_far = lightViewMatrix_far  * lightProjectionMatrix
+      let lightProjectionMatrix = 
+         createPerspectiveFov lightFovRadians shadowScreenRatio shadowNearPlane shadowFarPlane
 
       let makeLightSpaceMatrix camTargetOffset camUpDir =
          ((createLookAt lightPos (lightPos + camTargetOffset) camUpDir)) * lightProjectionMatrix
 
-      //let lightSpaceMatrices = [
-      //   makeLightSpaceMatrix (v3i  1  0  0) (v3i 0 -1  0)   // Right
-      //   makeLightSpaceMatrix (v3i -1  0  0) (v3i 0 -1  0)   // Left
-      //   makeLightSpaceMatrix (v3i  0  1  0) (v3i 0  0  1)   // Top
-      //   makeLightSpaceMatrix (v3i  0 -1  0) (v3i 0  0 -1)   // Bottom
-      //   makeLightSpaceMatrix (v3i  0  0  1) (v3i 0 -1  0)   // Near
-      //   makeLightSpaceMatrix (v3i  0  0 -1) (v3i 0 -1  0)   // Far
-      //]
-
       let lightSpaceMatrices = [
-         lightSpaceMatrix_right
-         lightSpaceMatrix_left
-         lightSpaceMatrix_top
-         lightSpaceMatrix_bottom
-         lightSpaceMatrix_near
-         lightSpaceMatrix_far
+         makeLightSpaceMatrix (v3i  1  0  0) (v3i 0 -1  0)   // Right
+         makeLightSpaceMatrix (v3i -1  0  0) (v3i 0 -1  0)   // Left
+         makeLightSpaceMatrix (v3i  0  1  0) (v3i 0  0  1)   // Top
+         makeLightSpaceMatrix (v3i  0 -1  0) (v3i 0  0 -1)   // Bottom
+         makeLightSpaceMatrix (v3i  0  0  1) (v3i 0 -1  0)   // Near
+         makeLightSpaceMatrix (v3i  0  0 -1) (v3i 0 -1  0)   // Far
       ]
-      
+
       (cubemapDepthShader, ctx)
       |> GlProg.setAsCurrent
       |> GlProg.setUniforms "uLightSpaceMatrices" lightSpaceMatrices
@@ -395,7 +457,7 @@ let main argv =
       |> GlProg.setUniformF "uFarPlane" shadowFarPlane
       |> ignore
 
-      renderScene cubemapDepthShader ctx
+      renderScene state cubemapDepthShader ctx
 
       // **********************************************************************
       // 2. Renders the normal scene, but using the generated shadow map
@@ -429,7 +491,7 @@ let main argv =
       |> GlProg.setUniform "uUseNormalMapping" useNormalMapping
       |> ignore
 
-      renderScene shader ctx
+      renderScene state shader ctx
       
       // **********************************************************************
       // Renders light source

@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="model.frag">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+    <None Include="model.vert">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
     <None Include="cubemapDepthShader.frag">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -58,5 +64,34 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup />
+	<ItemGroup>
+		<Content Include="..\Resources\Textures\fallback.jpg" Link="Resources\Textures\fallback.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+
+		<Content Include="..\Resources\Models\Cyborg\cyborg_diffuse.png" Link="Resources\Models\Cyborg\cyborg_diffuse.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Resources\Models\Cyborg\cyborg_normal.png" Link="Resources\Models\Cyborg\cyborg_normal.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Resources\Models\Cyborg\cyborg_specular.png" Link="Resources\Models\Cyborg\cyborg_specular.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Resources\Models\Cyborg\LICENSE.txt" Link="Resources\Models\Cyborg\LICENSE.txt">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<None Include="..\Resources\Models\Cyborg\cyborg.blend" Link="Resources\Models\Cyborg\cyborg.blend">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="..\Resources\Models\Cyborg\cyborg.blend1" Link="Resources\Models\Cyborg\cyborg.blend1">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="..\Resources\Models\Cyborg\cyborg.mtl" Link="Resources\Models\Cyborg\cyborg.mtl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="..\Resources\Models\Cyborg\cyborg.obj" Link="Resources\Models\Cyborg\cyborg.obj">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>

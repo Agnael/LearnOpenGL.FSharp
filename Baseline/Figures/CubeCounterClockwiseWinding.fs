@@ -220,9 +220,10 @@ module CubeCCW
       let bitangent: Vector3 = v3 bitanX bitanY bitanZ
       bitangent
 
-   let vertexPositionsAndNormalsAndTextureCoordsAndTangents =         
-      // Calculates a tangent per triangle but then saves an array entry per position
-      let tangents =
+   let vertexPositionsAndNormalsAndTextureCoordsAndTangentsBitangents =         
+      // Calculates a tangent and a bitanget per triangle but then saves an array entry per position,
+      // since each vertex of that triange will have the same tangent and bitangent vectors
+      let (tangents, bitangents) =
          [| 0..3..(positions.Length - 2) |]
          |> Array.map (
             fun i ->
@@ -235,27 +236,17 @@ module CubeCCW
 
                let triangleTangent = calcTriangeTangent pos1 pos2 pos3 uv1 uv2 uv3
                let tangentAsArray = [| triangleTangent.X; triangleTangent.Y; triangleTangent.Z |]
-               [| tangentAsArray; tangentAsArray; tangentAsArray |]
-         )
-         |> Array.collect id
-
-      // Calculates a bitangent per triangle but then saves an array entry per position
-      let bitangents =
-         [| 0..3..(positions.Length - 2) |]
-         |> Array.map (
-            fun i ->
-               let pos1 = v3FromArray positions.[i]
-               let pos2 = v3FromArray positions.[i+1]
-               let pos3 = v3FromArray positions.[i+2]
-               let uv1 = v2FromArray textureCoords.[i]
-               let uv2 = v2FromArray textureCoords.[i+1]
-               let uv3 = v2FromArray textureCoords.[i+2]
-
+               
                let triangleBitangent = calcTriangeBitangent pos1 pos2 pos3 uv1 uv2 uv3
                let bitangentAsArray = [| triangleBitangent.X; triangleBitangent.Y; triangleBitangent.Z |]
-               [| bitangentAsArray; bitangentAsArray; bitangentAsArray |]
+
+               (Array.create 3 tangentAsArray, Array.create 3 bitangentAsArray)
          )
-         |> Array.collect id
+         |> Array.fold 
+            (fun (accTangents, accBitangents) (currTangets, currBitangents) -> 
+               (Array.concat [accTangents; currTangets], Array.concat [accBitangents; currBitangents])
+            ) 
+            ([||], [||])
 
       positions
       |> Array.indexed
