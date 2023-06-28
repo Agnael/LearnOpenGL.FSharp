@@ -317,7 +317,6 @@ Rendering 100.000 asteroids went from 4 FPS to 80+ FPS when started using the in
 
 ## [Normal mapping](https://learnopengl.com/Advanced-Lighting/Normal-Mapping)  
 #### 51_Normal_Mapping
-![ezgif-4-4ea843e4d3](https://github.com/Agnael/LearnOpenGL.FSharp/assets/32271030/54f94dca-6f61-412c-ac8a-961744062515)
 ![ezgif-5-987bcc8c2a](https://github.com/Agnael/LearnOpenGL.FSharp/assets/32271030/8a81781d-0261-4990-9648-747ad9a307af)
 
 ## [Parallax mapping](https://learnopengl.com/Advanced-Lighting/Parallax-Mapping)  
