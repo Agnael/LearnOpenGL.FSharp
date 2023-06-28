@@ -39,23 +39,32 @@ void main()
 
    mat3 normalMatrix = transpose(inverse(mat3(uModel)));
 
-   vec3 normal =
-      uUseReverseNormals
-      ? normalize(normalMatrix * (-1.0 * aNormal))
-      : normalize(normalMatrix * aNormal);
-
    if (uUseNormalMapping) {
-      vec3 T = normalize(normalMatrix * aTangent);      
-      T = normalize(T - dot(T, normal) * normal);
-      vec3 B = cross(normal, T);
+      vec3 normal =
+         uUseReverseNormals
+         ? normalize(-1.0 * aNormal)
+         : normalize(aNormal);
 
-      mat3 TBN = transpose(mat3(T, B, normal));
+      vec3 T = normalize(vec3(uModel * vec4(aTangent, 0.0)));      
+      vec3 N = normalize(vec3(uModel * vec4(normal, 0.0))); 
+      
+      // Re-ortogonize T with respect to N
+      T = normalize(T - dot(T, N) * N);
+
+      vec3 B = cross(N, T);
+
+      mat3 TBN = transpose(mat3(T, B, N));
 
       vs_out.TangentLightPos = TBN * uLightPosition;
       vs_out.TangentViewPos = TBN * uViewerPos;
       vs_out.TangentFragPos = TBN * vs_out.FragPos;
    }
    else {
+      vec3 normal =
+         uUseReverseNormals
+         ? normalize(normalMatrix * (-1.0 * aNormal))
+         : normalize(normalMatrix * aNormal);
+
       vs_out.Normal = normal;
    }
       

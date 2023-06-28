@@ -85,7 +85,6 @@ let main argv =
    let mutable shader = Unchecked.defaultof<_>
    let mutable cubemapDepthShader = Unchecked.defaultof<_>
    let mutable lightSourceShader = Unchecked.defaultof<_>
-   let mutable modelShader = Unchecked.defaultof<_>
    
    let mutable shadowCubemapFbo = Unchecked.defaultof<_>
 
@@ -220,36 +219,7 @@ let main argv =
             "uModel"
          ]
          |> GlProg.build ctx
-
-      modelShader <-
-         GlProg.emptyBuilder
-         |> GlProg.withName "Simple3D"
-         |> GlProg.withShaders 
-               [ ShaderType.VertexShader, "model.vert"
-               ; ShaderType.FragmentShader, "model.frag" 
-               ;]
-         |> GlProg.withUniforms [
-               "uModel"
-               "uView"
-               "uProjection"
-               "uMaterial.diffuseMap"
-               "uMaterial.specularMap"
-               "uMaterial.shininess"
-               "uViewerPos"
-               "uPointLight.position"
-               "uPointLight.constantComponent"
-               "uPointLight.linearComponent"
-               "uPointLight.quadraticComponent"
-               "uPointLight.ambientColor"
-               "uPointLight.diffuseColor"
-               "uPointLight.specularColor"
-               "uDirectionalLight.direction"
-               "uDirectionalLight.ambientColor"
-               "uDirectionalLight.diffuseColor"
-               "uDirectionalLight.specularColor"
-         ]
-         |> GlProg.build ctx
-
+               
       ctx
       |> Baseline.bindShaderToUbo shader matricesUboDef state dispatch
       |> Baseline.bindShaderToUbo cubemapDepthShader matricesUboDef state dispatch
