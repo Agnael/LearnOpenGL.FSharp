@@ -95,7 +95,7 @@ From exercise 47 and onward, DearImGui is used to display an informative overlay
   * **Normal mapping** ([Original article](https://learnopengl.com/Advanced-Lighting/Normal-Mapping))
     * [51_Normal_Mapping](#51_normal_mapping)
   * **Parallax mapping** ([Original article](https://learnopengl.com/Advanced-Lighting/Parallax-Mapping))
-    * Coming soon.
+    * [52_Normal_Mapping](#52_parallax_mapping)
   * **HDR** ([Original article](https://learnopengl.com/Advanced-Lighting/HDR))
     * Coming soon.
   * **Bloom** ([Original article](https://learnopengl.com/Advanced-Lighting/Bloom))
@@ -320,7 +320,8 @@ Rendering 100.000 asteroids went from 4 FPS to 80+ FPS when started using the in
 ![ezgif-5-987bcc8c2a](https://github.com/Agnael/LearnOpenGL.FSharp/assets/32271030/8a81781d-0261-4990-9648-747ad9a307af)
 
 ## [Parallax mapping](https://learnopengl.com/Advanced-Lighting/Parallax-Mapping)  
-Coming soon.
+#### 52_Parallax_Mapping
+![52_Parallax_Mapping_hGS0Syfx1Q](https://github.com/Agnael/LearnOpenGL.FSharp/assets/32271030/021fa4ff-728c-4427-9f8d-e4b3fccd50f2)
 
 ## [HDR](https://learnopengl.com/Advanced-Lighting/HDR)  
 Coming soon.
