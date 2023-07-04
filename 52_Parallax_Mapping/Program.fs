@@ -33,7 +33,7 @@ open Serilog.Extensions.Logging
 
 let initialState = 
    BaselineState.createDefault(
-      "51_Normal_Mapping", 
+      "52_Parallax_Mapping", 
       new Size(640, 360))
 
 let initialRes = initialState.Window.Resolution
