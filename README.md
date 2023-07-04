@@ -95,7 +95,7 @@ From exercise 47 and onward, DearImGui is used to display an informative overlay
   * **Normal mapping** ([Original article](https://learnopengl.com/Advanced-Lighting/Normal-Mapping))
     * [51_Normal_Mapping](#51_normal_mapping)
   * **Parallax mapping** ([Original article](https://learnopengl.com/Advanced-Lighting/Parallax-Mapping))
-    * [52_Normal_Mapping](#52_parallax_mapping)
+    * [52_Parallax_Mapping](#52_parallax_mapping)
   * **HDR** ([Original article](https://learnopengl.com/Advanced-Lighting/HDR))
     * Coming soon.
   * **Bloom** ([Original article](https://learnopengl.com/Advanced-Lighting/Bloom))
