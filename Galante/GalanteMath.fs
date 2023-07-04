@@ -15,7 +15,8 @@
       static member value (Degrees d) = d
 
    let inline v2 x y = new Vector2(x, y)
-   let inline v2i (x: int) (y:int) (z: int) = 
+
+   let inline v2i (x: int) (y:int) = 
       new Vector2(single x, single y)
 
    let inline v3 x y z = new Vector3(x, y, z)
@@ -32,11 +33,17 @@
 
       v2 arr.[0] arr.[1]
 
+   let inline v2AsArrayF (v2: Vector2) = [| v2.X; v2.Y |]
+
+   let inline v3AsArrayF (v3: Vector3) = [| v3.X; v3.Y; v3.Z |]
+
    let inline v3FromArray(arr: float32 array) = 
       if not(arr.Length = 3) then
          failwith "A float32 array of 3 elements is needed to convert it to a Vector3"
 
       v3 arr.[0] arr.[1] arr.[2]
+
+   let inline normalize v = Vector3.Normalize v
 
    let normalizeCross (v1, v2) = 
       Vector3.Cross(v1, v2) 
