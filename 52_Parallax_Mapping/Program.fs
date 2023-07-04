@@ -319,15 +319,8 @@ let main argv =
       setUboUniformM4 matricesUboDef "uProjection" projectionMatrix
       setUboUniformM4 matricesUboDef "uView" viewMatrix
 
-      //fboBindDefault ctx |> ignore
-      //glEnable EnableCap.DepthTest
-      //glClear (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
-      //glClearColor 0.1f 0.1f 0.1f 1.0f
-
-      // **********************************************************************
-      // (1?) 2. Renders the normal scene, but using the generated shadow map
-      // - Resets viewport, flags and framebuffer
       fboBindDefault ctx |> ignore
+      glEnable EnableCap.DepthTest
       glViewport res.Width res.Height ctx
       glClear (GLEnum.ColorBufferBit ||| GLEnum.DepthBufferBit)
         
