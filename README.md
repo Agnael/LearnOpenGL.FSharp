@@ -321,7 +321,7 @@ Rendering 100.000 asteroids went from 4 FPS to 80+ FPS when started using the in
 
 ## [Parallax mapping](https://learnopengl.com/Advanced-Lighting/Parallax-Mapping)  
 #### 52_Parallax_Mapping
-![52_Parallax_Mapping_hGS0Syfx1Q](https://github.com/Agnael/LearnOpenGL.FSharp/assets/32271030/021fa4ff-728c-4427-9f8d-e4b3fccd50f2)
+![52_Parallax_Mapping_kjBTyTKLka](https://github.com/Agnael/LearnOpenGL.FSharp/assets/32271030/c9bc2e39-49e1-4cf1-8f7c-41225814fd65)
 
 ## [HDR](https://learnopengl.com/Advanced-Lighting/HDR)  
 Coming soon.
